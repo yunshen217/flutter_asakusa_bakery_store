@@ -41,3 +41,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/.gradle/file-system.probe
+android/.gradle/vcs-1/gc.properties
+android/.gradle/7.6.3/gc.properties
+android/.gradle/7.6.3/checksums/checksums.lock
+android/.gradle/
