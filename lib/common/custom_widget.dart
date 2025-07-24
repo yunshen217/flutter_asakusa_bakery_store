@@ -1,5 +1,7 @@
 //自定义封装类
 
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_pickers/time_picker/model/pduration.dart';
 import 'package:flutter_pickers/time_picker/model/suffix.dart';
 
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
 
 import '../routes/routes.dart';
 import "../common/custom_color.dart";
@@ -39,14 +42,18 @@ class CustomWidget {
       onTap,
       onPressed}) {
     return AppBar(
-        title: isTitle ? setText(title!, fontSize: 16, fontWeight: FontWeight.bold) : titleChild,
+        title: isTitle
+            ? setText(title!, fontSize: 16, fontWeight: FontWeight.bold)
+            : titleChild,
         backgroundColor: backgroundColor,
         centerTitle: centerTitle,
         elevation: 0.0,
         shadowColor: Colors.black,
         bottom: bottom,
         leading: isLeftShow ? const BackButton() : leading,
-        actions: [isRightShow ? InkWell(onTap: onTap, child: right) : Container()]);
+        actions: [
+          isRightShow ? InkWell(onTap: onTap, child: right) : Container()
+        ]);
   }
 
   setText(String text,
@@ -68,6 +75,38 @@ class CustomWidget {
                 color: color, fontSize: fontSize, fontWeight: fontWeight)));
   }
 
+  /// 横向两边对齐文字
+  setRowText(
+    String text1,
+    String text2, {
+    mainAxisAlignment = MainAxisAlignment.spaceBetween,
+    margin = const EdgeInsets.all(10),
+    text1Color = CustomColor.black_3,
+    text2Color = CustomColor.black_3,
+    text1FontSize = 14.0,
+    text2FontSize = 14.0,
+    text1FontWidget = FontWeight.normal,
+    text2FontWidget = FontWeight.normal,
+  }) {
+    return Container(
+      margin: margin,
+      child: Row(
+        mainAxisAlignment: mainAxisAlignment,
+        children: [
+          customWidget.setText(text1,
+              color: text1Color,
+              fontSize: text1FontSize,
+              fontWeight: text1FontWidget),
+          customWidget.setText(text2,
+              color: text2Color,
+              fontSize: text2FontSize,
+              fontWeight: text2FontWidget)
+        ],
+      ),
+    );
+  }
+
+  /// 有边距的文字
   setTextOverflow(String text,
       {margin = EdgeInsets.zero,
       padding = EdgeInsets.zero,
@@ -96,6 +135,7 @@ class CustomWidget {
       margin = const EdgeInsets.all(15),
       double fontSize = 12.0,
       double iconSize = 30.0,
+      double textTopMargin = 10,
       fontWeight = FontWeight.w500,
       textAlign = TextAlign.left,
       color = CustomColor.black_3,
@@ -106,37 +146,80 @@ class CustomWidget {
           margin: margin,
           child: Column(children: [
             //Icon(icon, size: iconSize, color: CustomColor.hospitalBlue1),
-            setAssetsImg(icon, width: iconSize, height: iconSize, fit: BoxFit.contain),
+            setAssetsImg(icon,
+                width: iconSize, height: iconSize, fit: BoxFit.contain),
             setText(text!,
                 textAlign: textAlign,
                 fontSize: fontSize,
                 color: color,
                 fontWeight: fontWeight,
-                margin: const EdgeInsets.only(top: 10))
+                margin: EdgeInsets.only(top: textTopMargin))
           ]),
         ));
   }
 
+  /// 设置底部横线按钮
+  setUnderLineButton(text,
+      {margin = EdgeInsets.zero,
+      onTap,
+      double fontSize = 12,
+      fontColor = CustomColor.black_3,
+      maxLines = 1,
+      TextAlign? textAlign,
+      fontWeight = FontWeight.normal,
+      double lineWidth = 15,
+      double lineHeight = 1,
+      double lineTopMargin = 2,
+      lineColor = CustomColor.redE8}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: margin,
+        child: Column(
+          children: [
+            setText(text,
+                color: fontColor,
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                maxLines: maxLines,
+                textAlign: textAlign),
+            Container(
+              margin: EdgeInsets.only(top: lineTopMargin),
+              height: lineHeight,
+              width: lineWidth,
+              color: lineColor,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 设置外边框按钮
   setOutLinedButton(text,
       {margin = EdgeInsets.zero,
       Size? minimumSize,
       Size? fixedSize,
       Size? maximumSize,
-      circular = 25.0,
+      double circular = 25.0,
+      fontColor = CustomColor.redE8,
+      lineColor = CustomColor.redE8,
+      double fontSize = 12.0,
+      linewidth = 1.0,
       onPressed}) {
     return Container(
       margin: margin,
       child: OutlinedButton(
         onPressed: onPressed,
-        child: setText(text, color: CustomColor.redE8),
+        child: setText(text, color: fontColor, fontSize: fontSize),
         style: TextButton.styleFrom(
             minimumSize: minimumSize,
             backgroundColor: Colors.white,
             fixedSize: fixedSize,
-            side: BorderSide(color: CustomColor.redE8),
+            side: BorderSide(color: lineColor),
             maximumSize: maximumSize,
             shape: RoundedRectangleBorder(
-                side: BorderSide(color: CustomColor.redE8),
+                side: BorderSide(color: lineColor, width: linewidth),
                 borderRadius: BorderRadius.circular(circular))),
       ),
     );
@@ -157,7 +240,8 @@ class CustomWidget {
         height: height,
         child: CupertinoButton(
             onPressed: onPressed,
-            child: setText(text, fontSize: fontSize, fontWeight: fontWeight, color: textColor),
+            child: setText(text,
+                fontSize: fontSize, fontWeight: fontWeight, color: textColor),
             padding: padding,
             disabledColor: CustomColor.grayC5,
             borderRadius: BorderRadius.circular(10.0),
@@ -174,7 +258,8 @@ class CustomWidget {
     return Container(
         padding: padding,
         margin: margin,
-        child: Image.asset("assets/$imgPath", width: width, height: height, fit: fit));
+        child: Image.asset("assets/$imgPath",
+            width: width, height: height, fit: fit));
   }
 
 //Icon()FilteringTextInputFormatter.allow("")
@@ -196,8 +281,8 @@ class CustomWidget {
       obscureText = false,
       Widget? suffixIcon,
       autofocus = false}) {
-    var customBorder =
-        OutlineInputBorder(borderRadius: BorderRadius.circular(10.0), borderSide: BorderSide.none);
+    var customBorder = OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0), borderSide: BorderSide.none);
     return Container(
       margin: margin,
       height: height,
@@ -212,15 +297,18 @@ class CustomWidget {
           cursorColor: CustomColor.redE8,
           keyboardType: keyboardType,
           onChanged: onChanged,
-          style:
-              setTextStyle(color: CustomColor.black_3, fontSize: 14, fontWeight: FontWeight.normal),
+          style: setTextStyle(
+              color: CustomColor.black_3,
+              fontSize: 14,
+              fontWeight: FontWeight.normal),
           inputFormatters: inputFormatters ?? [],
           // inputFormatters: [inputFormatters],
           decoration: InputDecoration(
               hintText: hintText,
               fillColor: CustomColor.grayF5,
               filled: true,
-              contentPadding: EdgeInsets.only(left: 15, top: top, bottom: 0, right: 15),
+              contentPadding:
+                  EdgeInsets.only(left: 15, top: top, bottom: 0, right: 15),
               counter: counter
                   ? const SizedBox(height: 0, width: 0)
                   : setText("100文字以内", fontSize: 12, color: CustomColor.gray_6),
@@ -242,7 +330,8 @@ class CustomWidget {
 
   setCard(
       {child,
-      EdgeInsetsGeometry margin = const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15),
+      EdgeInsetsGeometry margin =
+          const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15),
       padding = const EdgeInsets.all(20.0),
       color = CustomColor.white,
       boxShadowColor = CustomColor.pinkCf,
@@ -282,11 +371,14 @@ class CustomWidget {
             text: TextSpan(children: [
           TextSpan(
               text: title,
-              style: setTextStyle(fontWeight: fontWeight, color: color, fontSize: fontSize)),
+              style: setTextStyle(
+                  fontWeight: fontWeight, color: color, fontSize: fontSize)),
           TextSpan(
               text: subTitle,
               style: setTextStyle(
-                  color: subtitleColor, fontWeight: subFontWeight, fontSize: subFontSize))
+                  color: subtitleColor,
+                  fontWeight: subFontWeight,
+                  fontSize: subFontSize))
         ])));
   }
 
@@ -353,10 +445,13 @@ class CustomWidget {
             onChanged: onChanged,
             decoration: InputDecoration(
                 hintText: hintText,
-                contentPadding: const EdgeInsets.only(bottom: 5, top: 15, left: 15),
+                contentPadding:
+                    const EdgeInsets.only(bottom: 5, top: 15, left: 15),
                 counter: const SizedBox(height: 0, width: 0),
                 hintStyle: setTextStyle(
-                    color: CustomColor.grayC5, fontWeight: FontWeight.normal, fontSize: 14),
+                    color: CustomColor.grayC5,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14),
                 border: customBorder1,
                 suffixIcon: suffix ??
                     IconButton(
@@ -367,9 +462,11 @@ class CustomWidget {
                           }
                           controller.clear();
                         },
-                        icon: const Icon(Icons.cancel_rounded, color: CustomColor.grayC5)),
+                        icon: const Icon(Icons.cancel_rounded,
+                            color: CustomColor.grayC5)),
                 prefixIcon: icon != null
-                    ? setAssetsImg(icon, margin: const EdgeInsets.only(left: 10, right: 10))
+                    ? setAssetsImg(icon,
+                        margin: const EdgeInsets.only(left: 10, right: 10))
                     : null,
                 prefixIconConstraints: const BoxConstraints(maxHeight: 25),
                 focusedBorder: customBorder)));
@@ -454,13 +551,16 @@ class CustomWidget {
           return CupertinoAlertDialog(
             title: Center(child: setText(title, fontWeight: FontWeight.bold)),
             content: Center(
-                child:
-                    isChild ? child : setText(content!, maxLines: 50, fontWeight: FontWeight.w500)),
+                child: isChild
+                    ? child
+                    : setText(content!,
+                        maxLines: 50, fontWeight: FontWeight.w500)),
             insetAnimationDuration: const Duration(milliseconds: 500),
             insetAnimationCurve: Curves.linear,
             actions: [
               CupertinoDialogAction(
-                  child: setText("キャンセル"), onPressed: () => Routes.finishPage(context: context)),
+                  child: setText("キャンセル"),
+                  onPressed: () => Routes.finishPage(context: context)),
               CupertinoDialogAction(
                   child: setText(confirmTitle, color: CustomColor.redE8),
                   onPressed: () {
@@ -485,13 +585,16 @@ class CustomWidget {
         builder: (_) {
           return SimpleDialog(
             title: Center(
-                child: setText(title, color: CustomColor.redE8, fontWeight: FontWeight.bold)),
+                child: setText(title,
+                    color: CustomColor.redE8, fontWeight: FontWeight.bold)),
             insetPadding: const EdgeInsets.symmetric(horizontal: 15),
             backgroundColor: CustomColor.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             children: [
               child,
-              setCupertinoButton("選択する", margin: const EdgeInsets.only(left: 15, right: 15),
+              setCupertinoButton("選択する",
+                  margin: const EdgeInsets.only(left: 15, right: 15),
                   onPressed: () {
                 Routes.finishPage(context: context);
                 confirm();
@@ -514,92 +617,146 @@ class CustomWidget {
         });
   }
 
-void showCustomSingleBtnDialog(context, {title = "現在ログインしていません", isChild = false, child, confirm}) {
-  if (_isDialogShowing) return;
-  _isDialogShowing = true;
+  void showCustomSingleBtnDialog(context,
+      {title = "現在ログインしていません", isChild = false, child, confirm}) {
+    if (_isDialogShowing) return;
+    _isDialogShowing = true;
 
-  showAdaptiveDialog(
+    showAdaptiveDialog(
+      context: context,
+      builder: (_) {
+        return PopScope(
+          canPop: false,
+          child: CupertinoAlertDialog(
+            content: Center(child: isChild ? child : setText(title!)),
+            actions: [
+              CupertinoDialogAction(
+                child: setText("キャンセル", color: CustomColor.grayA),
+                onPressed: () => Navigator.pop(context),
+              ),
+              CupertinoDialogAction(
+                  child: setText("ログインする", color: CustomColor.redE8),
+                  onPressed: () {
+                    Navigator.pop(context); // 先关闭弹窗
+                    confirm(); // 再执行跳转
+                  })
+            ],
+          ),
+        );
+      },
+    ).then((_) => _isDialogShowing = false);
+  }
+
+  void showCheckNoticeDialog(context,
+      {title, msg, isChild = false, child, confirm}) {
+    if (_isDialogShowing) return;
+    _isDialogShowing = true;
+
+    showAdaptiveDialog(
+      context: context,
+      builder: (_) {
+        return PopScope(
+          canPop: false,
+          child: CupertinoAlertDialog(
+            title: Center(
+                child: setText(title!, color: CustomColor.redE8, fontSize: 16)),
+            content: Center(child: setText(msg!)),
+            actions: [
+              CupertinoDialogAction(
+                child: setText("閉じる", color: CustomColor.grayA),
+                onPressed: () => Navigator.pop(context),
+              ),
+              CupertinoDialogAction(
+                  child: setText("次回から表示しない", color: CustomColor.redE8),
+                  onPressed: () {
+                    Navigator.pop(context); // 先关闭弹窗
+                    confirm(); // 再执行跳转
+                  })
+            ],
+          ),
+        );
+      },
+    ).then((_) => _isDialogShowing = false);
+  }
+
+  void showConfirmDialog(
+  BuildContext context, {
+  bool barrierDismissible = true,
+  String title = "提示",
+  double titleFontSize = 14.0,
+  Color titleColor = CustomColor.black_3,
+  FontWeight titleFontWeight = FontWeight.normal,
+  Widget? child,
+  VoidCallback? onPressed,
+}) {
+  showDialog(
     context: context,
-    builder: (_) {
-      return PopScope(
-        canPop: false,
-        child: CupertinoAlertDialog(
-          content: Center(child: isChild ? child : setText(title!)),
-          actions: [
-            CupertinoDialogAction(
-              child: setText("キャンセル", color: CustomColor.grayA),
-              onPressed: () => Navigator.pop(context),
-            ),
-            CupertinoDialogAction(
-              child: setText("ログインする", color: CustomColor.redE8),
-              onPressed: () {
-                Navigator.pop(context); // 先关闭弹窗
-                confirm();             // 再执行跳转
-              }
-            )
-          ],
+    barrierDismissible: barrierDismissible,
+    builder: (_) => AlertDialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
+      contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // 去掉底部多余空白
+      actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
+      title: Align(
+        alignment: Alignment.center,
+        child: setText(title,
+            fontSize: titleFontSize,
+            color: titleColor,
+            fontWeight: titleFontWeight),
+      ),
+      content: child,
+      actions: [
+        setOutLinedButton(
+          "取消",
+          minimumSize: const Size(90, 40),
+          circular: 10,
+          fontColor: CustomColor.black_3,
+          lineColor: CustomColor.blackD,
+          fontSize: 15,
+          onPressed: () => Get.back(),
         ),
-      );
-    },
-  ).then((_) => _isDialogShowing = false);
+        setCupertinoButton(
+          "完成",
+          height: 40,
+          minimumSize: 90,
+          textColor: CustomColor.black_3,
+          color: CustomColor.redE8,
+          fontSize: 15,
+          onPressed: onPressed,
+          fontWeight: FontWeight.normal,
+        ),
+      ],
+    ),
+  );
 }
 
-void showCheckNoticeDialog(context, {title, msg, isChild = false, child, confirm}) {
-  if (_isDialogShowing) return;
-  _isDialogShowing = true;
+  void showNoticeDialog(context, {title, msg, isChild = false, child}) {
+    if (_isDialogShowing) return;
+    _isDialogShowing = true;
 
-  showAdaptiveDialog(
-    context: context,
-    builder: (_) {
-      return PopScope(
-        canPop: false,
-        child: CupertinoAlertDialog(
-          title: Center(child: setText(title!, color: CustomColor.redE8, fontSize: 16)),
-          content: Center(child: setText(msg!)),
-          actions: [
-            CupertinoDialogAction(
-              child: setText("閉じる", color: CustomColor.grayA),
-              onPressed: () => Navigator.pop(context),
-            ),
-            CupertinoDialogAction(
-              child: setText("次回から表示しない", color: CustomColor.redE8),
-              onPressed: () {
-                Navigator.pop(context); // 先关闭弹窗
-                confirm();             // 再执行跳转
-              }
-            )
-          ],
-        ),
-      );
-    },
-  ).then((_) => _isDialogShowing = false);
-}
+    showAdaptiveDialog(
+      context: context,
+      builder: (_) {
+        return PopScope(
+          canPop: false,
+          child: CupertinoAlertDialog(
+            title: Center(
+                child: setText(title!, color: CustomColor.redE8, fontSize: 16)),
+            content: Center(child: setText(msg!)),
+            actions: [
+              CupertinoDialogAction(
+                child: setText("閉じる", color: CustomColor.grayA),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((_) => _isDialogShowing = false);
+  }
 
-void showNoticeDialog(context, {title, msg, isChild = false, child}) {
-  if (_isDialogShowing) return;
-  _isDialogShowing = true;
-
-  showAdaptiveDialog(
-    context: context,
-    builder: (_) {
-      return PopScope(
-        canPop: false,
-        child: CupertinoAlertDialog(
-          title: Center(child: setText(title!, color: CustomColor.redE8, fontSize: 16)),
-          content: Center(child: setText(msg!)),
-          actions: [
-            CupertinoDialogAction(
-              child: setText("閉じる", color: CustomColor.grayA),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-      );
-    },
-  ).then((_) => _isDialogShowing = false);
-}
   setTabBar(tabs,
-      {EdgeInsetsGeometry indicatorPadding = const EdgeInsets.only(top: 10, bottom: 10),
+      {EdgeInsetsGeometry indicatorPadding =
+          const EdgeInsets.only(top: 10, bottom: 10),
       double borderRadius = 15,
       double fontSize = 14,
       unselectedLabelColor = CustomColor.black_3,
@@ -608,12 +765,15 @@ void showNoticeDialog(context, {title, msg, isChild = false, child}) {
     return SizedBox(
         width: 200,
         child: TabBar(
-            controller: controller, 
-            overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
+            controller: controller,
+            overlayColor:
+                WidgetStateProperty.resolveWith((states) => Colors.transparent),
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: CustomColor.white,
-            labelStyle: setTextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
-            unselectedLabelStyle: setTextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
+            labelStyle:
+                setTextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
+            unselectedLabelStyle:
+                setTextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
             dividerHeight: 0.0,
             indicatorPadding: indicatorPadding,
             indicator: BoxDecoration(
@@ -627,8 +787,10 @@ void showNoticeDialog(context, {title, msg, isChild = false, child}) {
   setShoppingCar({count = 0, key}) {
     return Badge(
         key: key,
-        label:
-            setText("$count", color: CustomColor.white, fontSize: 10, fontWeight: FontWeight.bold),
+        label: setText("$count",
+            color: CustomColor.white,
+            fontSize: 10,
+            fontWeight: FontWeight.bold),
         backgroundColor: CustomColor.redE8,
         smallSize: 20,
         largeSize: 20,
@@ -638,7 +800,11 @@ void showNoticeDialog(context, {title, msg, isChild = false, child}) {
   }
 
   loadImg(src,
-      {double width = 80, double height = 80, margin = EdgeInsets.zero, key, borderRadius}) {
+      {double width = 80,
+      double height = 80,
+      margin = EdgeInsets.zero,
+      key,
+      borderRadius}) {
     return Container(
         key: key,
         child: ClipRRect(
@@ -651,7 +817,8 @@ void showNoticeDialog(context, {title, msg, isChild = false, child}) {
             fit: BoxFit.cover,
             filterQuality: FilterQuality.medium,
             imageErrorBuilder: (_, __, ___) {
-              return setAssetsImg("icon_no_data.png", width: width, height: height);
+              return setAssetsImg("icon_no_data.png",
+                  width: width, height: height);
             },
           ),
         ));

@@ -13,7 +13,6 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/navigation_service.dart';
-import 'package:flutter_asakusa_bakery_store/page/login/login_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/home/home_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/person_page.dart';
@@ -46,16 +45,20 @@ class MyApp extends StatelessWidget {
             appBarTheme: const AppBarTheme(
                 color: Colors.white, surfaceTintColor: Colors.transparent),
             scaffoldBackgroundColor: Colors.white),
-        onGenerateRoute: onGenerateRoute,
+        // onGenerateRoute: onGenerateRoute,
         // initialRoute: Global.token.isEmpty ? "/LoginPage" : "/",
         navigatorObservers: [FlutterSmartDialog.observer],
         builder: FlutterSmartDialog.init(),
+        debugShowCheckedModeBanner: false,
         navigatorKey: NavigationService.navigatorKey, // 设置 navigatorKey
-        routes: {
-          '/LoginPage': (context) => const LoginPage(),
-          // 其他页面路由
-        },
-        home: const MyHomePage());
+        // routes: {
+        //   '/LoginPage': (context) => const LoginPage(),
+        //   // 其他页面路由
+        // },
+        // initialRoute: '/LoginPage',
+        getPages: Routes.pages,
+        home: const MyHomePage()
+        );
   }
 }
 

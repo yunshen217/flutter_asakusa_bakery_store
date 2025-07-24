@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/model/base_model.dart';
+import 'package:flutter_asakusa_bakery_store/model/base_res.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:shopping_client/common/constant.dart';
 
 import '../common/Global.dart';
 import '../common/custom_widget.dart';
 import '../common/navigation_service.dart';
-import '../model/base_model.dart';
-import '../model/base_res.dart';
 
 class BaseInterceptors extends InterceptorsWrapper {
   final Dio dio;
