@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
 import 'package:get/get.dart';
 
 import '../page/login/login_page.dart';
@@ -16,6 +17,7 @@ class Routes {
     GetPage(name: '/OrderPage', page: () => const OrderPage()),
     GetPage(name: '/HomePage', page: () => const HomePage()),
     GetPage(name: '/PersonPage', page: () => const PersonPage()),
+    GetPage(name: '/ForgetPage', page: () => const ForgetPage()),
     // 其他页面可以继续添加
   ];
 

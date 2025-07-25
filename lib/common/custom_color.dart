@@ -23,6 +23,7 @@ class CustomColor {
   static const Color grayFa = Color(0xFFFAFAFA);
   static const Color grayE = Color(0xFFEEEEEE);
   static const Color grayE0 = Color(0xFFE0E0E0);
+  static const Color grayC7 = Color(0xFFc7c7cc);
   static const Color black_29 = Color(0xFF000029);
   static const Color gray_6 = Color(0xFF666666);
   static const Color gray_9 = Color(0xFF999999);

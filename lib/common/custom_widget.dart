@@ -50,6 +50,8 @@ class CustomWidget {
         elevation: 0.0,
         shadowColor: Colors.black,
         bottom: bottom,
+        scrolledUnderElevation: 0, // 去掉滚动阴影
+        surfaceTintColor: Colors.transparent,
         leading: isLeftShow ? const BackButton() : leading,
         actions: [
           isRightShow ? InkWell(onTap: onTap, child: right) : Container()
@@ -680,54 +682,54 @@ class CustomWidget {
   }
 
   void showConfirmDialog(
-  BuildContext context, {
-  bool barrierDismissible = true,
-  String title = "提示",
-  double titleFontSize = 14.0,
-  Color titleColor = CustomColor.black_3,
-  FontWeight titleFontWeight = FontWeight.normal,
-  Widget? child,
-  VoidCallback? onPressed,
-}) {
-  showDialog(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    builder: (_) => AlertDialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
-      contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // 去掉底部多余空白
-      actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
-      title: Align(
-        alignment: Alignment.center,
-        child: setText(title,
-            fontSize: titleFontSize,
-            color: titleColor,
-            fontWeight: titleFontWeight),
+    BuildContext context, {
+    bool barrierDismissible = true,
+    String title = "提示",
+    double titleFontSize = 14.0,
+    Color titleColor = CustomColor.black_3,
+    FontWeight titleFontWeight = FontWeight.normal,
+    Widget? child,
+    VoidCallback? onPressed,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // 去掉底部多余空白
+        actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
+        title: Align(
+          alignment: Alignment.center,
+          child: setText(title,
+              fontSize: titleFontSize,
+              color: titleColor,
+              fontWeight: titleFontWeight),
+        ),
+        content: child,
+        actions: [
+          setOutLinedButton(
+            "取消",
+            minimumSize: const Size(90, 40),
+            circular: 10,
+            fontColor: CustomColor.black_3,
+            lineColor: CustomColor.blackD,
+            fontSize: 15,
+            onPressed: () => Get.back(),
+          ),
+          setCupertinoButton(
+            "完成",
+            height: 40,
+            minimumSize: 90,
+            textColor: CustomColor.black_3,
+            color: CustomColor.redE8,
+            fontSize: 15,
+            onPressed: onPressed,
+            fontWeight: FontWeight.normal,
+          ),
+        ],
       ),
-      content: child,
-      actions: [
-        setOutLinedButton(
-          "取消",
-          minimumSize: const Size(90, 40),
-          circular: 10,
-          fontColor: CustomColor.black_3,
-          lineColor: CustomColor.blackD,
-          fontSize: 15,
-          onPressed: () => Get.back(),
-        ),
-        setCupertinoButton(
-          "完成",
-          height: 40,
-          minimumSize: 90,
-          textColor: CustomColor.black_3,
-          color: CustomColor.redE8,
-          fontSize: 15,
-          onPressed: onPressed,
-          fontWeight: FontWeight.normal,
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   void showNoticeDialog(context, {title, msg, isChild = false, child}) {
     if (_isDialogShowing) return;
@@ -754,6 +756,7 @@ class CustomWidget {
     ).then((_) => _isDialogShowing = false);
   }
 
+  /// 有圆角的tabBar
   setTabBar(tabs,
       {EdgeInsetsGeometry indicatorPadding =
           const EdgeInsets.only(top: 10, bottom: 10),
@@ -761,6 +764,7 @@ class CustomWidget {
       double fontSize = 14,
       unselectedLabelColor = CustomColor.black_3,
       TabController? controller,
+      color = CustomColor.redE8,
       onTab}) {
     return SizedBox(
         width: 200,
@@ -777,7 +781,7 @@ class CustomWidget {
             dividerHeight: 0.0,
             indicatorPadding: indicatorPadding,
             indicator: BoxDecoration(
-                color: CustomColor.redE8,
+                color: color,
                 borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
             unselectedLabelColor: unselectedLabelColor,
             tabs: tabs,
@@ -850,22 +854,153 @@ class CustomWidget {
     );
   }
 
-  showPicker(context, data, {selectData = "2", onConfirm}) {
-    return Pickers.showSinglePicker(context,
-        data: data,
-        selectData: selectData,
-        pickerStyle: PickerStyle(
-            textSize: 16,
-            cancelButton: customWidget.setText("キャンセル",
-                color: CustomColor.gray_9,
-                fontSize: 16,
-                margin: const EdgeInsets.only(left: 15),
-                fontWeight: FontWeight.bold),
-            commitButton: customWidget.setText("確定",
-                color: CustomColor.redE8,
-                fontSize: 16,
-                margin: const EdgeInsets.only(right: 15),
-                fontWeight: FontWeight.bold)),
-        onConfirm: onConfirm);
+  /// 展示年月日Picker，确定按钮在底部
+  void showMyDatePickerBottomBtn(
+    BuildContext context, {
+    DateTime? selectDate,
+    String? title = "時間",
+    required Function(String) confirm,
+  }) {
+    DateTime now = DateTime.now();
+    DateTime _selected = selectDate ?? now;
+
+    final int minYear = 2025;
+    final int maxYear = 2025;
+    final List<int> years =
+        List.generate(maxYear - minYear + 1, (i) => minYear + i);
+    final List<int> months = List.generate(12, (i) => i + 1);
+
+    int yearIndex = _selected.year - minYear;
+    int monthIndex = _selected.month - 1;
+    int dayIndex = _selected.day - 1;
+    List<int> days = List.generate(
+        _daysInMonth(years[yearIndex], months[monthIndex]), (i) => i + 1);
+
+    void _updateDays() {
+      days = List.generate(
+          _daysInMonth(years[yearIndex], months[monthIndex]), (i) => i + 1);
+      if (dayIndex >= days.length) dayIndex = days.length - 1;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => StatefulBuilder(
+        builder: (_, setState) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(),
+                  setText(title!,fontSize: 18,color: CustomColor.black_3),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: const Icon(Icons.clear,color: CustomColor.grayC7,size: 20,),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 216,
+              child: Row(
+                children: [
+                  _buildWheel(years, yearIndex, (i) {
+                    setState(() => yearIndex = i);
+                    _updateDays();
+                  }),
+                  _buildWheel(months, monthIndex, (i) {
+                    setState(() => monthIndex = i);
+                    _updateDays();
+                  }, formatter: (v) => v.toString().padLeft(2, '0')),
+                  _buildWheel(days, dayIndex, (i) {
+                    setState(() => dayIndex = i); // 这里也要 setState
+                  }, formatter: (v) => v.toString().padLeft(2, '0')),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    final y = years[yearIndex];
+                    final m = months[monthIndex].toString().padLeft(2, '0');
+                    final d = days[dayIndex].toString().padLeft(2, '0');
+                    confirm('$y-$m-$d');
+                    Navigator.pop(context);
+                  },
+                  child:
+                      const Text('確定', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+
+  /// 通用滚轮封装
+  Widget _buildWheel(
+    List<int> items,
+    int selectedIndex, // 新增
+    ValueChanged<int> onChanged, {
+    String Function(int)? formatter,
+  }) {
+    final fixedFormatter = formatter ?? (v) => v.toString();
+    return Expanded(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 32,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: const BoxDecoration(
+              border: Border.symmetric(
+                horizontal: BorderSide(color: Colors.redAccent, width: 1),
+              ),
+            ),
+          ),
+          ListWheelScrollView.useDelegate(
+            itemExtent: 32,
+            controller: FixedExtentScrollController(initialItem: selectedIndex),
+            onSelectedItemChanged: onChanged,
+            physics: const FixedExtentScrollPhysics(),
+            perspective: 0.005,
+            diameterRatio: 1.1,
+            childDelegate: ListWheelChildBuilderDelegate(
+              builder: (_, index) => Center(
+                child: Text(
+                  fixedFormatter(items[index]),
+                  // 2. 根据是否选中切换颜色
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: index == selectedIndex
+                        ? Colors.redAccent
+                        : CustomColor.black_9,
+                  ),
+                ),
+              ),
+              childCount: items.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _daysInMonth(int year, int month) => DateTime(year, month + 1, 0).day;
 }

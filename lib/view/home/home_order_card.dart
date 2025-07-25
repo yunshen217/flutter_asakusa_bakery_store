@@ -17,8 +17,6 @@ class HomeOrderCard extends StatelessWidget {
   bool? isSelected = false;
   // 是否为店取
   bool isStorePickup;
-  // 是否为寄出
-  bool? isSendOut = false;
   // 完成按钮
   Function()? finishOnTap;
   // 编辑单号按钮
@@ -30,7 +28,6 @@ class HomeOrderCard extends StatelessWidget {
       this.onTap,
       this.isSelected,
       required this.isStorePickup,
-      this.isSendOut,
       this.editTrackingPopup,
       this.finishOnTap});
 
@@ -43,34 +40,54 @@ class HomeOrderCard extends StatelessWidget {
           color: CustomColor.white, borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              customWidget.setRichText("# ", "A301",
+          isStorePickup == false && orderStateIndex == 3
+              ? Container()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    customWidget.setRichText("", "A3013405769958",
+                        color: CustomColor.black_3,
+                        subtitleColor: CustomColor.black_3,
+                        fontSize: 15,
+                        subFontSize: 18),
+                    if (orderStateIndex == 0 || orderStateIndex == 1) ...[
+                      GestureDetector(
+                        onTap: onTap,
+                        child: customWidget.setAssetsImg(
+                            isSelected != null && isSelected == true
+                                ? "order_circle_select@3x.png"
+                                : "order_circle@3x.png",
+                            width: 24,
+                            height: 24),
+                      )
+                    ],
+                    // if (orderStateIndex == 3) ...[
+                    //   customWidget.setText("结束",
+                    //       color: CustomColor.gray_6, fontSize: 14)
+                    // ]
+                  ],
+                ),
+          Container(
+            margin: EdgeInsets.only(top: isStorePickup == false ? 0 : 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                customWidget.setText(
+                  "田中",
                   color: CustomColor.black_3,
-                  subtitleColor: CustomColor.black_3,
-                  fontSize: 15,
-                  subFontSize: 18),
-              if (orderStateIndex == 0 || orderStateIndex == 1) ...[
-                GestureDetector(
-                  onTap: onTap,
-                  child: customWidget.setAssetsImg(
-                      isSelected != null && isSelected == true
-                          ? "order_circle_select@3x.png"
-                          : "order_circle@3x.png",
-                      width: 24,
-                      height: 24),
-                )
+                  fontSize: 14,
+                ),
+                // customWidget.setCupertinoButton("注文取消",
+                //     height: 40,
+                //     minimumSize: 80,
+                //     fontWeight: FontWeight.normal,
+                //     fontSize: 15,
+                //     textColor: CustomColor.black_3,
+                //     color: CustomColor.grayC7,
+                //     onPressed: finishOnTap)
               ],
-              if (orderStateIndex == 3) ...[
-                customWidget.setText("结束",
-                    color: CustomColor.gray_6, fontSize: 14)
-              ]
-            ],
+            ),
           ),
-          customWidget.setRowText("田中", isStorePickup ? "店取" : "邮寄",
-              margin: const EdgeInsets.only(top: 15),
-              text2Color: CustomColor.redE8),
           // 详情
           Container(
             padding: const EdgeInsets.all(15),
@@ -79,13 +96,12 @@ class HomeOrderCard extends StatelessWidget {
                 color: CustomColor.grayF8,
                 borderRadius: BorderRadius.circular(10)),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                customWidget.setRowText("吐司", "X2",
-                    margin: const EdgeInsets.only(bottom: 10)),
-                customWidget.setRowText("欧包", "X4",
-                    margin: const EdgeInsets.only(bottom: 10)),
-                customWidget.setText("备注：我不需要袋子，我自己会带袋子过去，我自己装好拿走。",
-                    color: CustomColor.black_3, fontSize: 14, maxLines: 1000)
+                customWidget.setRichText("受取方式：", isStorePickup ? "引取" : "配達", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
+                customWidget.setRichText("受取番号：", "C297", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
+                customWidget.setRichText("数量：", "竹炭ココナッツバンx1 黑胡麻ロ-ルンx1", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
+                customWidget.setRichText("コメント：","", fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
               ],
             ),
           ),
@@ -95,14 +111,14 @@ class HomeOrderCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  customWidget.setText("约定时间",
+                  customWidget.setText(isStorePickup ? "引取時間：" : "配達時間：",
                       color: CustomColor.gray_6, fontSize: 12),
-                  customWidget.setText("14:00-16:00",
+                  customWidget.setText("2025-07-25",
                       color: CustomColor.black_3, fontSize: 16),
                 ],
               ),
               if (orderStateIndex == 0) ...[
-                customWidget.setCupertinoButton("完成",
+                customWidget.setCupertinoButton("焼き上がリ",
                     height: 40,
                     minimumSize: 80,
                     fontWeight: FontWeight.normal,
@@ -110,7 +126,7 @@ class HomeOrderCard extends StatelessWidget {
                     textColor: CustomColor.black_3,
                     onPressed: finishOnTap)
               ],
-              if (orderStateIndex == 1 && isSendOut == false) ...[
+              if (orderStateIndex == 1 && isStorePickup == true) ...[
                 customWidget.setCupertinoButton("已取",
                     height: 40,
                     minimumSize: 80,
@@ -119,7 +135,7 @@ class HomeOrderCard extends StatelessWidget {
                     textColor: CustomColor.black_3,
                     onPressed: finishOnTap)
               ],
-              if (orderStateIndex == 1 && isSendOut == true) ...[
+              if (orderStateIndex == 1 && isStorePickup == false) ...[
                 Row(
                   children: [
                     GestureDetector(
@@ -140,13 +156,13 @@ class HomeOrderCard extends StatelessWidget {
                           children: [
                             customWidget.setAssetsImg("edit.png",
                                 width: 16, height: 16),
-                            customWidget.setText("编辑单号",
+                            customWidget.setText("送状番号",
                                 fontSize: 12, color: CustomColor.black_3)
                           ],
                         ),
                       ),
                     ),
-                    customWidget.setCupertinoButton("寄出",
+                    customWidget.setCupertinoButton("出荷",
                         height: 40,
                         minimumSize: 80,
                         fontWeight: FontWeight.normal,
@@ -160,7 +176,7 @@ class HomeOrderCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    customWidget.setText("快递单号",
+                    customWidget.setText("送状番号",
                         color: CustomColor.gray_6, fontSize: 12),
                     customWidget.setText("YD03161240",
                         color: CustomColor.black_3, fontSize: 16),
