@@ -264,6 +264,34 @@ class CustomWidget {
             width: width, height: height, fit: fit));
   }
 
+  // 设置容器
+  setContain(Widget widget,
+      {margin = const EdgeInsets.symmetric(horizontal: 15),
+      padding = const EdgeInsets.all(15)}) {
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: BoxDecoration(
+          color: CustomColor.white, borderRadius: BorderRadius.circular(10)),
+      child: widget,
+    );
+  }
+
+  // 设置表格
+  setTable(List<TableRow> children,
+      {color = CustomColor.grayC5,
+      Map<int, TableColumnWidth> columnWidths = const {
+        0: FlexColumnWidth(1),
+        1: FlexColumnWidth(2),
+      }}) {
+    return Table(
+      border: TableBorder.all(color: color),
+      columnWidths: columnWidths,
+      children: children,
+    );
+  }
+
+
 //Icon()FilteringTextInputFormatter.allow("")
   setTextField(controller,
       {hintText,
@@ -695,6 +723,7 @@ class CustomWidget {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (_) => AlertDialog(
+        backgroundColor: CustomColor.white,
         insetPadding: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
         contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // 去掉底部多余空白
         actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
@@ -856,32 +885,80 @@ class CustomWidget {
 
   /// 展示年月日Picker，确定按钮在底部
   void showMyDatePickerBottomBtn(
-    BuildContext context, {
-    DateTime? selectDate,
+    BuildContext context,
+    String selectDate, {
     String? title = "時間",
     required Function(String) confirm,
+    bool isOnlyShowNowMonthsAndDays = false, // 是否仅展示今日及今日之后的日期
+    int? minYear = 2025,
+    int? maxYear = 2025,
   }) {
-    DateTime now = DateTime.now();
-    DateTime _selected = selectDate ?? now;
+    /* -------------------------------------------------
+   * 1. 基础日期、当前日期、选中日期
+   * ------------------------------------------------- */
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day); // 去掉时分秒
+    DateTime _selected = DateTime.parse(selectDate);
 
-    final int minYear = 2025;
-    final int maxYear = 2025;
-    final List<int> years =
-        List.generate(maxYear - minYear + 1, (i) => minYear + i);
-    final List<int> months = List.generate(12, (i) => i + 1);
+    /* -------------------------------------------------
+   * 2. 根据开关决定数据源
+   * ------------------------------------------------- */
+    late final List<int> years;
+    late final List<int> months;
+    late int initYearIndex;
+    late int initMonthIndex;
+    late int initDayIndex;
 
-    int yearIndex = _selected.year - minYear;
-    int monthIndex = _selected.month - 1;
-    int dayIndex = _selected.day - 1;
-    List<int> days = List.generate(
-        _daysInMonth(years[yearIndex], months[monthIndex]), (i) => i + 1);
+    /* ---- 年份 ---- */
+    if (isOnlyShowNowMonthsAndDays) {
+      years = [today.year];
+    } else {
+      years = List.generate(maxYear! - minYear! + 1, (i) => minYear + i);
+    }
+
+    /* ---- 月份 ---- */
+    int _calcMonthsStart() => isOnlyShowNowMonthsAndDays ? today.month : 1;
+    months = List.generate(
+        12 - _calcMonthsStart() + 1, (i) => _calcMonthsStart() + i);
+
+    /* ---- 某月天数 ---- */
+    List<int> _daysInMonth(int y, int m) {
+      final int total = DateTime(y, m + 1, 0).day;
+      if (!isOnlyShowNowMonthsAndDays)
+        return List.generate(total, (i) => i + 1);
+
+      // 仅今天及以后
+      final int startDay =
+          (y == today.year && m == today.month) ? today.day : 1;
+      return List.generate(total - startDay + 1, (i) => startDay + i);
+    }
+
+    /* ---- 初始化索引 ---- */
+    initYearIndex = years.indexWhere((y) => y == _selected.year);
+    if (initYearIndex < 0) initYearIndex = 0;
+
+    initMonthIndex = months.indexWhere((m) => m == _selected.month);
+    if (initMonthIndex < 0) initMonthIndex = 0;
+
+    List<int> days = _daysInMonth(years[initYearIndex], months[initMonthIndex]);
+    initDayIndex = days.indexWhere((d) => d == _selected.day);
+    if (initDayIndex < 0) initDayIndex = 0;
+
+    /* -------------------------------------------------
+   * 3. Stateful 变量
+   * ------------------------------------------------- */
+    int yearIndex = initYearIndex;
+    int monthIndex = initMonthIndex;
+    int dayIndex = initDayIndex;
 
     void _updateDays() {
-      days = List.generate(
-          _daysInMonth(years[yearIndex], months[monthIndex]), (i) => i + 1);
+      days = _daysInMonth(years[yearIndex], months[monthIndex]);
       if (dayIndex >= days.length) dayIndex = days.length - 1;
     }
 
+    /* -------------------------------------------------
+   * 4. 弹窗 UI（与原逻辑一致，仅数据源变化）
+   * ------------------------------------------------- */
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -898,11 +975,12 @@ class CustomWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(),
-                  setText(title!,fontSize: 18,color: CustomColor.black_3),
+                  setText(title!, fontSize: 18, color: CustomColor.black_3),
                   GestureDetector(
                     onTap: () => Get.back(),
-                    child: const Icon(Icons.clear,color: CustomColor.grayC7,size: 20,),
-                  )
+                    child: const Icon(Icons.clear,
+                        color: CustomColor.grayC7, size: 20),
+                  ),
                 ],
               ),
             ),
@@ -919,7 +997,7 @@ class CustomWidget {
                     _updateDays();
                   }, formatter: (v) => v.toString().padLeft(2, '0')),
                   _buildWheel(days, dayIndex, (i) {
-                    setState(() => dayIndex = i); // 这里也要 setState
+                    setState(() => dayIndex = i);
                   }, formatter: (v) => v.toString().padLeft(2, '0')),
                 ],
               ),

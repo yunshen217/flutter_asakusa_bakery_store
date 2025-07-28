@@ -18,6 +18,7 @@ class CustomColor {
   static const Color black_3 = Color(0xFF333333);
   static const Color black_9 = Color(0xFF999999);
   static const Color blackD = Color(0xFFDDDDDD);
+  static const Color black2D = Color(0xFF2D1212);
   static const Color redE8 = Color(0xFFFDA24F);
   static const Color grayA = Color(0xFFAAAAAA);
   static const Color grayFa = Color(0xFFFAFAFA);
@@ -36,6 +37,9 @@ class CustomColor {
   static const Color pinkCf = Color(0xFFCFB6AB);
   static const Color grayEc = Color(0xffececec);
   static const Color bg = Color(0xffF5F6F6);
+  static const Color redE84F43  = Color(0xffE84F43 );
+  static const Color orangeFFB554 = Color(0xffFFB554);
+  static const Color orangeFFEAC7 = Color(0xffFFEAC7);
 
   ///步进器
   static const Color primary = Color(0xFF409EFF);
