@@ -52,6 +52,8 @@ class _HomePageState extends State<HomePage>
   List<RxBool> orderDetailsSelected = <RxBool>[].obs;
 
   RxString time = "".obs;
+  // 是否全选
+  RxBool isAllSelected = false.obs;
 
   @override
   void initState() {
@@ -112,9 +114,11 @@ class _HomePageState extends State<HomePage>
                         onTap: () {
                           customWidget.showMyDatePickerBottomBtn(
                             context,
-                            selectDate: DateTime.now(),
+                            time.value,
+                            maxYear: DateTime.now().year,
+                            minYear: DateTime.now().year,
                             confirm: (date) {
-                              print("选中的日期：$date");
+                              time.value = date;
                             },
                           );
                         },
@@ -168,6 +172,18 @@ class _HomePageState extends State<HomePage>
                             } else {
                               tabs.value = ["すべて", "配達", "引取"];
                             }
+                            isAllSelected.value = false;
+                            if(isAllSelected.value){
+                                orderDetailsSelected.assignAll(
+                                  orderDetailsSelected
+                                      .map((e) => true.obs)
+                                      .toList());
+                              }else{
+                                orderDetailsSelected.assignAll(
+                                  orderDetailsSelected
+                                      .map((e) => false.obs)
+                                      .toList());
+                              }
                           }));
                     })),
               ),
@@ -289,10 +305,19 @@ class _HomePageState extends State<HomePage>
                               lineColor: CustomColor.blackD,
                               linewidth: 0.5, onPressed: () {
                             if (tabIndex.value == 0) {
-                              orderDetailsSelected.assignAll(
+                              isAllSelected.value = !isAllSelected.value;
+                              if(isAllSelected.value){
+                                orderDetailsSelected.assignAll(
                                   orderDetailsSelected
                                       .map((e) => true.obs)
                                       .toList());
+                              }else{
+                                orderDetailsSelected.assignAll(
+                                  orderDetailsSelected
+                                      .map((e) => false.obs)
+                                      .toList());
+                              }
+                              
                             }
                             // if(tabIndex.value == 1){
                             //   orderDetailsSelected.assignAll(orderDetailsSelected.map((e)=>(e.value == true?false:e.value).obs).toList());

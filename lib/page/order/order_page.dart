@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/utils.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
+import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:get/get.dart';
 
 class OrderPage extends StatefulWidget {
@@ -17,24 +20,32 @@ class _OrderPageState extends State<OrderPage>
   final ScrollController _scrollController = ScrollController();
 
   /// tab
-  List<Tab> tabs = [const Tab(text: "列表"), const Tab(text: "图表")];
+  List<Tab> tabs = [const Tab(text: "リスト"), const Tab(text: "グラフ")];
 
   /// 列表 ： 0、图表 ： 1
   RxInt mainTabIndex = 0.obs;
 
-  /// 副标题tab
-  List subTitleTabs = ["最近一天", "预约中"];
+  /// 初始时间
+  RxString timeStart = "".obs;
 
-  /// 最近一天 ： 0、预约中 ： 1
-  RxInt subTitleIndex = 0.obs;
+  /// 结束时间
+  RxString timeEnd = "".obs;
 
   /// 列表数据
   RxList listData = [1, 1, 1].obs;
+
+  /// 图表数据
+  RxMap chartsData = {
+    "xAxis": ['7/1', '7/2', '7/2', '7/2', '7/2'],
+    "yAxis": ["6", "10", "111", "45", "80"],
+  }.obs;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    timeStart.value = Utils().getCurrentDate();
+    timeEnd.value = Utils().getCurrentDate();
   }
 
   @override
@@ -46,6 +57,23 @@ class _OrderPageState extends State<OrderPage>
   /// 获取数据
   void getData(tag) {}
 
+  /// 时间选择
+  Widget timeSelected(String time, Function fun) {
+    return GestureDetector(
+      onTap: () => fun(),
+      child: Row(
+        children: [
+          customWidget.setTextOverflow(time,
+              fontSize: 12,
+              color: CustomColor.black_3,
+              margin: const EdgeInsets.only(right: 5)),
+          customWidget.setAssetsImg("reservate_select@3x.png",
+              width: 16, height: 16)
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -56,7 +84,7 @@ class _OrderPageState extends State<OrderPage>
             isLeftShow: false, // 左侧的按钮不显示
             centerTitle: false, // 标题不居中
             isTitle: false,
-            titleChild: customWidget.setText("预约状况",
+            titleChild: customWidget.setText("計画&予約",
                 fontSize: 18, color: CustomColor.black_3),
             isRightShow: true,
             color: CustomColor.white,
@@ -95,27 +123,39 @@ class _OrderPageState extends State<OrderPage>
                         color: CustomColor.white,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: List.generate(subTitleTabs.length, (i) {
-                            return GestureDetector(
-                              onTap: () {
-                                subTitleIndex.value = i;
-                                debugPrint(
-                                    "subTitleIndex.value --------------- ${subTitleIndex.value}");
-                              },
-                              child: Row(
-                                children: [
-                                  customWidget.setTextOverflow(subTitleTabs[i],
-                                      fontSize: 12,
-                                      color: CustomColor.black_3,
-                                      margin: const EdgeInsets.only(right: 5)),
-                                  customWidget.setAssetsImg(
-                                      "reservate_select@3x.png",
-                                      width: 16,
-                                      height: 16)
-                                ],
-                              ),
-                            );
-                          }),
+                          children: [
+                            Obx(() => timeSelected(timeStart.value, () {
+                                  customWidget.showMyDatePickerBottomBtn(
+                                    context,
+                                    timeStart.value,
+                                    isOnlyShowNowMonthsAndDays: true,
+                                    maxYear: DateTime.now().year,
+                                    minYear: DateTime.now().year,
+                                    confirm: (date) {
+                                      timeStart.value = date;
+                                    },
+                                  );
+                                })),
+                            Obx(() => timeSelected(timeEnd.value, () {
+                                  customWidget.showMyDatePickerBottomBtn(
+                                    context,
+                                    timeEnd.value,
+                                    maxYear: DateTime.now().year,
+                                    isOnlyShowNowMonthsAndDays: true,
+                                    minYear: DateTime.now().year,
+                                    confirm: (date) {
+                                      if (DateTime.parse(timeStart.value)
+                                          .isAfter(
+                                              DateTime.parse(timeEnd.value))) {
+                                        customWidget.toastShow(
+                                            "現在の時刻は開始時刻より前にすることはできません");
+                                        return;
+                                      }
+                                      timeEnd.value = date;
+                                    },
+                                  );
+                                })),
+                          ],
                         )),
                   ],
                 ))),
@@ -140,38 +180,47 @@ class _OrderPageState extends State<OrderPage>
               ],
             )
           : ListView.builder(
-            controller: _scrollController,
-            shrinkWrap: true, // 只包裹内容
-            physics: const AlwaysScrollableScrollPhysics(),// 始终允许滚动
-            padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10), // 整个列表四周空白
-              itemBuilder: (_,index){
-                if(listData.isEmpty){
+              controller: _scrollController,
+              shrinkWrap: true, // 只包裹内容
+              physics: const AlwaysScrollableScrollPhysics(), // 始终允许滚动
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 15, vertical: 10), // 整个列表四周空白
+              itemBuilder: (_, index) {
+                if (listData.isEmpty) {
                   return const SizedBox();
                 }
                 return InkWell(
-                  onTap: (){},
+                  onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      color: CustomColor.white,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
+                        color: CustomColor.white,
+                        borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       children: [
-                        customWidget.setRowText("2024-03-18", "预约中",text2Color: CustomColor.redE8,margin: const EdgeInsets.only(bottom: 15)),
+                        customWidget.setRowText("2024-03-18", "预约中",
+                            text2Color: CustomColor.redE8,
+                            margin: const EdgeInsets.only(bottom: 15)),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14,vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 15),
                           decoration: BoxDecoration(
                             color: CustomColor.grayF8,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
                             children: [
-                              customWidget.setRowText("订单数", "20",margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("邮寄数", "5",margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("数量", "100",margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("金额", '\$ 168.00',margin: const EdgeInsets.only(bottom: 0)),
+                              customWidget.setRowText("計画倜数", "20",
+                                  margin: const EdgeInsets.only(bottom: 10)),
+                              customWidget.setRowText("予約倜数", "5",
+                                  margin: const EdgeInsets.only(bottom: 10)),
+                              customWidget.setRowText("当日在庫数", "100",
+                                  margin: const EdgeInsets.only(bottom: 10)),
+                              customWidget.setRowText("予約件数", '0',
+                                  margin: const EdgeInsets.only(bottom: 10)),
+                              customWidget.setRowText("予約金额", '\$ 10',
+                                  margin: const EdgeInsets.only(bottom: 0)),
                             ],
                           ),
                         )
@@ -184,8 +233,91 @@ class _OrderPageState extends State<OrderPage>
     );
   }
 
+  /// 图表上面容器
+  Widget chartBox(String text1, String text2) {
+    return Container(
+      width: 95,
+      height: 61,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          color: CustomColor.grayF5, borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          customWidget.setText(text1, fontSize: 12, color: CustomColor.gray_6),
+          const SizedBox(
+            height: 5,
+          ),
+          customWidget.setText(text2, fontSize: 12, color: CustomColor.black_3),
+        ],
+      ),
+    );
+  }
+
   /// 图表数据
   Widget chartDataWidget() {
-    return Container();
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+            color: CustomColor.white, borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                chartBox("鄄便番号", "5"),
+                chartBox("商品数", "100"),
+                chartBox("商品の金额", "8200"),
+              ],
+            ),
+            Container(
+              height: 200,
+              margin: EdgeInsets.only(top: 15),
+              child: Obx(() => Echarts(option: '''
+        {
+          grid: { left: '3%', right: '4%', bottom: '3%',top:'10%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: ${chartsData["xAxis"].map((e) => '"$e"').toList()},
+            axisLine: { lineStyle: { color: '#999999' } },   // 只留一条直线
+            axisTick: { show: false },                   // 去掉刻度
+            splitLine: { show: false },                  // 去掉垂直分割线
+            axisLabel: { interval: 0, rotate: 0 }
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: { show: false },   // 隐藏纵坐标数字
+            splitLine: { show: true }     // 保留横线
+          },
+          dataZoom: [{
+            type: 'inside',   // ← 关键：内置滑动，不显示滚动条
+            xAxisIndex: 0,
+            startValue: 0,    // 初始显示 0~4（共 5 根）
+            endValue: 4
+          }],
+          series: [{
+            name: '订单',
+            type: 'bar',
+            data: ${chartsData["yAxis"].map((e) => num.parse(e)).toList()}, // y轴要数字
+            itemStyle: { color: '#FFDAA1' },
+            barWidth: 26,
+            emphasis: { itemStyle: { color: '#FFA244' } },
+            label: {
+              show: true,
+              position: 'top',
+              color: '#ffa244',
+              fontSize:"14",
+              formatter: '{c}'
+            }
+          }]
+        }
+        ''')),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
