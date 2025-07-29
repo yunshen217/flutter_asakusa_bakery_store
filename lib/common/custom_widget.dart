@@ -233,6 +233,7 @@ class CustomWidget {
       padding = EdgeInsets.zero,
       double height = 45.0,
       double fontSize = 15.0,
+      double circular = 10.0,
       fontWeight = FontWeight.w600,
       color = CustomColor.redE8,
       textColor = Colors.white,
@@ -246,7 +247,7 @@ class CustomWidget {
                 fontSize: fontSize, fontWeight: fontWeight, color: textColor),
             padding: padding,
             disabledColor: CustomColor.grayC5,
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(circular),
             minSize: minimumSize,
             color: color));
   }
@@ -267,12 +268,13 @@ class CustomWidget {
   // 设置容器
   setContain(Widget widget,
       {margin = const EdgeInsets.symmetric(horizontal: 15),
-      padding = const EdgeInsets.all(15)}) {
+      padding = const EdgeInsets.all(15),
+      double circular = 10}) {
     return Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-          color: CustomColor.white, borderRadius: BorderRadius.circular(10)),
+          color: CustomColor.white, borderRadius: BorderRadius.circular(circular)),
       child: widget,
     );
   }
@@ -303,6 +305,7 @@ class CustomWidget {
       maxLines = 1,
       double top = 0,
       double height = 50,
+      double circular = 10,
       isShow = false,
       enabled = true,
       readOnly = false,
@@ -310,9 +313,12 @@ class CustomWidget {
       onChanged,
       obscureText = false,
       Widget? suffixIcon,
+      fillColor = CustomColor.grayF5,
+      borderSide=BorderSide.none,
+      textAlign=TextAlign.start,
       autofocus = false}) {
     var customBorder = OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.0), borderSide: BorderSide.none);
+        borderRadius: BorderRadius.circular(circular), borderSide: borderSide);
     return Container(
       margin: margin,
       height: height,
@@ -333,9 +339,10 @@ class CustomWidget {
               fontWeight: FontWeight.normal),
           inputFormatters: inputFormatters ?? [],
           // inputFormatters: [inputFormatters],
+          textAlign: textAlign,
           decoration: InputDecoration(
               hintText: hintText,
-              fillColor: CustomColor.grayF5,
+              fillColor: fillColor,
               filled: true,
               contentPadding:
                   EdgeInsets.only(left: 15, top: top, bottom: 0, right: 15),
@@ -345,6 +352,7 @@ class CustomWidget {
               hintStyle: setTextStyle(color: CustomColor.gray_9, fontSize: 14),
               border: customBorder,
               focusedBorder: customBorder,
+              enabledBorder: customBorder,            // 正常状态
               suffixIcon: !isShow ? null : suffixIcon)),
     );
   }
@@ -712,10 +720,13 @@ class CustomWidget {
   void showConfirmDialog(
     BuildContext context, {
     bool barrierDismissible = true,
+    bool useDefaultWidth = false,
     String title = "提示",
     double titleFontSize = 14.0,
     Color titleColor = CustomColor.black_3,
     FontWeight titleFontWeight = FontWeight.normal,
+    contentPadding= const EdgeInsets.fromLTRB(24, 20, 24, 0),
+    mainAxisAlignment= MainAxisAlignment.end,
     Widget? child,
     VoidCallback? onPressed,
   }) {
@@ -724,8 +735,8 @@ class CustomWidget {
       barrierDismissible: barrierDismissible,
       builder: (_) => AlertDialog(
         backgroundColor: CustomColor.white,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
-        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // 去掉底部多余空白
+        insetPadding:useDefaultWidth?null: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
+        contentPadding: contentPadding, // 去掉底部多余空白
         actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
         title: Align(
           alignment: Alignment.center,
@@ -736,8 +747,11 @@ class CustomWidget {
         ),
         content: child,
         actions: [
-          setOutLinedButton(
-            "取消",
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              setOutLinedButton(
+            "いいえ",
             minimumSize: const Size(90, 40),
             circular: 10,
             fontColor: CustomColor.black_3,
@@ -746,7 +760,7 @@ class CustomWidget {
             onPressed: () => Get.back(),
           ),
           setCupertinoButton(
-            "完成",
+            "はい",
             height: 40,
             minimumSize: 90,
             textColor: CustomColor.black_3,
@@ -755,6 +769,8 @@ class CustomWidget {
             onPressed: onPressed,
             fontWeight: FontWeight.normal,
           ),
+            ],
+          )
         ],
       ),
     );

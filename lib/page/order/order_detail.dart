@@ -27,7 +27,7 @@ class _OrderDetailState extends State<OrderDetail> {
     return BaseScaffold(
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
-          title: "订单详情",
+          title: "注文の詳細",
           backgroundColor: CustomColor.white,
           isLeftShow: false,
           leading: InkWell(
