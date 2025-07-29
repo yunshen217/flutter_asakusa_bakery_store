@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/utils.dart';
+import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:get/get.dart';
@@ -190,7 +191,7 @@ class _OrderPageState extends State<OrderPage>
                   return const SizedBox();
                 }
                 return InkWell(
-                  onTap: () {},
+                  onTap: () =>Routes.goPage(context,'/ReservationDetails'),
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     margin: const EdgeInsets.only(bottom: 10),
