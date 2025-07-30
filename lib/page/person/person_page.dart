@@ -82,7 +82,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("ホ-ムペ-ジ",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_shoppage@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage(context, "/StoreSetup")),
                       // 通知
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
@@ -91,7 +91,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("お知らせ",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage(context, "/NoticePage")),
                       // 未付款订单
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),

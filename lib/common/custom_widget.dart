@@ -206,6 +206,7 @@ class CustomWidget {
       double circular = 25.0,
       fontColor = CustomColor.redE8,
       lineColor = CustomColor.redE8,
+      backgroundColor = Colors.white,
       double fontSize = 12.0,
       linewidth = 1.0,
       onPressed}) {
@@ -213,13 +214,14 @@ class CustomWidget {
       margin: margin,
       child: OutlinedButton(
         onPressed: onPressed,
-        child: setText(text, color: fontColor, fontSize: fontSize),
+        child: setText(text, color: fontColor, fontSize: fontSize,maxLines: 10),
         style: TextButton.styleFrom(
             minimumSize: minimumSize,
-            backgroundColor: Colors.white,
+            backgroundColor: backgroundColor,
             fixedSize: fixedSize,
             side: BorderSide(color: lineColor),
             maximumSize: maximumSize,
+            padding: const EdgeInsets.only(bottom: 2),
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: lineColor, width: linewidth),
                 borderRadius: BorderRadius.circular(circular))),
@@ -306,6 +308,9 @@ class CustomWidget {
       double top = 0,
       double height = 50,
       double circular = 10,
+      double left = 15,
+      double right = 15,
+      double bottom = 0,
       isShow = false,
       enabled = true,
       readOnly = false,
@@ -345,11 +350,11 @@ class CustomWidget {
               fillColor: fillColor,
               filled: true,
               contentPadding:
-                  EdgeInsets.only(left: 15, top: top, bottom: 0, right: 15),
+                  EdgeInsets.only(left: left, top: top, bottom: bottom, right: right),
               counter: counter
                   ? const SizedBox(height: 0, width: 0)
                   : setText("100文字以内", fontSize: 12, color: CustomColor.gray_6),
-              hintStyle: setTextStyle(color: CustomColor.gray_9, fontSize: 14),
+              hintStyle: setTextStyle(color: CustomColor.gray_9, fontSize: 14,fontWeight: FontWeight.w400),
               border: customBorder,
               focusedBorder: customBorder,
               enabledBorder: customBorder,            // 正常状态
@@ -555,10 +560,12 @@ class CustomWidget {
       EdgeInsetsGeometry margin = EdgeInsets.zero,
       EdgeInsetsGeometry padding = EdgeInsets.zero,
       color = CustomColor.redE8,
-      radius = 10.0,
+      double radius = 10.0,
       right = 0.0,
       double height = 40,
+      double borderWidth = 1,
       double width = double.infinity,
+      borderColor = CustomColor.grayF5,
       onTap}) {
     return InkWell(
         onTap: onTap,
@@ -571,7 +578,7 @@ class CustomWidget {
             decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(radius),
-                border: Border.all(color: CustomColor.grayF5)),
+                border: Border.all(color: borderColor,width: borderWidth)),
             child: child));
   }
 
@@ -898,7 +905,97 @@ class CustomWidget {
       },
     );
   }
+  /// 自定义数据Picker，确定按钮在底部
+  /// 通用多列滚轮 Picker
+/// columnsData  : 二维列表，每一列的数据
+/// initialIndex : 每一列的初始下标，长度必须与 columnsData 一致
+/// confirm      : 返回 List<String>，顺序与 columnsData 一致
+/// title        : 顶部标题
+void showCustomizationPicker(
+  BuildContext context, {
+  required List<List<String>> columnsData,
+  required List<int> initialIndex,
+  required Function(List<String>) confirm,
+  String? title = "選択",
+}) {
+  assert(columnsData.length == initialIndex.length);
 
+  // 当前选中下标
+  final List<int> currentIndex = List.from(initialIndex);
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (_) => StatefulBuilder(
+      builder: (_, setState) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 1. 顶部标题栏
+          Container(
+            margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(),
+                setText(title!, fontSize: 18, color: CustomColor.black_3),
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: const Icon(Icons.clear,
+                      color: CustomColor.grayC7, size: 20),
+                ),
+              ],
+            ),
+          ),
+          // 2. 滚轮区域
+          SizedBox(
+            height: 216,
+            child: Row(
+              children: List.generate(columnsData.length, (col) {
+                final data = columnsData[col];
+                final selIdx = currentIndex[col];
+
+                return _buildWheel(
+                  data, // 直接传 List<String>
+            selIdx,
+            (i) => setState(() => currentIndex[col] = i),
+            formatter: (v) => v,
+                );
+              }),
+            ),
+          ),
+          // 3. 底部确定按钮
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  final result = List.generate(
+                    columnsData.length,
+                    (i) => columnsData[i][currentIndex[i]],
+                  );
+                  confirm(result);
+                  Navigator.pop(context);
+                },
+                child: const Text('確定',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
   /// 展示年月日Picker，确定按钮在底部
   void showMyDatePickerBottomBtn(
     BuildContext context,
@@ -1049,10 +1146,10 @@ class CustomWidget {
 
   /// 通用滚轮封装
   Widget _buildWheel(
-    List<int> items,
+    List<dynamic> items,
     int selectedIndex, // 新增
-    ValueChanged<int> onChanged, {
-    String Function(int)? formatter,
+    ValueChanged<dynamic> onChanged, {
+    String Function(dynamic)? formatter,
   }) {
     final fixedFormatter = formatter ?? (v) => v.toString();
     return Expanded(

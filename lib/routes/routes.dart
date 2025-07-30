@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/reservation_details.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/notice_page.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/store_setup.dart';
 import 'package:get/get.dart';
 
 import '../page/login/login_page.dart';
@@ -24,6 +26,10 @@ class Routes {
     GetPage(name: '/OrderDetail', page: () => const OrderDetail()),
     // 预约详情
     GetPage(name: '/ReservationDetails', page: () => const ReservationDetails()),
+    // 通知
+    GetPage(name: '/NoticePage', page: () => const NoticePage()),
+    // 店铺设置
+    GetPage(name: '/StoreSetup', page: () => const StoreSetup()),
     // 其他页面可以继续添加
   ];
 

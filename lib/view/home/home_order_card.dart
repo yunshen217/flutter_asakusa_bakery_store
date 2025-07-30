@@ -36,7 +36,7 @@ class HomeOrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Routes.goPage(context, '/OrderDetail',param: {"isStorePickup":isStorePickup});
+        Routes.goPage(context, '/OrderDetail',param: {"isStorePickup":isStorePickup,"orderStateIndex":orderStateIndex});
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(15, 0, 15, 10),
