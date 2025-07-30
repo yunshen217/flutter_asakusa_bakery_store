@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -42,7 +40,25 @@ class _ReservationDetailsState extends State<ReservationDetails> {
       "name": "ココナッツバン",
       "plannedQuantity": "12",
       "orderNumber": "0",
-      "inventory": "12"
+      "inventory": "0"
+    },
+    {
+      "name": "黑骑士バン",
+      "plannedQuantity": "12",
+      "orderNumber": "0",
+      "inventory": "2"
+    },
+    {
+      "name": "コ-ヒ-クリ-ムチ-ズバン",
+      "plannedQuantity": "12",
+      "orderNumber": "0",
+      "inventory": "0"
+    },
+    {
+      "name": "ココナッツバン",
+      "plannedQuantity": "12",
+      "orderNumber": "0",
+      "inventory": "3"
     }
   ].obs;
 
@@ -121,7 +137,13 @@ class _ReservationDetailsState extends State<ReservationDetails> {
               flex: 1,
               child: Container(
                   margin: const EdgeInsets.only(left: 15, right: 15),
-                  child: customWidget.setText(inventory,
+                  child:!isBg&& int.parse(inventory)==0?Row(mainAxisAlignment: MainAxisAlignment.end,children: [
+                    customWidget.setText(inventory,
+                      textAlign: TextAlign.center,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.redE84F43,
+                      fontSize: 12),
+                      customWidget.setAssetsImg("reservate_detail_warn@3x.png",width: 18,height: 18,margin: const EdgeInsets.only(left: 1))
+                  ],): customWidget.setText(inventory,
                       textAlign: TextAlign.center,
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
                       fontSize: 12))),
