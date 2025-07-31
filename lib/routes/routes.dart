@@ -5,6 +5,7 @@ import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/reservation_details.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/notice_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/store_setup.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/time_management.dart';
 import 'package:get/get.dart';
 
 import '../page/login/login_page.dart';
@@ -30,6 +31,8 @@ class Routes {
     GetPage(name: '/NoticePage', page: () => const NoticePage()),
     // 店铺设置
     GetPage(name: '/StoreSetup', page: () => const StoreSetup()),
+    // 时间管理
+    GetPage(name: '/TimeManagement', page: () => const TimeManagement()),
     // 其他页面可以继续添加
   ];
 

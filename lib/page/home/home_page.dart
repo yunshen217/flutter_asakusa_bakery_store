@@ -283,8 +283,7 @@ class _HomePageState extends State<HomePage>
                   ? Container()
                   : Container(
                       width: Get.width,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
                       decoration:
                           BoxDecoration(color: CustomColor.white, boxShadow: [
                         BoxShadow(

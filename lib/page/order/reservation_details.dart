@@ -64,6 +64,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
 
   /// 控制器
   RxList<TextEditingController> controllerList = <TextEditingController>[].obs;
+  RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
   @override
   void initState() {
     // TODO: implement initState
@@ -72,6 +73,9 @@ class _ReservationDetailsState extends State<ReservationDetails> {
     controllerList.clear();
     controllerList.assignAll(
       List.generate(detailsData.length, (_) => TextEditingController()),
+    );
+    focusNodeList.assignAll(
+      List.generate(detailsData.length, (_) => FocusNode()),
     );
   }
 
@@ -84,74 +88,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
     super.dispose();
   }
 
-  Widget _row(
-      String name,
-      String plannedQuantity,
-      String orderNumber,
-      String inventory,
-      bool isBg,
-      bool isTextEditing,
-      TextEditingController controller) {
-    controller.text = plannedQuantity;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(15, 11, 0, 11),
-      decoration: BoxDecoration(
-        color: isBg ? CustomColor.bg : Colors.transparent,
-        border: const Border(bottom: BorderSide(color: CustomColor.bg)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 2,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: customWidget.setText(name,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
-          Expanded(
-              flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 15, right: 15),
-                  child: isTextEditing
-                      ? customWidget.setTextField(controller,
-                          height: 34,
-                          circular: 5,
-                          margin: const EdgeInsets.only(top: 10),
-                          textAlign: TextAlign.center,
-                          fillColor: Colors.transparent,
-                          borderSide: const BorderSide(
-                              color: CustomColor.blackD, width: 1))
-                      : customWidget.setText(plannedQuantity,
-                          color:
-                              isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                          fontSize: 12))),
-          Expanded(
-              flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: customWidget.setText(orderNumber,
-                      textAlign: TextAlign.center,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
-          Expanded(
-              flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 15, right: 15),
-                  child:!isBg&& int.parse(inventory)==0?Row(mainAxisAlignment: MainAxisAlignment.end,children: [
-                    customWidget.setText(inventory,
-                      textAlign: TextAlign.center,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.redE84F43,
-                      fontSize: 12),
-                      customWidget.setAssetsImg("reservate_detail_warn@3x.png",width: 18,height: 18,margin: const EdgeInsets.only(left: 1))
-                  ],): customWidget.setText(inventory,
-                      textAlign: TextAlign.center,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
-        ],
-      ),
-    );
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
@@ -249,21 +186,21 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                     circular: 0,
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                     margin: EdgeInsets.all(0)),
-                _row("商品名", "計画数", "注文数", "在庫数", true, false,
-                    TextEditingController()),
+                customWidget.rowWithTextEditing("商品名", "計画数", "注文数", "在庫数", true, false,
+                    TextEditingController(),FocusNode()),
                 Expanded(
                     child: ListView.builder(
                         itemCount: detailsData.length,
                         itemBuilder: (context, index) {
                           final item = detailsData[index];
-                          return _row(
+                          return customWidget.rowWithTextEditing(
                               item["name"],
                               item["plannedQuantity"],
                               item["orderNumber"],
                               item["inventory"],
                               false,
                               true,
-                              controllerList[index]);
+                              controllerList[index],focusNodeList[index]);
                         })),
                 const SizedBox(
                   height: 50,

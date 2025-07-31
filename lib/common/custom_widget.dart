@@ -1,13 +1,8 @@
 //自定义封装类
 
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_pickers/pickers.dart';
 import 'package:flutter_pickers/style/picker_style.dart';
 import 'package:flutter_pickers/time_picker/model/date_mode.dart';
@@ -16,6 +11,8 @@ import 'package:flutter_pickers/time_picker/model/suffix.dart';
 
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../routes/routes.dart';
 import "../common/custom_color.dart";
@@ -214,7 +211,8 @@ class CustomWidget {
       margin: margin,
       child: OutlinedButton(
         onPressed: onPressed,
-        child: setText(text, color: fontColor, fontSize: fontSize,maxLines: 10),
+        child:
+            setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
         style: TextButton.styleFrom(
             minimumSize: minimumSize,
             backgroundColor: backgroundColor,
@@ -276,7 +274,8 @@ class CustomWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-          color: CustomColor.white, borderRadius: BorderRadius.circular(circular)),
+          color: CustomColor.white,
+          borderRadius: BorderRadius.circular(circular)),
       child: widget,
     );
   }
@@ -295,9 +294,98 @@ class CustomWidget {
     );
   }
 
+  /// 带权限检查的选图
+  Future<void> pickImageWithPermission(
+      BuildContext context,  Function isGrantedFun) async {
+    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      debugPrint("PermissionState: $ps");
+
+      if (ps.hasAccess) {
+        isGrantedFun();
+        // 权限已授予，加载图片
+      } else if (ps == PermissionState.denied) {
+        // _showPermissionDialog(); // 首次拒绝，显示弹窗
+      } else if (ps == PermissionState.limited) {
+        debugPrint("相册访问权限受限（仅部分照片）");
+      } else if (ps == PermissionState.denied) {
+        // 永久拒绝，直接跳转设置
+        await openAppSettings();
+    
+    }
+  }
+  /// 表格带输入框
+  Widget rowWithTextEditing(
+      String name,
+      String plannedQuantity,
+      String orderNumber,
+      String inventory,
+      bool isBg,
+      bool isTextEditing,
+      TextEditingController controller,
+      FocusNode focusNode) {
+    controller.text = plannedQuantity;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(15, 11, 0, 11),
+      decoration: BoxDecoration(
+        color: isBg ? CustomColor.bg : Colors.transparent,
+        border: const Border(bottom: BorderSide(color: CustomColor.bg)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+              flex: 2,
+              child: Container(
+                  margin: const EdgeInsets.only(left: 15),
+                  child: customWidget.setText(name,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                      fontSize: 12))),
+          Expanded(
+              flex: 1,
+              child: Container(
+                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  child: isTextEditing
+                      ? customWidget.setTextField(controller,focusNode,
+                          height: 34,
+                          circular: 5,
+                          margin: const EdgeInsets.only(top: 10),
+                          textAlign: TextAlign.center,
+                          fillColor: Colors.transparent,
+                          borderSide: const BorderSide(
+                              color: CustomColor.blackD, width: 1))
+                      : customWidget.setText(plannedQuantity,
+                          color:
+                              isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                          fontSize: 12))),
+          Expanded(
+              flex: 1,
+              child: Container(
+                  margin: const EdgeInsets.only(left: 15),
+                  child: customWidget.setText(orderNumber,
+                      textAlign: TextAlign.center,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                      fontSize: 12))),
+          Expanded(
+              flex: 1,
+              child: Container(
+                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  child:!isBg&& int.parse(inventory)==0?Row(mainAxisAlignment: MainAxisAlignment.end,children: [
+                    customWidget.setText(inventory,
+                      textAlign: TextAlign.center,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.redE84F43,
+                      fontSize: 12),
+                      customWidget.setAssetsImg("reservate_detail_warn@3x.png",width: 18,height: 18,margin: const EdgeInsets.only(left: 1))
+                  ],): customWidget.setText(inventory,
+                      textAlign: TextAlign.center,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                      fontSize: 12))),
+        ],
+      ),
+    );
+  }
+
 
 //Icon()FilteringTextInputFormatter.allow("")
-  setTextField(controller,
+  setTextField(controller, focusNode,
       {hintText,
       icon,
       margin = EdgeInsets.zero,
@@ -319,8 +407,8 @@ class CustomWidget {
       obscureText = false,
       Widget? suffixIcon,
       fillColor = CustomColor.grayF5,
-      borderSide=BorderSide.none,
-      textAlign=TextAlign.start,
+      borderSide = BorderSide.none,
+      textAlign = TextAlign.start,
       autofocus = false}) {
     var customBorder = OutlineInputBorder(
         borderRadius: BorderRadius.circular(circular), borderSide: borderSide);
@@ -331,6 +419,7 @@ class CustomWidget {
           autofocus: autofocus,
           obscureText: obscureText,
           controller: controller,
+          focusNode: focusNode,
           maxLength: maxLength ?? 16,
           maxLines: maxLines,
           enabled: enabled,
@@ -349,15 +438,18 @@ class CustomWidget {
               hintText: hintText,
               fillColor: fillColor,
               filled: true,
-              contentPadding:
-                  EdgeInsets.only(left: left, top: top, bottom: bottom, right: right),
+              contentPadding: EdgeInsets.only(
+                  left: left, top: top, bottom: bottom, right: right),
               counter: counter
                   ? const SizedBox(height: 0, width: 0)
                   : setText("100文字以内", fontSize: 12, color: CustomColor.gray_6),
-              hintStyle: setTextStyle(color: CustomColor.gray_9, fontSize: 14,fontWeight: FontWeight.w400),
+              hintStyle: setTextStyle(
+                  color: CustomColor.gray_9,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400),
               border: customBorder,
               focusedBorder: customBorder,
-              enabledBorder: customBorder,            // 正常状态
+              enabledBorder: customBorder, // 正常状态
               suffixIcon: !isShow ? null : suffixIcon)),
     );
   }
@@ -578,7 +670,7 @@ class CustomWidget {
             decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(radius),
-                border: Border.all(color: borderColor,width: borderWidth)),
+                border: Border.all(color: borderColor, width: borderWidth)),
             child: child));
   }
 
@@ -732,8 +824,8 @@ class CustomWidget {
     double titleFontSize = 14.0,
     Color titleColor = CustomColor.black_3,
     FontWeight titleFontWeight = FontWeight.normal,
-    contentPadding= const EdgeInsets.fromLTRB(24, 20, 24, 0),
-    mainAxisAlignment= MainAxisAlignment.end,
+    contentPadding = const EdgeInsets.fromLTRB(24, 20, 24, 0),
+    mainAxisAlignment = MainAxisAlignment.end,
     Widget? child,
     VoidCallback? onPressed,
   }) {
@@ -742,7 +834,9 @@ class CustomWidget {
       barrierDismissible: barrierDismissible,
       builder: (_) => AlertDialog(
         backgroundColor: CustomColor.white,
-        insetPadding:useDefaultWidth?null: const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
+        insetPadding: useDefaultWidth
+            ? null
+            : const EdgeInsets.symmetric(horizontal: 10), // 左右留白 ↓ 宽度 ↑
         contentPadding: contentPadding, // 去掉底部多余空白
         actionsPadding: const EdgeInsets.fromLTRB(24, 10, 24, 16), // 按钮贴紧 child
         title: Align(
@@ -758,24 +852,24 @@ class CustomWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               setOutLinedButton(
-            "いいえ",
-            minimumSize: const Size(90, 40),
-            circular: 10,
-            fontColor: CustomColor.black_3,
-            lineColor: CustomColor.blackD,
-            fontSize: 15,
-            onPressed: () => Get.back(),
-          ),
-          setCupertinoButton(
-            "はい",
-            height: 40,
-            minimumSize: 90,
-            textColor: CustomColor.black_3,
-            color: CustomColor.redE8,
-            fontSize: 15,
-            onPressed: onPressed,
-            fontWeight: FontWeight.normal,
-          ),
+                "いいえ",
+                minimumSize: const Size(90, 40),
+                circular: 10,
+                fontColor: CustomColor.black_3,
+                lineColor: CustomColor.blackD,
+                fontSize: 15,
+                onPressed: () => Get.back(),
+              ),
+              setCupertinoButton(
+                "はい",
+                height: 40,
+                minimumSize: 90,
+                textColor: CustomColor.black_3,
+                color: CustomColor.redE8,
+                fontSize: 15,
+                onPressed: onPressed,
+                fontWeight: FontWeight.normal,
+              ),
             ],
           )
         ],
@@ -905,97 +999,99 @@ class CustomWidget {
       },
     );
   }
+
   /// 自定义数据Picker，确定按钮在底部
   /// 通用多列滚轮 Picker
-/// columnsData  : 二维列表，每一列的数据
-/// initialIndex : 每一列的初始下标，长度必须与 columnsData 一致
-/// confirm      : 返回 List<String>，顺序与 columnsData 一致
-/// title        : 顶部标题
-void showCustomizationPicker(
-  BuildContext context, {
-  required List<List<String>> columnsData,
-  required List<int> initialIndex,
-  required Function(List<String>) confirm,
-  String? title = "選択",
-}) {
-  assert(columnsData.length == initialIndex.length);
+  /// columnsData  : 二维列表，每一列的数据
+  /// initialIndex : 每一列的初始下标，长度必须与 columnsData 一致
+  /// confirm      : 返回 List<String>，顺序与 columnsData 一致
+  /// title        : 顶部标题
+  void showCustomizationPicker(
+    BuildContext context, {
+    required List<List<String>> columnsData,
+    required List<int> initialIndex,
+    required Function(List<String>) confirm,
+    String? title = "選択",
+  }) {
+    assert(columnsData.length == initialIndex.length);
 
-  // 当前选中下标
-  final List<int> currentIndex = List.from(initialIndex);
+    // 当前选中下标
+    final List<int> currentIndex = List.from(initialIndex);
 
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (_) => StatefulBuilder(
-      builder: (_, setState) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. 顶部标题栏
-          Container(
-            margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(),
-                setText(title!, fontSize: 18, color: CustomColor.black_3),
-                GestureDetector(
-                  onTap: () => Get.back(),
-                  child: const Icon(Icons.clear,
-                      color: CustomColor.grayC7, size: 20),
-                ),
-              ],
-            ),
-          ),
-          // 2. 滚轮区域
-          SizedBox(
-            height: 216,
-            child: Row(
-              children: List.generate(columnsData.length, (col) {
-                final data = columnsData[col];
-                final selIdx = currentIndex[col];
-
-                return _buildWheel(
-                  data, // 直接传 List<String>
-            selIdx,
-            (i) => setState(() => currentIndex[col] = i),
-            formatter: (v) => v,
-                );
-              }),
-            ),
-          ),
-          // 3. 底部确定按钮
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => StatefulBuilder(
+        builder: (_, setState) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. 顶部标题栏
+            Container(
+              margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(),
+                  setText(title!, fontSize: 18, color: CustomColor.black_3),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: const Icon(Icons.clear,
+                        color: CustomColor.grayC7, size: 20),
                   ),
-                ),
-                onPressed: () {
-                  final result = List.generate(
-                    columnsData.length,
-                    (i) => columnsData[i][currentIndex[i]],
-                  );
-                  confirm(result);
-                  Navigator.pop(context);
-                },
-                child: const Text('確定',
-                    style: TextStyle(color: Colors.white)),
+                ],
               ),
             ),
-          ),
-        ],
+            // 2. 滚轮区域
+            SizedBox(
+              height: 216,
+              child: Row(
+                children: List.generate(columnsData.length, (col) {
+                  final data = columnsData[col];
+                  final selIdx = currentIndex[col];
+
+                  return _buildWheel(
+                    data, // 直接传 List<String>
+                    selIdx,
+                    (i) => setState(() => currentIndex[col] = i),
+                    formatter: (v) => v,
+                  );
+                }),
+              ),
+            ),
+            // 3. 底部确定按钮
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    final result = List.generate(
+                      columnsData.length,
+                      (i) => columnsData[i][currentIndex[i]],
+                    );
+                    confirm(result);
+                    Navigator.pop(context);
+                  },
+                  child:
+                      const Text('確定', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   /// 展示年月日Picker，确定按钮在底部
   void showMyDatePickerBottomBtn(
     BuildContext context,
