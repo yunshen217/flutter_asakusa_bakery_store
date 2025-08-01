@@ -206,13 +206,21 @@ class CustomWidget {
       backgroundColor = Colors.white,
       double fontSize = 12.0,
       linewidth = 1.0,
+      bool isHaveLeftIcon = false,
+      imgPath = "",
       onPressed}) {
     return Container(
       margin: margin,
       child: OutlinedButton(
         onPressed: onPressed,
         child:
-            setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
+            isHaveLeftIcon?Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                setAssetsImg(imgPath,width: 20,height: 20),
+                setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
+              ],
+            ):setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
         style: TextButton.styleFrom(
             minimumSize: minimumSize,
             backgroundColor: backgroundColor,
@@ -251,7 +259,7 @@ class CustomWidget {
             minSize: minimumSize,
             color: color));
   }
-
+  /// 设置静态图片
   setAssetsImg(imgPath,
       {double height = 25.0,
       double width = 25.0,
@@ -264,18 +272,36 @@ class CustomWidget {
         child: Image.asset("assets/$imgPath",
             width: width, height: height, fit: fit));
   }
+  /// 设置网络图片
+  setNetworkImg(imgPath,
+      {double height = 25.0,
+      double width = 25.0,
+      fit = BoxFit.cover,
+      margin = EdgeInsets.zero,
+      padding = EdgeInsets.zero}) {
+    return Container(
+        padding: padding,
+        margin: margin,
+        child: Image.network(imgPath,
+            width: width, height: height, fit: fit));
+  }
 
   // 设置容器
-  setContain(Widget widget,
-      {margin = const EdgeInsets.symmetric(horizontal: 15),
-      padding = const EdgeInsets.all(15),
-      double circular = 10}) {
+  Widget setContain(
+    Widget widget, {
+    EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 15),
+    EdgeInsets padding = const EdgeInsets.all(15),
+    Border? border, // 显式声明为可空类型
+    double circular = 10,
+  }) {
     return Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-          color: CustomColor.white,
-          borderRadius: BorderRadius.circular(circular)),
+        color: Colors.white,
+        border: border ?? Border.all(color: Colors.transparent), // 使用 ?? 处理空值
+        borderRadius: BorderRadius.circular(circular),
+      ),
       child: widget,
     );
   }
@@ -296,23 +322,23 @@ class CustomWidget {
 
   /// 带权限检查的选图
   Future<void> pickImageWithPermission(
-      BuildContext context,  Function isGrantedFun) async {
+      BuildContext context, Function isGrantedFun) async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
-      debugPrint("PermissionState: $ps");
+    debugPrint("PermissionState: $ps");
 
-      if (ps.hasAccess) {
-        isGrantedFun();
-        // 权限已授予，加载图片
-      } else if (ps == PermissionState.denied) {
-        // _showPermissionDialog(); // 首次拒绝，显示弹窗
-      } else if (ps == PermissionState.limited) {
-        debugPrint("相册访问权限受限（仅部分照片）");
-      } else if (ps == PermissionState.denied) {
-        // 永久拒绝，直接跳转设置
-        await openAppSettings();
-    
+    if (ps.hasAccess) {
+      isGrantedFun();
+      // 权限已授予，加载图片
+    } else if (ps == PermissionState.denied) {
+      // _showPermissionDialog(); // 首次拒绝，显示弹窗
+    } else if (ps == PermissionState.limited) {
+      debugPrint("相册访问权限受限（仅部分照片）");
+    } else if (ps == PermissionState.denied) {
+      // 永久拒绝，直接跳转设置
+      await openAppSettings();
     }
   }
+
   /// 表格带输入框
   Widget rowWithTextEditing(
       String name,
@@ -344,7 +370,7 @@ class CustomWidget {
               child: Container(
                   margin: const EdgeInsets.only(left: 15, right: 15),
                   child: isTextEditing
-                      ? customWidget.setTextField(controller,focusNode,
+                      ? customWidget.setTextField(controller, focusNode,
                           height: 34,
                           circular: 5,
                           margin: const EdgeInsets.only(top: 10),
@@ -368,21 +394,32 @@ class CustomWidget {
               flex: 1,
               child: Container(
                   margin: const EdgeInsets.only(left: 15, right: 15),
-                  child:!isBg&& int.parse(inventory)==0?Row(mainAxisAlignment: MainAxisAlignment.end,children: [
-                    customWidget.setText(inventory,
-                      textAlign: TextAlign.center,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.redE84F43,
-                      fontSize: 12),
-                      customWidget.setAssetsImg("reservate_detail_warn@3x.png",width: 18,height: 18,margin: const EdgeInsets.only(left: 1))
-                  ],): customWidget.setText(inventory,
-                      textAlign: TextAlign.center,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
+                  child: !isBg && int.parse(inventory) == 0
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            customWidget.setText(inventory,
+                                textAlign: TextAlign.center,
+                                color: isBg
+                                    ? CustomColor.gray_6
+                                    : CustomColor.redE84F43,
+                                fontSize: 12),
+                            customWidget.setAssetsImg(
+                                "reservate_detail_warn@3x.png",
+                                width: 18,
+                                height: 18,
+                                margin: const EdgeInsets.only(left: 1))
+                          ],
+                        )
+                      : customWidget.setText(inventory,
+                          textAlign: TextAlign.center,
+                          color:
+                              isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                          fontSize: 12))),
         ],
       ),
     );
   }
-
 
 //Icon()FilteringTextInputFormatter.allow("")
   setTextField(controller, focusNode,
@@ -470,11 +507,12 @@ class CustomWidget {
       padding = const EdgeInsets.all(20.0),
       color = CustomColor.white,
       boxShadowColor = CustomColor.pinkCf,
+      isShowBoxShadow = true,
       double height = 340,
       double dy = 5,
       double dx = 1,
       double blurRadius = 10.0,
-      radius = 20.0}) {
+      double radius = 20.0}) {
     return Container(
         height: height,
         margin: margin,
@@ -482,7 +520,7 @@ class CustomWidget {
         decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(radius),
-            boxShadow: [
+            boxShadow:!isShowBoxShadow?null: [
               BoxShadow(
                   color: boxShadowColor,
                   offset: Offset(dx, dy),
@@ -1035,7 +1073,7 @@ class CustomWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(),
-                  setText(title!, fontSize: 18, color: CustomColor.black_3),
+                  setText(title!, fontSize: 15, color: CustomColor.black_3,maxLines: 2),
                   GestureDetector(
                     onTap: () => Get.back(),
                     child: const Icon(Icons.clear,

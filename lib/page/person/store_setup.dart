@@ -1,9 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
-import 'package:flutter_asakusa_bakery_store/common/japanese_text_delegate.dart';
+import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/calendar/calendar_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/calendar/models/date_model.dart';
@@ -129,9 +128,6 @@ class _StoreSetupState extends State<StoreSetup> {
 
   RxList<AssetEntity> image = <AssetEntity>[].obs;
 
-  // 2. 用来保存选中的图片
-  File? imageFile;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -170,153 +166,6 @@ class _StoreSetupState extends State<StoreSetup> {
     super.dispose();
   }
 
-  /// 选择图片
-  Widget selectImage() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if(image.length < 3)
-          GestureDetector(
-            onTap: () async {
-              await customWidget.pickImageWithPermission(context, () async {
-                // 2. 打开选择器（日语 UI）
-                final List<AssetEntity>? result = await AssetPicker.pickAssets(
-                  context,
-                  pickerConfig: AssetPickerConfig(
-                    maxAssets: 1, // 最多选 9 张
-                    requestType: RequestType.image, // 只选图片
-                    textDelegate: JapaneseTextDelegate(), // 日语界面
-                  ),
-                );
-
-                // 3. 更新列表
-                if (result != null) {
-                  setState(() {
-                    if(image.isEmpty){
-                      image.assignAll(result);
-                    }else {
-                      if(image.length >= 3){
-                        return;
-                      }else{
-                        image.addAll(result);
-                      }
-                    }
-                    // image = <AssetEntity>[].obs;
-                    
-                  });
-                }
-              });
-            },
-            child: Container(
-              width: 98,
-              height: 98,
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(top: 7, right: 7),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 0.5, color: CustomColor.blackD)),
-              child: customWidget.setAssetsImg("icon_add.png",
-                  width: 32, height: 32),
-            ),
-          ),
-          SizedBox(
-            width:image.length == 3?Get.width-30: Get.width- ((Get.width-315-30)/2)-105-30,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(image.length, (index) {
-                return Stack(
-                  children: [
-                    Container(
-                        width: 105,
-                        height: 105,
-                        padding: const EdgeInsets.only(top: 7, right: 7),
-                        child: Obx(() {
-                          return image.isEmpty
-                              ? const Icon(Icons.image,
-                                  size: 100, color: Colors.grey)
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: AssetEntityImage(
-                                    image[index],
-                                    width: 98,
-                                    height: 98,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                        })),
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              image.removeAt(index);
-                            });
-                          },
-                          child: customWidget.setAssetsImg("icon_clear.png",
-                              width: 20, height: 20),
-                        ))
-                  ],
-                );
-              }),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  /// 标题文字(isRequired:是否为必填)
-  Widget titleWidget(String text, bool isRequired) {
-    return Row(
-      children: [
-        customWidget.setTextOverflow(text,
-            margin: EdgeInsets.fromLTRB(15, 15, isRequired ? 10 : 15, 10),
-            fontSize: 13,
-            color: CustomColor.black_3),
-        isRequired
-            ? Container(
-                width: 30,
-                height: 16,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(bottom: 2),
-                margin: const EdgeInsets.only(top: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: CustomColor.redE84F43),
-                child: customWidget.setTextOverflow("必須",
-                    fontSize: 10, color: CustomColor.white),
-              )
-            : Container()
-      ],
-    );
-  }
-
-  /// Picker选择
-  Widget pickerSelected(String text, Function fun,
-      {double width = double.infinity}) {
-    return customWidget.setCardForHeight(
-        margin: const EdgeInsets.symmetric(horizontal: 15),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        height: 41,
-        radius: 5,
-        borderWidth: 0.5,
-        width: width,
-        onTap: fun,
-        color: CustomColor.bg,
-        borderColor: CustomColor.blackD,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            customWidget.setText(text),
-            customWidget.setAssetsImg("cus_textfield_select@3x.png",
-                width: 24, height: 24)
-          ],
-        ));
-  }
-
   /// 主要页面展示
   Widget mainPageShow() {
     return Column(
@@ -326,14 +175,14 @@ class _StoreSetupState extends State<StoreSetup> {
           height: 1,
           color: CustomColor.bg,
         ),
-        titleWidget("店舗画像(3枚)", false),
-        selectImage(),
-        titleWidget("店舗名", true),
+        infoWidget.titleWidget("店舗画像(3枚)", false),
+        infoWidget.selectImage(image,context,3),
+        infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,
             hintText: '店舗名を入カしてください',
             readOnly: false),
-        titleWidget("一言の店舗説明(20文字)", false),
+        infoWidget.titleWidget("一言の店舗説明(20文字)", false),
         customWidget.setTextField(
             storeDescriptionController, storeDescriptionFocusNode,
             hintText: '店舗名を入カしてください',
@@ -346,12 +195,12 @@ class _StoreSetupState extends State<StoreSetup> {
             right: 10,
             borderSide: const BorderSide(color: CustomColor.blackD, width: 0.5),
             margin: const EdgeInsets.symmetric(horizontal: 15)),
-        titleWidget("郵便番号", true),
+        infoWidget.titleWidget("郵便番号", true),
         ClearableTextField(
             controller: postalCodeController,
             hintText: '郵便番号を入カしてください',
             readOnly: false),
-        titleWidget("店舗住所", true),
+        infoWidget.titleWidget("店舗住所", true),
         ClearableTextField(
             controller: provinceController, hintText: '都道府県', readOnly: true),
         ClearableTextField(
@@ -362,12 +211,12 @@ class _StoreSetupState extends State<StoreSetup> {
             controller: addressController,
             hintText: '建物名·部屋番号',
             readOnly: false),
-        titleWidget("電話番号", false),
+        infoWidget.titleWidget("電話番号", false),
         ClearableTextField(
             controller: phoneController, hintText: '電話番号', readOnly: false),
-        titleWidget("イ-トインスペ-スあり", true),
+        infoWidget.titleWidget("イ-トインスペ-スあり", true),
         Obx(
-          () => pickerSelected(isThereDiningSpace.value, () {
+          () => infoWidget.pickerSelected(isThereDiningSpace.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [isThereDiningSpaceData],
@@ -377,9 +226,9 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("最大予約可能日数", true),
+        infoWidget.titleWidget("最大予約可能日数", true),
         Obx(
-          () => pickerSelected(bookingDayMax.value, () {
+          () => infoWidget.pickerSelected(bookingDayMax.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [days.map((e) => e.toString()).toList()],
@@ -389,9 +238,9 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("予約締切日数", true),
+        infoWidget.titleWidget("予約締切日数", true),
         Obx(
-          () => pickerSelected(reservationsAreClosedDay.value, () {
+          () => infoWidget.pickerSelected(reservationsAreClosedDay.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [days.map((e) => e.toString()).toList()],
@@ -401,9 +250,9 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("予約締切日数", true),
+        infoWidget.titleWidget("予約締切日数", true),
         Obx(
-          () => pickerSelected(reservationsAreClosedDay.value, () {
+          () => infoWidget.pickerSelected(reservationsAreClosedDay.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [days.map((e) => e.toString()).toList()],
@@ -413,9 +262,9 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("予約締切日数", true),
+        infoWidget.titleWidget("予約締切日数", true),
         Obx(
-          () => pickerSelected(appointmentTime.value, () {
+          () => infoWidget.pickerSelected(appointmentTime.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [
@@ -429,12 +278,12 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("営業時間", true),
+        infoWidget.titleWidget("営業時間", true),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Obx(
-              () => pickerSelected(startTime.value, () {
+              () => infoWidget.pickerSelected(startTime.value, () {
                 customWidget.showCustomizationPicker(
                   context,
                   columnsData: [
@@ -449,7 +298,7 @@ class _StoreSetupState extends State<StoreSetup> {
             ),
             customWidget.setText("~"),
             Obx(
-              () => pickerSelected(endTime.value, () {
+              () => infoWidget.pickerSelected(endTime.value, () {
                 customWidget.showCustomizationPicker(
                   context,
                   columnsData: [
@@ -464,7 +313,7 @@ class _StoreSetupState extends State<StoreSetup> {
             ),
           ],
         ),
-        titleWidget("定休日", false),
+        infoWidget.titleWidget("定休日", false),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: GridView.count(
@@ -491,38 +340,38 @@ class _StoreSetupState extends State<StoreSetup> {
             ),
           ),
         ),
-        titleWidget("特别休日", false),
+        infoWidget.titleWidget("特别休日", false),
         Obx(
-          () => pickerSelected(specialHolidays.value, () => showCalendar()),
+          () => infoWidget.pickerSelected(specialHolidays.value, () => showCalendar()),
         ),
-        titleWidget("顧客每回注文金额上限", false),
+        infoWidget.titleWidget("顧客每回注文金额上限", false),
         ClearableTextField(
             controller: orderAmountMaxController,
             hintText: '顧客每回注文金額上限を入力してください',
             readOnly: false),
-        titleWidget("顧客每日注文金額上限", false),
+        infoWidget.titleWidget("顧客每日注文金額上限", false),
         ClearableTextField(
             controller: dailyOrderAmountMaxController,
             hintText: '顧客每日注文金額上限を入力してください',
             readOnly: false),
-        titleWidget("店舗每日予約商品数上限", false),
+        infoWidget.titleWidget("店舗每日予約商品数上限", false),
         ClearableTextField(
             controller: productNumberMaxController,
             hintText: '店舗每日予約商品数上限を入カしてください',
             readOnly: false),
-        titleWidget("店舗每日予約金額上限", false),
+        infoWidget.titleWidget("店舗每日予約金額上限", false),
         ClearableTextField(
             controller: productAmountMaxController,
             hintText: '店舗每日予約金额上限を入カしてく尤さい',
             readOnly: false),
-        titleWidget("ポイント比率", false),
+        infoWidget.titleWidget("ポイント比率", false),
         ClearableTextField(
             controller: pointsRatioController,
             hintText: 'ポイント比率を入カしてィださい',
             readOnly: false),
-        titleWidget("SNS1", false),
+        infoWidget.titleWidget("SNS1", false),
         Obx(
-          () => pickerSelected(sns1.value, () {
+          () => infoWidget.pickerSelected(sns1.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [snsData.map((e) => e.toString()).toList()],
@@ -532,12 +381,12 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("リンク1", false),
+        infoWidget.titleWidget("リンク1", false),
         ClearableTextField(
             controller: linkController1, hintText: 'リンク', readOnly: false),
-        titleWidget("SNS2", false),
+        infoWidget.titleWidget("SNS2", false),
         Obx(
-          () => pickerSelected(sns1.value, () {
+          () => infoWidget.pickerSelected(sns1.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [snsData.map((e) => e.toString()).toList()],
@@ -547,12 +396,12 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("リンク2", false),
+        infoWidget.titleWidget("リンク2", false),
         ClearableTextField(
             controller: linkController2, hintText: 'リンク', readOnly: false),
-        titleWidget("SNS3", false),
+        infoWidget.titleWidget("SNS3", false),
         Obx(
-          () => pickerSelected(sns3.value, () {
+          () => infoWidget.pickerSelected(sns3.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [snsData.map((e) => e.toString()).toList()],
@@ -562,12 +411,12 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("リンク3", false),
+        infoWidget.titleWidget("リンク3", false),
         ClearableTextField(
             controller: linkController3, hintText: 'リンク', readOnly: false),
-        titleWidget("SNS4", false),
+        infoWidget.titleWidget("SNS4", false),
         Obx(
-          () => pickerSelected(sns4.value, () {
+          () => infoWidget.pickerSelected(sns4.value, () {
             customWidget.showCustomizationPicker(
               context,
               columnsData: [snsData.map((e) => e.toString()).toList()],
@@ -577,10 +426,10 @@ class _StoreSetupState extends State<StoreSetup> {
             );
           }),
         ),
-        titleWidget("リンク4", false),
+        infoWidget.titleWidget("リンク4", false),
         ClearableTextField(
             controller: linkController4, hintText: 'リンク', readOnly: false),
-        titleWidget("ホ-ムペ-ジ", false),
+        infoWidget.titleWidget("ホ-ムペ-ジ", false),
         ClearableTextField(
             controller: homeController, hintText: 'ホ-ムペ-ジ', readOnly: false),
         const SizedBox(
@@ -612,44 +461,7 @@ class _StoreSetupState extends State<StoreSetup> {
               child: mainPageShow(),
             ),
           ),
-          Positioned(
-              bottom: 0,
-              child: Container(
-                width: Get.width,
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
-                decoration: BoxDecoration(color: CustomColor.white, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2), // 阴影颜色
-                    blurRadius: 8, // 模糊半径
-                    spreadRadius: 0, // 扩散半径（0 表示不放大）
-                    offset: const Offset(0, 4), //  正 Y 值：向下偏移
-                  ),
-                ]),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    customWidget.setCupertinoButton("キャン乜ル",
-                        minimumSize: (Get.width - 50) / 2,
-                        height: 30,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12,
-                        circular: 5,
-                        textColor: CustomColor.black_3,
-                        color: CustomColor.black_9,
-                        onPressed: () {}),
-                    customWidget.setCupertinoButton("保存",
-                        minimumSize: (Get.width - 50) / 2,
-                        height: 30,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12,
-                        circular: 5,
-                        textColor: CustomColor.black_3,
-                        color: CustomColor.redE8,
-                        onPressed: () {})
-                  ],
-                ),
-              ))
+          infoWidget.bottomBtn("キャン乜ル", "保存",true, (){}, (){})
         ],
       ),
     );
