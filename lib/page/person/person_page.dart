@@ -108,7 +108,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("商品管理",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_commodity@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage(context, "/ProductManagement")),
 
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
