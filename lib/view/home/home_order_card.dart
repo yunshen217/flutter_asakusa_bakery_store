@@ -1,26 +1,25 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 
-/// 今日订单订单卡片
+/// 今日の注文カード
 class HomeOrderCard extends StatelessWidget {
-  /// 订单状态编号 0：制作中 1：待取 2：出货 3：结束
+  /// 注文ステータス番号 0：製作中 1：受け取り待ち 2：出荷 3：終了
   int orderStateIndex;
 
-  /// 订单详情
+  /// 注文の詳細
   Map orderDetail;
-  // 点击顶部单选按钮后所执行的方法
+  // 上部のラジオボタンをクリックした後に実行されるメソッド
   Function()? onTap;
-  // 是否选中
+  // 選択されていますか
   bool? isSelected = false;
-  // 是否为店取
+  // 店取ですか？
   bool isStorePickup;
-  // 完成按钮
+  // 完了ボタン
   Function()? finishOnTap;
-  // 编辑单号按钮
+  // 編集番号ボタン
   Function()? editTrackingPopup;
   HomeOrderCard(
       {super.key,
@@ -82,18 +81,17 @@ class HomeOrderCard extends StatelessWidget {
                     color: CustomColor.black_3,
                     fontSize: 14,
                   ),
-                  // customWidget.setCupertinoButton("注文取消",
-                  //     height: 40,
-                  //     minimumSize: 80,
-                  //     fontWeight: FontWeight.normal,
-                  //     fontSize: 15,
-                  //     textColor: CustomColor.black_3,
-                  //     color: CustomColor.grayC7,
-                  //     onPressed: finishOnTap)
+                   if (orderStateIndex == 0 || orderStateIndex == 1)customWidget.setCupertinoButton("注文取消",
+                      height: 40,
+                      minimumSize: 80,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 15,
+                      textColor: CustomColor.black_3,
+                      color: CustomColor.grayC7,
+                      onPressed: finishOnTap)
                 ],
               ),
             ),
-            // 详情
             Container(
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.symmetric(vertical: 10),

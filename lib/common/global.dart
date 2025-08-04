@@ -4,7 +4,7 @@ import '../model/UserModel.dart';
 import 'constant.dart';
 import 'package:sp_util/sp_util.dart';
 
-///全局变量
+///グローバル変数
 class Global {
   Global._();
 
@@ -13,21 +13,21 @@ class Global {
 
   static putToken(token) => SpUtil.putString(Constant.TOKEN, token)!;
 
-  //全局实体   start
+  //全体エンティティ   start
   static UserModel? get userInfo => SpUtil.getObj(Constant.USER_MODEL, (v) => UserModel.fromJson(v),
       defValue: UserModel(userName: "ログイン", userId: ""));
 
   static Future<void> putUserInfo(dynamic user) async {
   try {
-    print("开始保存用户信息...");
+    print("ユーザー情報の保存を開始しています...");
     bool success = await SpUtil.putObject(Constant.USER_MODEL, user) ?? false;
     if (success) {
-      print("用户信息保存成功: ${user}");
+      print("ユーザー情報が保存されました： ${user}");
     } else {
-      print("用户信息保存失败");
+      print("ユーザー情報の保存に失敗しました");
     }
   } catch (e) {
-    print("保存用户信息失败: $e");
+    print("ユーザー情報の保存に失敗しました: $e");
   }
 }
 
@@ -35,12 +35,12 @@ class Global {
   //全局context
   static BuildContext? context;
 
-  //全局初始化 缓存
+  //全局初期化 キャッシュ
   static Future init() async {
     await SpUtil.getInstance();
   }
 
-  //清除保存记录
+  //保存された記録を削除する
   static Future clear() async {
     await SpUtil.remove(Constant.TOKEN);
     await SpUtil.remove(Constant.USER_MODEL);

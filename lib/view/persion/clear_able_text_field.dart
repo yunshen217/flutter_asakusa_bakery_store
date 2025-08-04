@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 
@@ -7,13 +8,17 @@ class ClearableTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool readOnly;
+  final bool isNum;
+  final bool isPsd;
 
-  const ClearableTextField({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    this.readOnly = false,
-  }) : super(key: key);
+  const ClearableTextField(
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      this.readOnly = false,
+      this.isNum = false,
+      this.isPsd = false})
+      : super(key: key);
 
   @override
   State<ClearableTextField> createState() => _ClearableTextFieldState();
@@ -26,28 +31,26 @@ class _ClearableTextFieldState extends State<ClearableTextField> {
   @override
   void initState() {
     super.initState();
-    // 添加焦点监听器
     _focusNode.addListener(() {
       setState(() {
         _hasFocus = _focusNode.hasFocus;
       });
     });
 
-    // 监听文本变化
     widget.controller.addListener(() {
-      setState(() {}); // 当文本变化时重新构建widget
+      setState(() {});
     });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();  // 销毁焦点节点
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // 判断是否显示清除按钮
+    // クリアボタンを表示するかどうかを判断する
     final showClear = _hasFocus && widget.controller.text.isNotEmpty;
 
     return customWidget.setTextField(
@@ -56,7 +59,14 @@ class _ClearableTextFieldState extends State<ClearableTextField> {
       hintText: widget.hintText,
       circular: 5,
       readOnly: widget.readOnly,
+      keyboardType: widget.isNum ? TextInputType.number : TextInputType.text,
+      inputFormatters: widget.isNum
+          ? [
+              FilteringTextInputFormatter.digitsOnly, // 只允许输入数字（0-9）
+            ]
+          : null,
       isShow: true,
+      obscureText: widget.isPsd,
       suffixIcon: showClear
           ? GestureDetector(
               onTap: () => widget.controller.clear(),

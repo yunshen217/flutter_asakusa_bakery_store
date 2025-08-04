@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
@@ -11,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-/// 店铺设置
+/// 店舗設定
 class StoreSetup extends StatefulWidget {
   const StoreSetup({super.key});
 
@@ -20,14 +19,14 @@ class StoreSetup extends StatefulWidget {
 }
 
 class _StoreSetupState extends State<StoreSetup> {
-  /// 店铺名
+  /// 店名
   TextEditingController storeNameController = TextEditingController();
 
-  /// 店铺说明
+  /// 店舗説明
   TextEditingController storeDescriptionController = TextEditingController();
   FocusNode storeDescriptionFocusNode = FocusNode();
 
-  /// 邮编号码
+  /// 郵便番号
   TextEditingController postalCodeController = TextEditingController();
 
   /// 省
@@ -39,100 +38,91 @@ class _StoreSetupState extends State<StoreSetup> {
   /// 街道
   TextEditingController streetController = TextEditingController();
 
-  /// 地址
+  /// 住所
   TextEditingController addressController = TextEditingController();
 
-  /// 电话号码
+  /// 電話番号
   TextEditingController phoneController = TextEditingController();
 
-  /// 顾客每次订单金额上限
+  /// 顧客の注文金額上限
   TextEditingController orderAmountMaxController = TextEditingController();
 
-  /// 客户每日订单金额上限
+  /// 顧客の日次注文金額上限
   TextEditingController dailyOrderAmountMaxController = TextEditingController();
 
-  /// 店铺每日预约商品数上限
+  /// 店舗ごとの毎日の予約商品の上限
   TextEditingController productNumberMaxController = TextEditingController();
 
-  /// 店铺每日预约金额上限
+  /// 店舗ごとの毎日の予約金額上限
   TextEditingController productAmountMaxController = TextEditingController();
 
-  /// 积分比例
+  /// 積分比率
   TextEditingController pointsRatioController = TextEditingController();
-
-  /// 链接
   TextEditingController linkController1 = TextEditingController();
-
-  /// 链接
   TextEditingController linkController2 = TextEditingController();
-
-  /// 链接
   TextEditingController linkController3 = TextEditingController();
-
-  /// 链接
   TextEditingController linkController4 = TextEditingController();
 
-  /// 主页
+  /// ホームページ
   TextEditingController homeController = TextEditingController();
 
-  /// 是否有用餐空间
-  RxString isThereDiningSpace = "なし".obs;
+  /// 食事スペースはありますか？
+  RxString isThereDiningSpace = "イ-トインスペ-スあり".obs;
 
-  /// 是否有用餐空间数据
+  /// 食事スペースのデータはありますか？
   List<String> isThereDiningSpaceData = ["なし", "あります"];
 
-  /// 最多预约天数
-  RxString bookingDayMax = '0'.obs;
+  /// 最大予約可能日数
+  RxString bookingDayMax = '最大予約可能日数'.obs;
 
-  /// 天数
+  /// 日数
   RxList days = [].obs;
 
-  /// 预约截至天数
-  RxString reservationsAreClosedDay = '0'.obs;
+  /// 予約締切日数
+  RxString reservationsAreClosedDay = '予約締切日数'.obs;
 
-  /// 预约时间
-  RxString appointmentTime = '19:00:00'.obs;
+  /// 予約締切時間
+  RxString appointmentTime = '予約締切時間'.obs;
 
-  /// 时间-时
+  /// 時間-時
   RxList timeHour = [].obs;
 
-  /// 时间-分
+  /// 時間-分
   List<String> timeMinute = ["00", "30"];
 
-  /// 开始时间
-  RxString startTime = '10:00:00'.obs;
+  /// 開始時間
+  RxString startTime = '開始時間'.obs;
 
-  /// 结束时间
-  RxString endTime = '18:00:00'.obs;
+  /// 終了時間
+  RxString endTime = '終了時間'.obs;
 
-  /// 休息日数据
+  /// 休息日のデータ
   List restDays = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"];
 
-  /// 休息日数据选择数据
+  /// 休息日データの選択データ
   List<bool> selected = [];
 
-  /// 特别休日
+  /// 特別休暇
   RxString specialHolidays = '選択済み'.obs;
   final RxString _date = ''.obs;
 
-  /// SNS数据
+  /// SNS
   List snsData = ["Instagram", "X", "LINE", "Facebook"];
-  RxString sns1 = "Instagram".obs;
-  RxString sns2 = "Instagram".obs;
-  RxString sns3 = "Instagram".obs;
-  RxString sns4 = "Instagram".obs;
+  RxString sns1 = "SNS1".obs;
+  RxString sns2 = "SNS2".obs;
+  RxString sns3 = "SNS3".obs;
+  RxString sns4 = "SNS4".obs;
 
-  /// 不可选日期
-  List<String> mData = ["1", "2", "3"];
-  List<String> mOrderDates = ["2025-07-04", "2025-07-05", "2025-07-06"];
+  List<String> mOrderDates = ["2025-07-08", "2025-07-09", "2025-07-10"];
 
   RxList<AssetEntity> image = <AssetEntity>[].obs;
+  RxList<DateTime> selectedDates = <DateTime>[].obs;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // 为天数添加0~30的数据
+    // 天数に0〜30のデータを追加する
     days.assignAll(List.generate(31, (i) => "$i"));
     timeHour.assignAll(
       List.generate(24, (i) => i.toString().padLeft(2, '0')),
@@ -166,7 +156,6 @@ class _StoreSetupState extends State<StoreSetup> {
     super.dispose();
   }
 
-  /// 主要页面展示
   Widget mainPageShow() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +165,7 @@ class _StoreSetupState extends State<StoreSetup> {
           color: CustomColor.bg,
         ),
         infoWidget.titleWidget("店舗画像(3枚)", false),
-        infoWidget.selectImage(image,context,3),
+        infoWidget.selectImage(image, context, 3),
         infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,
@@ -215,102 +204,85 @@ class _StoreSetupState extends State<StoreSetup> {
         ClearableTextField(
             controller: phoneController, hintText: '電話番号', readOnly: false),
         infoWidget.titleWidget("イ-トインスペ-スあり", true),
-        Obx(
-          () => infoWidget.pickerSelected(isThereDiningSpace.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [isThereDiningSpaceData],
-              initialIndex: [0],
-              title: '飲食工リアがあるかどうか',
-              confirm: (list) => isThereDiningSpace.value = list[0],
-            );
-          }),
-        ),
+        Obx(() => infoWidget.pickerSelected(isThereDiningSpace.value,
+                isThereDiningSpace.value == "イ-トインスペ-スあり", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [isThereDiningSpaceData],
+                initialIndex: [0],
+                title: '飲食工リアがあるかどうか',
+                confirm: (list) => isThereDiningSpace.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("最大予約可能日数", true),
-        Obx(
-          () => infoWidget.pickerSelected(bookingDayMax.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [days.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: '日数を選択してください',
-              confirm: (list) => bookingDayMax.value = list[0],
-            );
-          }),
-        ),
+        Obx(() => infoWidget.pickerSelected(
+                bookingDayMax.value, bookingDayMax.value == "最大予約可能日数", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [days.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: '日数を選択してください',
+                confirm: (list) => bookingDayMax.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("予約締切日数", true),
-        Obx(
-          () => infoWidget.pickerSelected(reservationsAreClosedDay.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [days.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: '日数を選択してください',
-              confirm: (list) => reservationsAreClosedDay.value = list[0],
-            );
-          }),
-        ),
-        infoWidget.titleWidget("予約締切日数", true),
-        Obx(
-          () => infoWidget.pickerSelected(reservationsAreClosedDay.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [days.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: '日数を選択してください',
-              confirm: (list) => reservationsAreClosedDay.value = list[0],
-            );
-          }),
-        ),
-        infoWidget.titleWidget("予約締切日数", true),
-        Obx(
-          () => infoWidget.pickerSelected(appointmentTime.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [
-                timeHour.map((e) => e.toString()).toList(),
-                timeMinute
-              ],
-              initialIndex: [0, 0],
-              title: '時間を選択してください',
-              confirm: (list) =>
-                  appointmentTime.value = '${list[0]}:${list[1]}',
-            );
-          }),
-        ),
+        Obx(() => infoWidget.pickerSelected(reservationsAreClosedDay.value,
+                reservationsAreClosedDay.value == "予約締切日数", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [days.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: '日数を選択してください',
+                confirm: (list) => reservationsAreClosedDay.value = list[0],
+              );
+            })),
+        infoWidget.titleWidget("予約締切時間", true),
+        Obx(() => infoWidget.pickerSelected(
+                appointmentTime.value, appointmentTime.value == "予約締切時間", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [
+                  timeHour.map((e) => e.toString()).toList(),
+                  timeMinute
+                ],
+                initialIndex: [0, 0],
+                title: '時間を選択してください',
+                confirm: (list) =>
+                    appointmentTime.value = '${list[0]}:${list[1]}',
+              );
+            })),
         infoWidget.titleWidget("営業時間", true),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Obx(
-              () => infoWidget.pickerSelected(startTime.value, () {
-                customWidget.showCustomizationPicker(
-                  context,
-                  columnsData: [
-                    timeHour.map((e) => e.toString()).toList(),
-                    timeMinute
-                  ],
-                  initialIndex: [0, 0],
-                  title: '時間を選択してください',
-                  confirm: (list) => startTime.value = '${list[0]}:${list[1]}',
-                );
-              }, width: (Get.width - 75) / 2),
-            ),
+            Obx(() => infoWidget.pickerSelected(
+                    startTime.value, startTime.value == "開始時間", () {
+                  customWidget.showCustomizationPicker(
+                    context,
+                    columnsData: [
+                      timeHour.map((e) => e.toString()).toList(),
+                      timeMinute
+                    ],
+                    initialIndex: [0, 0],
+                    title: '時間を選択してください',
+                    confirm: (list) =>
+                        startTime.value = '${list[0]}:${list[1]}',
+                  );
+                }, width: (Get.width - 75) / 2)),
             customWidget.setText("~"),
-            Obx(
-              () => infoWidget.pickerSelected(endTime.value, () {
-                customWidget.showCustomizationPicker(
-                  context,
-                  columnsData: [
-                    timeHour.map((e) => e.toString()).toList(),
-                    timeMinute
-                  ],
-                  initialIndex: [0, 0],
-                  title: '時間を選択してください',
-                  confirm: (list) => endTime.value = '${list[0]}:${list[1]}',
-                );
-              }, width: (Get.width - 75) / 2),
-            ),
+            Obx(() => infoWidget
+                    .pickerSelected(endTime.value, endTime.value == "終了時間", () {
+                  customWidget.showCustomizationPicker(
+                    context,
+                    columnsData: [
+                      timeHour.map((e) => e.toString()).toList(),
+                      timeMinute
+                    ],
+                    initialIndex: [0, 0],
+                    title: '時間を選択してください',
+                    confirm: (list) => endTime.value = '${list[0]}:${list[1]}',
+                  );
+                }, width: (Get.width - 75) / 2)),
           ],
         ),
         infoWidget.titleWidget("定休日", false),
@@ -341,9 +313,8 @@ class _StoreSetupState extends State<StoreSetup> {
           ),
         ),
         infoWidget.titleWidget("特别休日", false),
-        Obx(
-          () => infoWidget.pickerSelected(specialHolidays.value, () => showCalendar()),
-        ),
+        Obx(() => infoWidget.pickerSelected(specialHolidays.value,
+            specialHolidays.value == "", () => showCalendar())),
         infoWidget.titleWidget("顧客每回注文金额上限", false),
         ClearableTextField(
             controller: orderAmountMaxController,
@@ -370,62 +341,58 @@ class _StoreSetupState extends State<StoreSetup> {
             hintText: 'ポイント比率を入カしてィださい',
             readOnly: false),
         infoWidget.titleWidget("SNS1", false),
-        Obx(
-          () => infoWidget.pickerSelected(sns1.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [snsData.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: 'sns',
-              confirm: (list) => sns1.value = list[0],
-            );
-          }),
-        ),
+        Obx(() =>
+            infoWidget.pickerSelected(sns1.value, sns1.value == "SNS1", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [snsData.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: 'sns',
+                confirm: (list) => sns1.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("リンク1", false),
         ClearableTextField(
             controller: linkController1, hintText: 'リンク', readOnly: false),
         infoWidget.titleWidget("SNS2", false),
-        Obx(
-          () => infoWidget.pickerSelected(sns1.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [snsData.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: 'sns',
-              confirm: (list) => sns1.value = list[0],
-            );
-          }),
-        ),
+        Obx(() =>
+            infoWidget.pickerSelected(sns2.value, sns2.value == "SNS2", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [snsData.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: 'sns',
+                confirm: (list) => sns2.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("リンク2", false),
         ClearableTextField(
             controller: linkController2, hintText: 'リンク', readOnly: false),
         infoWidget.titleWidget("SNS3", false),
-        Obx(
-          () => infoWidget.pickerSelected(sns3.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [snsData.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: 'sns',
-              confirm: (list) => sns3.value = list[0],
-            );
-          }),
-        ),
+        Obx(() =>
+            infoWidget.pickerSelected(sns3.value, sns3.value == "SNS3", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [snsData.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: 'sns',
+                confirm: (list) => sns3.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("リンク3", false),
         ClearableTextField(
             controller: linkController3, hintText: 'リンク', readOnly: false),
         infoWidget.titleWidget("SNS4", false),
-        Obx(
-          () => infoWidget.pickerSelected(sns4.value, () {
-            customWidget.showCustomizationPicker(
-              context,
-              columnsData: [snsData.map((e) => e.toString()).toList()],
-              initialIndex: [0],
-              title: 'sns',
-              confirm: (list) => sns4.value = list[0],
-            );
-          }),
-        ),
+        Obx(() =>
+            infoWidget.pickerSelected(sns4.value, sns4.value == "SNS4", () {
+              customWidget.showCustomizationPicker(
+                context,
+                columnsData: [snsData.map((e) => e.toString()).toList()],
+                initialIndex: [0],
+                title: 'sns',
+                confirm: (list) => sns4.value = list[0],
+              );
+            })),
         infoWidget.titleWidget("リンク4", false),
         ClearableTextField(
             controller: linkController4, hintText: 'リンク', readOnly: false),
@@ -461,48 +428,63 @@ class _StoreSetupState extends State<StoreSetup> {
               child: mainPageShow(),
             ),
           ),
-          infoWidget.bottomBtn("キャン乜ル", "保存",true, (){}, (){})
+          infoWidget.bottomBtn("キャン乜ル", "保存", true, () {}, () {})
         ],
       ),
     );
   }
 
-  showCalendar() {
+  void showCalendar() {
     if (_date.value.isEmpty) {
-      _date.value = '2025-01-01'; // 默认日期格式
+      _date.value = '2025-01-01';
     }
-    customWidget.showCustomNoTitleDialog(context,
-        confirm: () => {print("_data.value ----------------- ${_date.value}")},
-        child: StatefulBuilder(builder: (_, state) {
-          return SizedBox(
-              height: 390,
-              width: Get.width,
-              child: CustomCalendarViewer(
-                  initDate: _date.value,
-                  calendarType: CustomCalendarType.date,
-                  calendarStyle: CustomCalendarStyle.normal,
-                  animateDirection: CustomCalendarAnimatedDirection.horizontal,
-                  movingArrowSize: 15,
-                  local: "jp",
-                  showCurrentDayBorder: true,
-                  mDates: mData,
-                  mOrderDates: mOrderDates,
-                  spaceBetweenMovingArrow: 40,
-                  closedDatesColor: Colors.white.withOpacity(0.7),
-                  showHeader: true,
-                  daysMargin: const EdgeInsets.only(
-                      left: 10, right: 10, top: 0, bottom: 0),
-                  showBorderAfterDayHeader: false,
-                  headerAlignment: MainAxisAlignment.spaceEvenly,
-                  calendarStartDay: CustomCalendarStartDay.sunday,
-                  activeColor: CustomColor.redE8,
-                  currentDayBorder: Border.all(color: CustomColor.redE8),
-                  onDatesUpdated: (date) =>
-                      [Date(date: DateTime.parse(_date.value))],
-                  onChange: (year, month) =>
-                      {print("year ----- $year   month ------ $month")},
-                  onDayTapped: (date) =>
-                      _date.value = date.toString().substring(0, 10)));
-        }));
+
+    customWidget.showCustomNoTitleDialog(
+      context,
+      confirm: () {
+        print(
+            "选中的日期：${selectedDates.map((e) => e.toString().substring(0, 10)).join(', ')}");
+        selectedDates.isNotEmpty?specialHolidays.value= "選択済み择":specialHolidays.value= "選択してください";
+      },
+      child: StatefulBuilder(builder: (_, state) {
+        return SizedBox(
+          height: 390,
+          width: Get.width,
+          child: CustomCalendarViewer(
+            initDate: _date.value,
+            calendarType: CustomCalendarType.multiDates, // 1️⃣ Key: Change to multiple choices
+            calendarStyle: CustomCalendarStyle.normal,
+            animateDirection: CustomCalendarAnimatedDirection.horizontal,
+            movingArrowSize: 15,
+            local: "jp",
+            showCurrentDayBorder: true,
+            dates: selectedDates
+                .map((e) => Date(date: DateTime.parse(e.toString())))
+                .toList(), // ✅ Set the default selected date
+            mDates: [],
+            mOrderDates: mOrderDates,
+            spaceBetweenMovingArrow: 40,
+            closedDatesColor: Colors.white.withOpacity(0.7),
+            showHeader: true,
+            daysMargin:
+                const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+            showBorderAfterDayHeader: false,
+            headerAlignment: MainAxisAlignment.spaceEvenly,
+            calendarStartDay: CustomCalendarStartDay.sunday,
+            activeColor: CustomColor.redE8,
+            currentDayBorder: Border.all(color: CustomColor.redE8),
+            onDatesUpdated: (List<Date> dates) {
+              // 3️⃣ 選択した日付を同期させる
+              selectedDates.value = dates.map((d) => d.date).toList();
+            },
+            onChange: (year, month) =>
+                print("year ----- $year   month ------ $month"),
+            onDayTapped: (date) {
+              // 複数選択モードでは別途処理する必要はなく、onDatesUpdatedが統一的にコールバックされます。
+            },
+          ),
+        );
+      }),
+    );
   }
 }

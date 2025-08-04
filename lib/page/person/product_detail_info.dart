@@ -10,21 +10,17 @@ import 'package:photo_manager/photo_manager.dart';
 
 /// 商品详情 - 商品信息
 class ProductDetailInfo extends StatefulWidget {
-  
-   const ProductDetailInfo({super.key});
+  const ProductDetailInfo({super.key});
 
   @override
   State<ProductDetailInfo> createState() => _ProductDetailInfoState();
 }
 
 class _ProductDetailInfoState extends State<ProductDetailInfo> {
-  /// 上面三个名称
   List topTitle = ["商品番号", "商品名", "商品名略称"];
 
-  /// 上面三个TextEditingController
   late final RxList<TextEditingController> topTitleController;
 
-  /// 下面7个名称
   List bottomTitle = [
     "望価(税込)",
     "重量(g)",
@@ -35,14 +31,11 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
     "デフオルト計画数"
   ];
 
-  /// 下面7个TextEditingController
   late final RxList<TextEditingController> bottomTitleController;
 
-  /// 图片存放
   RxList<AssetEntity> image = <AssetEntity>[].obs;
 
-  /// 商品类别
-  RxString productCategorySelected = "".obs;
+  RxString productCategorySelected = "商品カテゴリ".obs;
   RxList productCategory = [
     "八ン",
     "食バン",
@@ -59,23 +52,18 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
     "季限定"
   ].obs;
 
-  /// 商品烤制时间
-  RxString freshlyBakedTimeZoneSelected = "".obs;
+  RxString freshlyBakedTimeZoneSelected = "商品焼きたて時間带を選択してください".obs;
   RxList freshlyBakedTimeZone = ["12:00~13:00", "13:00~14:00"].obs;
 
-  /// 状态
-  RxString statusSelected = "".obs;
+  RxString statusSelected = "ステ一タス".obs;
   RxList status = ["贩壳中", "开発中", "服壳中止"].obs;
 
-  /// 商品说明
   TextEditingController productDescriptionController = TextEditingController();
   FocusNode productDescriptionFocusNode = FocusNode();
 
-  /// 原材料
   TextEditingController rawMaterialsController = TextEditingController();
   FocusNode rawMaterialsFocusNode = FocusNode();
 
-  /// 过敏原信息
   List allergyInfo = [
     {
       "name": "小麦",
@@ -119,7 +107,6 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
     }
   ];
 
-  /// 过敏原信息是否选中
   RxList<RxBool> allergyInfoIsSelected = [false.obs].obs;
   @override
   void initState() {
@@ -129,9 +116,6 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
         List.generate(topTitle.length, (_) => TextEditingController()).obs;
     bottomTitleController =
         List.generate(bottomTitle.length, (_) => TextEditingController()).obs;
-    productCategorySelected.value = productCategory[0];
-    freshlyBakedTimeZoneSelected.value = freshlyBakedTimeZone[0];
-    statusSelected.value = status[0];
     allergyInfoIsSelected
         .assignAll(List.generate(allergyInfo.length, (_) => false.obs));
   }
@@ -147,7 +131,6 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
     super.dispose();
   }
 
-  /// 输入框列表
   Widget textEditingList(List name, RxList<TextEditingController> controller) {
     return Column(
       children: List.generate(name.length, (index) {
@@ -171,14 +154,12 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            /// 前面三个
             textEditingList(topTitle, topTitleController),
             infoWidget.titleWidget("商品画像(2枚)", false),
             infoWidget.selectImage(image, context, 2),
-            // 商品类别
             infoWidget.titleWidget("商品カテゴリ", false),
-            Obx(() =>
-                infoWidget.pickerSelected(productCategorySelected.value, () {
+            Obx(() => infoWidget.pickerSelected(productCategorySelected.value,
+                    productCategorySelected.value == "商品カテゴリ", () {
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [
@@ -189,10 +170,11 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
                     confirm: (list) => productCategorySelected.value = list[0],
                   );
                 })),
-            // 商品烤制时间
             infoWidget.titleWidget("商品焼きたて時間带", false),
-            Obx(() => infoWidget
-                    .pickerSelected(freshlyBakedTimeZoneSelected.value, () {
+            Obx(() => infoWidget.pickerSelected(
+                    freshlyBakedTimeZoneSelected.value,
+                    freshlyBakedTimeZoneSelected.value == '商品焼きたて時間带を選択してください',
+                    () {
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [
@@ -237,21 +219,20 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
                   margin: const EdgeInsets.symmetric(horizontal: 15),
                   height: 170,
                   child: SingleChildScrollView(
-                    // 添加滚动容器
                     child: GridView.count(
-                      shrinkWrap: true, // 关键参数
-                      physics: const NeverScrollableScrollPhysics(), // 禁用独立滚动
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       crossAxisCount: 5,
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 15,
-                      childAspectRatio: 0.7,  // 子项宽高比为1，保持正方形
+                      childAspectRatio: 0.7,
                       children: List.generate(allergyInfo.length, (index) {
                         return GestureDetector(
                           onTap: () {
-                            allergyInfoIsSelected[index].value = !allergyInfoIsSelected[index].value;
+                            allergyInfoIsSelected[index].value =
+                                !allergyInfoIsSelected[index].value;
                           },
                           child: ConstrainedBox(
-                            // 约束子项高度
                             constraints: const BoxConstraints(maxHeight: 80),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -263,7 +244,9 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
                                     width: 59,
                                     height: 59),
                                 customWidget.setTextOverflow(
-                                  margin: const EdgeInsets.only(top: 1,),
+                                    margin: const EdgeInsets.only(
+                                      top: 1,
+                                    ),
                                     allergyInfo[index]["name"],
                                     color: CustomColor.black_3,
                                     fontSize: 12)
@@ -275,10 +258,9 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
                     ),
                   ),
                 )),
-
-            // 状态
-            infoWidget.titleWidget("ステ-タス", false),
-            Obx(() => infoWidget.pickerSelected(statusSelected.value, () {
+            infoWidget.titleWidget("ステ一タス", false),
+            Obx(() => infoWidget.pickerSelected(
+                    statusSelected.value, statusSelected.value == "ステ一タス", () {
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [status.map((e) => e.toString()).toList()],
@@ -287,8 +269,6 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
                     confirm: (list) => statusSelected.value = list[0],
                   );
                 })),
-
-            /// 后面三个
             textEditingList(bottomTitle, bottomTitleController),
             const SizedBox(
               height: 80,

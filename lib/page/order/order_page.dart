@@ -20,22 +20,21 @@ class _OrderPageState extends State<OrderPage>
   late AnimationController _controller;
   final ScrollController _scrollController = ScrollController();
 
-  /// tab
   List<Tab> tabs = [const Tab(text: "リスト"), const Tab(text: "グラフ")];
 
-  /// 列表 ： 0、图表 ： 1
+  /// リスト ： 0、グラフ ： 1
   RxInt mainTabIndex = 0.obs;
 
-  /// 初始时间
+  /// 初期時間
   RxString timeStart = "".obs;
 
-  /// 结束时间
+  /// 終了時間
   RxString timeEnd = "".obs;
 
-  /// 列表数据
+  /// リストデータ
   RxList listData = [1, 1, 1].obs;
 
-  /// 图表数据
+  /// グラフデータ
   RxMap chartsData = {
     "xAxis": ['7/1', '7/2', '7/2', '7/2', '7/2'],
     "yAxis": ["6", "10", "111", "45", "80"],
@@ -55,10 +54,8 @@ class _OrderPageState extends State<OrderPage>
     super.dispose();
   }
 
-  /// 获取数据
   void getData(tag) {}
 
-  /// 时间选择
   Widget timeSelected(String time, Function fun) {
     return GestureDetector(
       onTap: () => fun(),
@@ -82,8 +79,8 @@ class _OrderPageState extends State<OrderPage>
       child: BaseScaffold(
         backgroundColor: CustomColor.bg,
         appBar: customWidget.setAppBar(
-            isLeftShow: false, // 左侧的按钮不显示
-            centerTitle: false, // 标题不居中
+            isLeftShow: false, 
+            centerTitle: false, 
             isTitle: false,
             titleChild: customWidget.setText("計画&予約",
                 fontSize: 18, color: CustomColor.black_3),
@@ -112,7 +109,7 @@ class _OrderPageState extends State<OrderPage>
                     }))),
             bottom: PreferredSize(
                 preferredSize:
-                    const Size.fromHeight(50), // 设置了一个50高度的区域，用于放置自定义的TabBar
+                    const Size.fromHeight(50), 
                 child: Column(
                   children: [
                     Container(
@@ -166,7 +163,7 @@ class _OrderPageState extends State<OrderPage>
     );
   }
 
-  /// 列表数据
+
   Widget listDataWidget() {
     return RefreshIndicator(
       color: CustomColor.redE8,
@@ -182,10 +179,10 @@ class _OrderPageState extends State<OrderPage>
             )
           : ListView.builder(
               controller: _scrollController,
-              shrinkWrap: true, // 只包裹内容
-              physics: const AlwaysScrollableScrollPhysics(), // 始终允许滚动
+              shrinkWrap: true,
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(
-                  horizontal: 15, vertical: 10), // 整个列表四周空白
+                  horizontal: 15, vertical: 10), 
               itemBuilder: (_, index) {
                 if (listData.isEmpty) {
                   return const SizedBox();
@@ -234,7 +231,7 @@ class _OrderPageState extends State<OrderPage>
     );
   }
 
-  /// 图表上面容器
+
   Widget chartBox(String text1, String text2) {
     return Container(
       width: 95,
@@ -255,7 +252,7 @@ class _OrderPageState extends State<OrderPage>
     );
   }
 
-  /// 图表数据
+
   Widget chartDataWidget() {
     return SingleChildScrollView(
       child: Container(

@@ -69,7 +69,6 @@ class _LoginPageState extends State<LoginPage>
                                     color: CustomColor.redE8,
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold),
-                                // 邮箱框
                                 customWidget.setTextFieldForLogin(
                                     accountController,
                                     icon: "icon_msg.png",
@@ -79,7 +78,6 @@ class _LoginPageState extends State<LoginPage>
                                     keyboardType: TextInputType.emailAddress,
                                     margin: const EdgeInsets.only(
                                         top: 30, bottom: 10)),
-                                // 密码框
                                 customWidget.setTextFieldForLogin(pwController,
                                     maxLength: 16,
                                     autofillHints: [AutofillHints.password],
@@ -103,7 +101,6 @@ class _LoginPageState extends State<LoginPage>
                                         onTap: () => Routes.goPage(context, "/ForgetPage", param: {
                                               Constant.FLAG: accountController?.text.trim()
                                             })),
-                                // 登录按钮
                                 customWidget.setCupertinoButton("ログイン",minimumSize: Get.width-100,margin: const EdgeInsets.only(top: 15),onPressed: (){
                                   if(isLogin()){
 
@@ -118,7 +115,6 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
-  // 检查是否为null
   isLogin(){
     if (accountController!.text.trim().isEmpty) {
       customWidget.toastShow("ユーザーIDを入力してください", notifyType: NotifyType.warning);

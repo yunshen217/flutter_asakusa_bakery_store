@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-///常量
+
 
 class Constant {
   Constant._();

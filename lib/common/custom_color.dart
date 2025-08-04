@@ -10,7 +10,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-//颜色
+
 class CustomColor {
   CustomColor._();
 
@@ -41,7 +41,7 @@ class CustomColor {
   static const Color orangeFFB554 = Color(0xffFFB554);
   static const Color orangeFFEAC7 = Color(0xffFFEAC7);
 
-  ///步进器
+  ///ステッパー
   static const Color primary = Color(0xFF409EFF);
   static const Color secondary = Color(0xFF909399);
   static const Color success = Color(0xFF67C23A);
@@ -51,5 +51,5 @@ class CustomColor {
   static const Color fatal = Color(0xFFC910F2);
 }
 
-///字符串
+///文字列
 class CustomString {}

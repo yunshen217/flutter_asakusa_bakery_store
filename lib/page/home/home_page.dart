@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage>
   // tab
   RxInt tabIndex = 0.obs;
   RxList<String> tabs = ["すべて", "配達", "引取"].obs;
-  // false：邮寄 true：店取
+  // false：配達 true：引取
   List orderDetails = [true, false, false];
   List<RxBool> orderDetailsSelected = <RxBool>[].obs;
 
@@ -59,7 +59,6 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    //  初始化：把每个元素变成 RxBool
     orderDetailsSelected.assignAll(
       List.generate(orderDetails.length, (_) => false.obs),
     );
@@ -75,13 +74,13 @@ class _HomePageState extends State<HomePage>
   /// 编辑单号弹窗
   void _editTrackingPopup() {
     Widget widget = customWidget.setTextFieldForLogin(_editcontroller,
-        hintText: "请输入单号",
+        hintText: "番号を入カしてください",
         suffix: Container(
           padding: const EdgeInsets.all(10),
           child: customWidget.setAssetsImg("order_scan@2x.png"),
         ));
     customWidget.showConfirmDialog(context,
-        title: "编辑单号",
+        title: "番号の編集",
         titleFontWeight: FontWeight.bold,
         titleColor: CustomColor.black_3,
         titleFontSize: 18.0,
@@ -187,7 +186,7 @@ class _HomePageState extends State<HomePage>
                           }));
                     })),
               ),
-              // 全部、邮寄、店取
+              //  ["すべて", "配達", "引取"]
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 15),
                 child: Obx(() => Row(
@@ -287,10 +286,10 @@ class _HomePageState extends State<HomePage>
                       decoration:
                           BoxDecoration(color: CustomColor.white, boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // 阴影颜色
-                          blurRadius: 8, // 模糊半径
-                          spreadRadius: 0, // 扩散半径（0 表示不放大）
-                          offset: const Offset(0, 4), //  正 Y 值：向下偏移
+                          color: Colors.black.withOpacity(0.1), 
+                          blurRadius: 8, 
+                          spreadRadius: 0, 
+                          offset: const Offset(0, 4), 
                         ),
                       ]),
                       child: Row(

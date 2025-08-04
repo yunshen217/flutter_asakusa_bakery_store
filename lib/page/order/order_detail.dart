@@ -4,7 +4,7 @@ import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
-/// 订单详情
+/// 注文の詳細
 class OrderDetail extends StatefulWidget {
   const OrderDetail({super.key});
 
@@ -13,19 +13,18 @@ class OrderDetail extends StatefulWidget {
 }
 
 class _OrderDetailState extends State<OrderDetail> {
-  // orderStateIndex:订单状态
-  // isStorePickup：是否为店取
+  // orderStateIndex:注文の状態
+  // isStorePickup：店取ですか？
   final arguments = Get.arguments;
-  // 是否为店取
+  // 店取ですか？
   bool isStorePickup = false;
-  // 标题样式
+  // Header style
   RxMap<String, String> titleUI =
       {"title": "受取済", "img": "order_detail_finish@3x.png"}.obs;
   @override
   void initState() {
     super.initState();
     isStorePickup = arguments["isStorePickup"];
-    // 修改图标
     switch (arguments["orderStateIndex"]) {
       case 0:
         titleUI.value = {"title": "製造中", "img": "order_detail_make@3x.png"};
@@ -58,7 +57,6 @@ class _OrderDetailState extends State<OrderDetail> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            /// 顶部
             Container(
               width: Get.width,
               height: 100,
@@ -82,7 +80,6 @@ class _OrderDetailState extends State<OrderDetail> {
                 ],
               ),
             ),
-            // 客户
             customWidget.setContain(Row(
               children: [
                 Column(
@@ -111,7 +108,6 @@ class _OrderDetailState extends State<OrderDetail> {
                 )
               ],
             )),
-            // 订单详情
             customWidget.setContain(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +184,7 @@ class _OrderDetailState extends State<OrderDetail> {
                 ),
                 margin: const EdgeInsets.all(15)),
 
-            /// 商品明细
+            /// 商品の詳細
             customWidget.setContain(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +255,7 @@ class _OrderDetailState extends State<OrderDetail> {
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 15)),
 
-            /// 订单金额
+            /// 金额
             customWidget.setContain(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
