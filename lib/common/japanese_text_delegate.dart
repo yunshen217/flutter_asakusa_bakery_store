@@ -1,5 +1,5 @@
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-/// 图片选择日语
+/// Image selection in Japanese
 class JapaneseTextDelegate extends AssetPickerTextDelegate {
   @override
   String get languageCode => 'ja';

@@ -4,7 +4,7 @@ import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
-/// 预约详情
+/// 予約詳細
 class ReservationDetails extends StatefulWidget {
   const ReservationDetails({super.key});
 
@@ -13,10 +13,9 @@ class ReservationDetails extends StatefulWidget {
 }
 
 class _ReservationDetailsState extends State<ReservationDetails> {
-  /// 时间
   RxString time = "2024-03-21".obs;
 
-  /// 详情数据列表
+  /// 詳細データリスト
   RxList detailsData = [
     {
       "name": "test",
@@ -62,14 +61,12 @@ class _ReservationDetailsState extends State<ReservationDetails> {
     }
   ].obs;
 
-  /// 控制器
   RxList<TextEditingController> controllerList = <TextEditingController>[].obs;
   RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // 清空再生成，避免热重载重复添加
     controllerList.clear();
     controllerList.assignAll(
       List.generate(detailsData.length, (_) => TextEditingController()),

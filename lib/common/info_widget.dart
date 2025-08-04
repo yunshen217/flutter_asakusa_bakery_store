@@ -5,11 +5,11 @@ import 'package:flutter_asakusa_bakery_store/common/japanese_text_delegate.dart'
 import 'package:get/get.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-/// 详情组件（比如店铺设置、商品详情页面中使用的输入框、下拉选择、图片选择）
+/// 詳細コンポーネント（例えば、店舗設定や商品詳細ページで使用される入力ボックス、ドロップダウン選択、画像選択）
 final infoWidget = InfoWidget();
 
 class InfoWidget {
-  /// 标题文字(isRequired:是否为必填)
+  /// タイトル文字（必須かどうか：必須ですか）
   Widget titleWidget(String text, bool isRequired) {
     return Row(
       children: [
@@ -35,8 +35,8 @@ class InfoWidget {
     );
   }
 
-  /// Picker选择
-  Widget pickerSelected(String text, Function fun,
+
+  Widget pickerSelected(String text,bool isHitText, Function fun,
       {double width = double.infinity}) {
     return customWidget.setCardForHeight(
         margin: const EdgeInsets.symmetric(horizontal: 15),
@@ -51,14 +51,14 @@ class InfoWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            customWidget.setText(text),
+            customWidget.setText(text,color:isHitText?CustomColor.black_9:CustomColor.black_3),
             customWidget.setAssetsImg("cus_textfield_select@3x.png",
                 width: 24, height: 24)
           ],
         ));
   }
 
-  /// 选择图片
+ 
   Widget selectImage(
       RxList<AssetEntity> image, BuildContext context, int imageLength) {
     return Obx(() => Container(
@@ -145,7 +145,7 @@ class InfoWidget {
         ));
   }
 
-  /// 底部按钮
+
   Widget bottomBtn(String leftTitle,String rightTitle,bool isShowLeft,Function leftOnTap,Function rightOnTap){
     return Positioned(
               bottom: 0,
@@ -154,10 +154,10 @@ class InfoWidget {
                 padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
                 decoration: BoxDecoration(color: CustomColor.white, boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2), // 阴影颜色
-                    blurRadius: 8, // 模糊半径
-                    spreadRadius: 0, // 扩散半径（0 表示不放大）
-                    offset: const Offset(0, 4), //  正 Y 值：向下偏移
+                    color: Colors.black.withOpacity(0.2), 
+                    blurRadius: 8, 
+                    spreadRadius: 0,
+                    offset: const Offset(0, 4), 
                   ),
                 ]),
                 child: Row(

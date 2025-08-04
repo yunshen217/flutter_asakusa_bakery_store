@@ -5,7 +5,7 @@ import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 
-/// 时间管理
+/// 時間管理
 class TimeManagement extends StatefulWidget {
   const TimeManagement({super.key});
 

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/custom_color.dart';
@@ -627,11 +628,9 @@ class _CustomCalendarViewerState extends State<CustomCalendarViewer>
     }
 
     void onDateTaped(int index) {
-      print("1--------------------------");
       if (widget.mDates!.indexWhere((e) => e == "${index - extraDays + 1}") != -1) {
         return;
       }
-      print("2--------------------------");
       if (widget.mOrderDates!.isNotEmpty) {
         for (var e in widget.mOrderDates!) {
           if (e.split("-")[1] == "${index - extraDays + 1}" &&
@@ -640,7 +639,6 @@ class _CustomCalendarViewerState extends State<CustomCalendarViewer>
           }
         }
       }
-      print("3--------------------------");
       if (widget.calendarType != CustomCalendarType.view &&
           widget.calendarType != CustomCalendarType.viewFullYear) {
         setState(() {
@@ -1856,7 +1854,7 @@ class _CustomCalendarViewerState extends State<CustomCalendarViewer>
                     hoverColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                     padding: EdgeInsets.zero,
                     icon: const Icon(

@@ -19,13 +19,13 @@ class _ProductManagementState extends State<ProductManagement> {
   List tabs = ["贩壳中", "开発中", "服壳中止"];
   RxInt tabIndex = 0.obs;
 
-  /// 商品列表数据
+  /// 商品リストデータ
   List productData = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-  /// 筛选
+  /// フィルタリング
   RxBool sift = false.obs;
 
-  /// 按钮
+  /// フィルターボタン
   RxList siftBtnData = [
     "八ン",
     "食バン",
@@ -42,7 +42,7 @@ class _ProductManagementState extends State<ProductManagement> {
     "季限定"
   ].obs;
 
-  /// 按钮是否点击
+  /// ボタンがクリックされたかどうか
   RxList<RxBool> siftBtnDataIsSelectes = [false.obs].obs;
   @override
   void initState() {
@@ -51,7 +51,6 @@ class _ProductManagementState extends State<ProductManagement> {
         .assignAll(List.generate(siftBtnData.length, (_) => false.obs));
   }
 
-  /// tab组件
   Widget tabWidget() {
     return customWidget.setContain(
         Row(
@@ -87,9 +86,8 @@ class _ProductManagementState extends State<ProductManagement> {
         circular: 0);
   }
 
-  /// 商品组件
+
   Widget productCard(String img) {
-    /// 图片路径
     String imgPath = "person_product_make@3x.png";
     switch (tabIndex.value) {
       case 0:
@@ -147,7 +145,6 @@ class _ProductManagementState extends State<ProductManagement> {
 
   @override
   Widget build(BuildContext context) {
-    // 获取文字高度
     double textHeight =
         utils.getTextHeight(text: "贩壳中", style: const TextStyle(fontSize: 14));
     double allHeight = textHeight + 2 + 30;

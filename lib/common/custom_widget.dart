@@ -1,4 +1,4 @@
-//自定义封装类
+//カスタムラッピングクラス
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +74,7 @@ class CustomWidget {
                 color: color, fontSize: fontSize, fontWeight: fontWeight)));
   }
 
-  /// 横向两边对齐文字
+  /// 横に両側揃えのテキスト
   setRowText(
     String text1,
     String text2, {
@@ -105,7 +105,7 @@ class CustomWidget {
     );
   }
 
-  /// 有边距的文字
+  /// 余白のある文字
   setTextOverflow(String text,
       {margin = EdgeInsets.zero,
       padding = EdgeInsets.zero,
@@ -157,7 +157,7 @@ class CustomWidget {
         ));
   }
 
-  /// 设置底部横线按钮
+  /// ボトム横線ボタンを設定する
   setUnderLineButton(text,
       {margin = EdgeInsets.zero,
       onTap,
@@ -194,7 +194,7 @@ class CustomWidget {
     );
   }
 
-  /// 设置外边框按钮
+  /// 外枠ボタンを設定する
   setOutLinedButton(text,
       {margin = EdgeInsets.zero,
       Size? minimumSize,
@@ -213,14 +213,16 @@ class CustomWidget {
       margin: margin,
       child: OutlinedButton(
         onPressed: onPressed,
-        child:
-            isHaveLeftIcon?Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                setAssetsImg(imgPath,width: 20,height: 20),
-                setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
-              ],
-            ):setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
+        child: isHaveLeftIcon
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  setAssetsImg(imgPath, width: 20, height: 20),
+                  setText(text,
+                      color: fontColor, fontSize: fontSize, maxLines: 10),
+                ],
+              )
+            : setText(text, color: fontColor, fontSize: fontSize, maxLines: 10),
         style: TextButton.styleFrom(
             minimumSize: minimumSize,
             backgroundColor: backgroundColor,
@@ -259,7 +261,7 @@ class CustomWidget {
             minSize: minimumSize,
             color: color));
   }
-  /// 设置静态图片
+
   setAssetsImg(imgPath,
       {double height = 25.0,
       double width = 25.0,
@@ -272,7 +274,7 @@ class CustomWidget {
         child: Image.asset("assets/$imgPath",
             width: width, height: height, fit: fit));
   }
-  /// 设置网络图片
+
   setNetworkImg(imgPath,
       {double height = 25.0,
       double width = 25.0,
@@ -282,11 +284,9 @@ class CustomWidget {
     return Container(
         padding: padding,
         margin: margin,
-        child: Image.network(imgPath,
-            width: width, height: height, fit: fit));
+        child: Image.network(imgPath, width: width, height: height, fit: fit));
   }
 
-  // 设置容器
   Widget setContain(
     Widget widget, {
     EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 15),
@@ -306,7 +306,6 @@ class CustomWidget {
     );
   }
 
-  // 设置表格
   setTable(List<TableRow> children,
       {color = CustomColor.grayC5,
       Map<int, TableColumnWidth> columnWidths = const {
@@ -320,7 +319,7 @@ class CustomWidget {
     );
   }
 
-  /// 带权限检查的选图
+  /// 権限チェック付きの画像選択
   Future<void> pickImageWithPermission(
       BuildContext context, Function isGrantedFun) async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
@@ -328,18 +327,18 @@ class CustomWidget {
 
     if (ps.hasAccess) {
       isGrantedFun();
-      // 权限已授予，加载图片
+      // 権限が付与され、画像を読み込む
     } else if (ps == PermissionState.denied) {
-      // _showPermissionDialog(); // 首次拒绝，显示弹窗
+      // _showPermissionDialog(); // 最初の拒否、ポップアップを表示する
     } else if (ps == PermissionState.limited) {
       debugPrint("相册访问权限受限（仅部分照片）");
     } else if (ps == PermissionState.denied) {
-      // 永久拒绝，直接跳转设置
+      // 永久に拒否し、設定に直接ジャンプする
       await openAppSettings();
     }
   }
 
-  /// 表格带输入框
+  /// 入力ボックス付きの表
   Widget rowWithTextEditing(
       String name,
       String plannedQuantity,
@@ -486,7 +485,7 @@ class CustomWidget {
                   fontWeight: FontWeight.w400),
               border: customBorder,
               focusedBorder: customBorder,
-              enabledBorder: customBorder, // 正常状态
+              enabledBorder: customBorder, // 正常状態
               suffixIcon: !isShow ? null : suffixIcon)),
     );
   }
@@ -498,6 +497,26 @@ class CustomWidget {
         useAnimation: true,
         displayTime: const Duration(milliseconds: 1200),
         animationType: SmartAnimationType.scale);
+  }
+
+  void toastShowNotIcon(String text, {bool isSuccess = true}) {
+    SmartDialog.showToast(
+      text,
+      alignment: Alignment.center,
+      displayTime: const Duration(milliseconds: 1200),
+      animationType: SmartAnimationType.scale,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: CustomColor.black_3.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    );
   }
 
   setCard(
@@ -520,13 +539,15 @@ class CustomWidget {
         decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(radius),
-            boxShadow:!isShowBoxShadow?null: [
-              BoxShadow(
-                  color: boxShadowColor,
-                  offset: Offset(dx, dy),
-                  blurRadius: blurRadius,
-                  spreadRadius: 2.0)
-            ]),
+            boxShadow: !isShowBoxShadow
+                ? null
+                : [
+                    BoxShadow(
+                        color: boxShadowColor,
+                        offset: Offset(dx, dy),
+                        blurRadius: blurRadius,
+                        spreadRadius: 2.0)
+                  ]),
         child: child);
   }
 
@@ -728,8 +749,7 @@ class CustomWidget {
             content: Center(
                 child: isChild
                     ? child
-                    : setText(content!,
-                        maxLines: 50, fontWeight: FontWeight.w500)),
+                    : setTextOverflow(content!, fontWeight: FontWeight.w500,margin: EdgeInsets.only(bottom: 10))),
             insetAnimationDuration: const Duration(milliseconds: 500),
             insetAnimationCurve: Curves.linear,
             actions: [
@@ -812,8 +832,8 @@ class CustomWidget {
               CupertinoDialogAction(
                   child: setText("ログインする", color: CustomColor.redE8),
                   onPressed: () {
-                    Navigator.pop(context); // 先关闭弹窗
-                    confirm(); // 再执行跳转
+                    Get.back();
+                    confirm();
                   })
             ],
           ),
@@ -844,8 +864,8 @@ class CustomWidget {
               CupertinoDialogAction(
                   child: setText("次回から表示しない", color: CustomColor.redE8),
                   onPressed: () {
-                    Navigator.pop(context); // 先关闭弹窗
-                    confirm(); // 再执行跳转
+                    Get.back();
+                    confirm();
                   })
             ],
           ),
@@ -940,7 +960,7 @@ class CustomWidget {
     ).then((_) => _isDialogShowing = false);
   }
 
-  /// 有圆角的tabBar
+  /// 角が丸いタブバー
   setTabBar(tabs,
       {EdgeInsetsGeometry indicatorPadding =
           const EdgeInsets.only(top: 10, bottom: 10),
@@ -1038,12 +1058,12 @@ class CustomWidget {
     );
   }
 
-  /// 自定义数据Picker，确定按钮在底部
-  /// 通用多列滚轮 Picker
-  /// columnsData  : 二维列表，每一列的数据
-  /// initialIndex : 每一列的初始下标，长度必须与 columnsData 一致
-  /// confirm      : 返回 List<String>，顺序与 columnsData 一致
-  /// title        : 顶部标题
+  /// カスタムデータピッカー、決定ボタンは底部に位置しています
+  /// 汎用多列ローラーピッカー
+  /// columnsData : 二次元リスト、各列のデータ
+  /// initialIndex : 各列の初期インデックス、長さはcolumnsDataと一致する必要があります
+  /// confirm : List<String>を返し、順序はcolumnsDataと一致します
+  /// title : 上部タイトル
   void showCustomizationPicker(
     BuildContext context, {
     required List<List<String>> columnsData,
@@ -1066,14 +1086,15 @@ class CustomWidget {
         builder: (_, setState) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 1. 顶部标题栏
+            // 1. トップタイトルバー
             Container(
               margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(),
-                  setText(title!, fontSize: 15, color: CustomColor.black_3,maxLines: 2),
+                  setText(title!,
+                      fontSize: 15, color: CustomColor.black_3, maxLines: 2),
                   GestureDetector(
                     onTap: () => Get.back(),
                     child: const Icon(Icons.clear,
@@ -1082,7 +1103,7 @@ class CustomWidget {
                 ],
               ),
             ),
-            // 2. 滚轮区域
+            // 2. ホイールエリア
             SizedBox(
               height: 216,
               child: Row(
@@ -1091,7 +1112,7 @@ class CustomWidget {
                   final selIdx = currentIndex[col];
 
                   return _buildWheel(
-                    data, // 直接传 List<String>
+                    data, // 直接伝える List<String>
                     selIdx,
                     (i) => setState(() => currentIndex[col] = i),
                     formatter: (v) => v,
@@ -1099,7 +1120,7 @@ class CustomWidget {
                 }),
               ),
             ),
-            // 3. 底部确定按钮
+            // 3. 底部の確認ボタン
             Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(
@@ -1117,7 +1138,7 @@ class CustomWidget {
                       (i) => columnsData[i][currentIndex[i]],
                     );
                     confirm(result);
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child:
                       const Text('確定', style: TextStyle(color: Colors.white)),
@@ -1130,25 +1151,25 @@ class CustomWidget {
     );
   }
 
-  /// 展示年月日Picker，确定按钮在底部
+  /// 展示年月日ピッカー、確定ボタンは下部にあります。
   void showMyDatePickerBottomBtn(
     BuildContext context,
     String selectDate, {
     String? title = "時間",
     required Function(String) confirm,
-    bool isOnlyShowNowMonthsAndDays = false, // 是否仅展示今日及今日之后的日期
+    bool isOnlyShowNowMonthsAndDays = false, // 今日及び今日以降の日付のみを表示しますか？
     int? minYear = 2025,
     int? maxYear = 2025,
   }) {
     /* -------------------------------------------------
-   * 1. 基础日期、当前日期、选中日期
+   * 1. 基準日、現在の日付、選択された日付
    * ------------------------------------------------- */
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day); // 去掉时分秒
     DateTime _selected = DateTime.parse(selectDate);
 
     /* -------------------------------------------------
-   * 2. 根据开关决定数据源
+   * 2. スイッチに基づいてデータソースを決定する
    * ------------------------------------------------- */
     late final List<int> years;
     late final List<int> months;
@@ -1156,31 +1177,31 @@ class CustomWidget {
     late int initMonthIndex;
     late int initDayIndex;
 
-    /* ---- 年份 ---- */
+    /* ---- 年 ---- */
     if (isOnlyShowNowMonthsAndDays) {
       years = [today.year];
     } else {
       years = List.generate(maxYear! - minYear! + 1, (i) => minYear + i);
     }
 
-    /* ---- 月份 ---- */
+    /* ----   月 ---- */
     int _calcMonthsStart() => isOnlyShowNowMonthsAndDays ? today.month : 1;
     months = List.generate(
         12 - _calcMonthsStart() + 1, (i) => _calcMonthsStart() + i);
 
-    /* ---- 某月天数 ---- */
+    /* ---- ある月の日数 ---- */
     List<int> _daysInMonth(int y, int m) {
       final int total = DateTime(y, m + 1, 0).day;
       if (!isOnlyShowNowMonthsAndDays)
         return List.generate(total, (i) => i + 1);
 
-      // 仅今天及以后
+      // 今日のみ及びそれ以降
       final int startDay =
           (y == today.year && m == today.month) ? today.day : 1;
       return List.generate(total - startDay + 1, (i) => startDay + i);
     }
 
-    /* ---- 初始化索引 ---- */
+    /* ---- インデックスを初期化する ---- */
     initYearIndex = years.indexWhere((y) => y == _selected.year);
     if (initYearIndex < 0) initYearIndex = 0;
 
@@ -1192,7 +1213,7 @@ class CustomWidget {
     if (initDayIndex < 0) initDayIndex = 0;
 
     /* -------------------------------------------------
-   * 3. Stateful 变量
+   * 3. Stateful 変数
    * ------------------------------------------------- */
     int yearIndex = initYearIndex;
     int monthIndex = initMonthIndex;
@@ -1203,9 +1224,6 @@ class CustomWidget {
       if (dayIndex >= days.length) dayIndex = days.length - 1;
     }
 
-    /* -------------------------------------------------
-   * 4. 弹窗 UI（与原逻辑一致，仅数据源变化）
-   * ------------------------------------------------- */
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -1265,7 +1283,7 @@ class CustomWidget {
                     final m = months[monthIndex].toString().padLeft(2, '0');
                     final d = days[dayIndex].toString().padLeft(2, '0');
                     confirm('$y-$m-$d');
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child:
                       const Text('確定', style: TextStyle(color: Colors.white)),
@@ -1278,10 +1296,10 @@ class CustomWidget {
     );
   }
 
-  /// 通用滚轮封装
+  /// 一般的なホイール封筒
   Widget _buildWheel(
     List<dynamic> items,
-    int selectedIndex, // 新增
+    int selectedIndex,
     ValueChanged<dynamic> onChanged, {
     String Function(dynamic)? formatter,
   }) {
@@ -1310,7 +1328,6 @@ class CustomWidget {
               builder: (_, index) => Center(
                 child: Text(
                   fixedFormatter(items[index]),
-                  // 2. 根据是否选中切换颜色
                   style: TextStyle(
                     fontSize: 18,
                     color: index == selectedIndex

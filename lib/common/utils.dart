@@ -74,7 +74,7 @@ class Utils {
     }
   }
 
-  /// 获取文字高度
+  /// 文字の高さを取得する
   double getTextHeight({
     required String text,
     required TextStyle style,
@@ -90,7 +90,7 @@ class Utils {
 
   /// 获取AppBar的高度
   double getAppBarHeight(BuildContext context) {
-    // 获取当前页面 AppBar 总高度（含状态栏）
+    // AppBarの高さを取得する
     final appBarHeight =
         AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     print('AppBar 高度 = $appBarHeight');

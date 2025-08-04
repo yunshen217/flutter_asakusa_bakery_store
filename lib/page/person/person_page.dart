@@ -5,7 +5,7 @@ import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
-/// 我的页面
+/// My page
 class PersonPage extends StatefulWidget {
   const PersonPage({super.key});
 
@@ -49,7 +49,6 @@ class _PersonPageState extends State<PersonPage>
         child: SingleChildScrollView(
           child: Column(
             children: [
-              /// 顶部标题
               customWidget.setContain(
                   margin: EdgeInsets.fromLTRB(15, 55, 15, 15),
                   padding: EdgeInsets.all(15),
@@ -68,13 +67,11 @@ class _PersonPageState extends State<PersonPage>
                     ),
                   )),
 
-              /// 下面数据
               customWidget.setContain(
                   margin: const EdgeInsets.fromLTRB(15, 0, 15, 20),
                   padding: const EdgeInsets.all(0),
                   Column(
                     children: [
-                      // 主页
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -92,15 +89,14 @@ class _PersonPageState extends State<PersonPage>
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
                           onTap: () => Routes.goPage(context, "/NoticePage")),
-                      // 未付款订单
-                      ListTile(
-                          trailing: const Icon(Icons.chevron_right),
-                          contentPadding:
-                              const EdgeInsets.only(right: 15, left: 15),
-                          title: customWidget.setText("未払注文",
-                              fontWeight: FontWeight.bold),
-                          leading:  customWidget.setAssetsImg("order_bar_select@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                      // ListTile(
+                      //     trailing: const Icon(Icons.chevron_right),
+                      //     contentPadding:
+                      //         const EdgeInsets.only(right: 15, left: 15),
+                      //     title: customWidget.setText("未払注文",
+                      //         fontWeight: FontWeight.bold),
+                      //     leading:  customWidget.setAssetsImg("order_bar_select@3x.png",width: 24),
+                      //     onTap: () => Routes.goPage(context, "/SettingPage")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -125,16 +121,15 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("在庫管理",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_inventory@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
-                      // 库存警报
-                      ListTile(
-                          trailing: const Icon(Icons.chevron_right),
-                          contentPadding:
-                              const EdgeInsets.only(right: 15, left: 15),
-                          title: customWidget.setText("在庫アラ-ム",
-                              fontWeight: FontWeight.bold),
-                          leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage(context, "/InLibraryManagement")),
+                      // ListTile(
+                      //     trailing: const Icon(Icons.chevron_right),
+                      //     contentPadding:
+                      //         const EdgeInsets.only(right: 15, left: 15),
+                      //     title: customWidget.setText("在庫アラ-ム",
+                      //         fontWeight: FontWeight.bold),
+                      //     leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
+                      //     onTap: () => Routes.goPage(context, "/SettingPage")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -142,8 +137,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("バスフ-ドの変更",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("login_secret@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
-                      // 注销登录
+                          onTap: () => Routes.goPage(context, "/ChangeOfBusService")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -151,7 +145,12 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("ログオンの終了",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_loginout@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: (){
+                            customWidget.showCustomDialog(context,title: "",content: "ログアウトします",confirm: (){
+                              Routes.pushNamedAndRemoveUntil(context, '/LoginPage');
+                            });
+                            
+                          },)
                     ],
                   ))
             ],
