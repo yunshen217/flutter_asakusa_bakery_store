@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "354734842035",
+    "project_id": "asakusa-bakery-merchant",
+    "storage_bucket": "asakusa-bakery-merchant.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354734842035:android:f20f3c259489874b9790c6",
+        "android_client_info": {
+          "package_name": "com.example.flutter_asakusa_bakery_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9Sx5TZsVqbzebsQoaKS2vtlXAk9uOTU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

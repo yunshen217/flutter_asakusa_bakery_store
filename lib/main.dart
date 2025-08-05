@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_asakusa_bakery_store/common/push_messages.dart';
 import 'package:get/get.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
@@ -20,6 +21,10 @@ import 'package:flutter_asakusa_bakery_store/view/NavigationIconView.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // 初始化推送
+  pushMessages.initFCM();
+  // 初始化深度链接监听器，用于处理从外部应用跳转到此应用的深度链接
+  pushMessages.initDeepLinkListener();
   Global.init().then((e) =>
       runApp(const MyApp())); //Global.init()返回`Future的异步方法，首屏加载前执行全局的初始化工作
   SystemChrome.setSystemUIOverlayStyle(

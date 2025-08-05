@@ -101,7 +101,7 @@ class _ProductManagementState extends State<ProductManagement> {
         break;
     }
     return GestureDetector(
-      onTap: () => Routes.goPage(context,"ProductDetail",param: {"isHavePurge":true}),
+      onTap: () => Routes.goPage("ProductDetail",param: {"isHavePurge":true}),
       child: Stack(
         children: [
           customWidget.setCard(
@@ -269,7 +269,7 @@ class _ProductManagementState extends State<ProductManagement> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("追加",
-                  onPressed: ()=>Routes.goPage(context,"ProductDetail",param: {"isHavePurge":false}),
+                  onPressed: ()=>Routes.goPage("ProductDetail",param: {"isHavePurge":false}),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),
