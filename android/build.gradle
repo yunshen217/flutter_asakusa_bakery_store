@@ -3,6 +3,10 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    dependencies {
+        classpath 'com.google.gms:google-services:4.4.3'
+    }
 }
 
 rootProject.buildDir = "../build"
@@ -15,4 +19,4 @@ subprojects {
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
-}
+} 
