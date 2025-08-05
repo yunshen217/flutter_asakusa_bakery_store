@@ -121,7 +121,7 @@ class _InLibraryDetailState extends State<InLibraryDetail> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("追加",
-                  onPressed: ()=>Routes.goPage(context,"InboundAndOutboundStorage"),
+                  onPressed: ()=>Routes.goPage("InboundAndOutboundStorage"),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),

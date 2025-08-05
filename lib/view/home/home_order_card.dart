@@ -5,6 +5,7 @@ import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 
 /// 今日の注文カード
+// ignore: must_be_immutable
 class HomeOrderCard extends StatelessWidget {
   /// 注文ステータス番号 0：製作中 1：受け取り待ち 2：出荷 3：終了
   int orderStateIndex;
@@ -35,7 +36,7 @@ class HomeOrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Routes.goPage(context, '/OrderDetail',param: {"isStorePickup":isStorePickup,"orderStateIndex":orderStateIndex});
+        Routes.goPage( '/OrderDetail',param: {"isStorePickup":isStorePickup,"orderStateIndex":orderStateIndex});
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(15, 0, 15, 10),

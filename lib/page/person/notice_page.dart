@@ -31,9 +31,9 @@ class _NoticePageState extends State<NoticePage>
           itemBuilder: (_, index) {
             return InkWell(
               onTap: () => _tabController.index == 0
-                  ? Routes.goPage(context, '/OrderDetail',
+                  ? Routes.goPage( '/OrderDetail',
                       param: {"isStorePickup": false, "orderStateIndex": 1})
-                  : Routes.goPage(context, '/InLibraryManagement'),
+                  : Routes.goPage( '/InLibraryManagement'),
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: Row(

@@ -111,7 +111,7 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
                   child: Column(
                     children: List.generate(inLibraryManagementList.length, (index){
                       final item = inLibraryManagementList[index];
-                      return _row(item["name"], '${item["num"]}kg', '${item["stockArrivalAlert"]}kg', ()=>Routes.goPage(context, "/InLibraryDetail"), false);
+                      return _row(item["name"], '${item["num"]}kg', '${item["stockArrivalAlert"]}kg', ()=>Routes.goPage( "/InLibraryDetail"), false);
                     }),
                   ),
                 )
@@ -127,7 +127,7 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("材料追加",
-                  onPressed: ()=>Routes.goPage(context,"MaterialAddition"),
+                  onPressed: ()=>Routes.goPage("MaterialAddition"),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),

@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage>
                                           child: customWidget.setText("パスワードを忘れた場合",
                                             margin: const EdgeInsets.only(top: 10, )),
                                         ),
-                                        onTap: () => Routes.goPage(context, "/ForgetPage", param: {
+                                        onTap: () => Routes.goPage( "/ForgetPage", param: {
                                               Constant.FLAG: accountController?.text.trim()
                                             })),
                                 customWidget.setCupertinoButton("ログイン",minimumSize: Get.width-100,margin: const EdgeInsets.only(top: 15),onPressed: (){

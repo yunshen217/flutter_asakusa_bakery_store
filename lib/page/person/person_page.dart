@@ -79,7 +79,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("ホ-ムペ-ジ",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_shoppage@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/StoreSetup")),
+                          onTap: () => Routes.goPage( "/StoreSetup")),
                       // 通知
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
@@ -88,15 +88,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("お知らせ",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/NoticePage")),
-                      // ListTile(
-                      //     trailing: const Icon(Icons.chevron_right),
-                      //     contentPadding:
-                      //         const EdgeInsets.only(right: 15, left: 15),
-                      //     title: customWidget.setText("未払注文",
-                      //         fontWeight: FontWeight.bold),
-                      //     leading:  customWidget.setAssetsImg("order_bar_select@3x.png",width: 24),
-                      //     onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage("/NoticePage")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -104,7 +96,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("商品管理",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_commodity@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/ProductManagement")),
+                          onTap: () => Routes.goPage("/ProductManagement")),
 
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
@@ -113,7 +105,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("引取時間管理",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_reservate@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/TimeManagement")),
+                          onTap: () => Routes.goPage( "/TimeManagement")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -121,15 +113,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("在庫管理",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("person_inventory@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/InLibraryManagement")),
-                      // ListTile(
-                      //     trailing: const Icon(Icons.chevron_right),
-                      //     contentPadding:
-                      //         const EdgeInsets.only(right: 15, left: 15),
-                      //     title: customWidget.setText("在庫アラ-ム",
-                      //         fontWeight: FontWeight.bold),
-                      //     leading: customWidget.setAssetsImg("person_notification@3x.png",width: 24),
-                      //     onTap: () => Routes.goPage(context, "/SettingPage")),
+                          onTap: () => Routes.goPage( "/InLibraryManagement")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -137,7 +121,7 @@ class _PersonPageState extends State<PersonPage>
                           title: customWidget.setText("バスフ-ドの変更",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg("login_secret@3x.png",width: 24),
-                          onTap: () => Routes.goPage(context, "/ChangeOfBusService")),
+                          onTap: () => Routes.goPage( "/ChangeOfBusService")),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -147,7 +131,7 @@ class _PersonPageState extends State<PersonPage>
                           leading: customWidget.setAssetsImg("person_loginout@3x.png",width: 24),
                           onTap: (){
                             customWidget.showCustomDialog(context,title: "",content: "ログアウトします",confirm: (){
-                              Routes.pushNamedAndRemoveUntil(context, '/LoginPage');
+                              Routes.pushNamedAndRemoveUntil('/LoginPage');
                             });
                             
                           },)

@@ -18,7 +18,7 @@ class NavigationService {
 
   static void goLoginPage() {
     customWidget.showCustomSingleBtnDialog(context,
-        confirm: () => Routes.goPage(context!, "/LoginPage"));
+        confirm: () => Routes.goPage( "/LoginPage"));
     //navigatorKey.currentState?.pushNamedAndRemoveUntil('/LoginPage', (route) => false);
   }
 }

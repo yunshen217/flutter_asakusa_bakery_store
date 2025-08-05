@@ -755,11 +755,11 @@ class CustomWidget {
             actions: [
               CupertinoDialogAction(
                   child: setText("キャンセル"),
-                  onPressed: () => Routes.finishPage(context: context)),
+                  onPressed: () => Routes.finishPage()),
               CupertinoDialogAction(
                   child: setText(confirmTitle, color: CustomColor.redE8),
                   onPressed: () {
-                    Routes.finishPage(context: context);
+                    Routes.finishPage();
                     confirm();
                   })
             ],
@@ -791,7 +791,7 @@ class CustomWidget {
               setCupertinoButton("選択する",
                   margin: const EdgeInsets.only(left: 15, right: 15),
                   onPressed: () {
-                Routes.finishPage(context: context);
+                Routes.finishPage();
                 confirm();
               })
             ],
@@ -804,7 +804,7 @@ class CustomWidget {
               CupertinoDialogAction(
                   child: setText("選択する", color: CustomColor.redE8),
                   onPressed: () {
-                    Routes.finishPage(context: context);
+                    Routes.finishPage();
                     confirm();
                   })
             ],

@@ -58,27 +58,27 @@ class Routes {
   ];
 
   // Get.to() を使用してページを移動する
-  static void goPage(BuildContext context, String pagePath, {Map<String, dynamic>? param}) {
+  static void goPage(String pagePath, {Map<String, dynamic>? param}) {
     Get.toNamed(pagePath, arguments: param);
   }
 
   // ページを移動し、結果を受け取る
-  static void goPageForResult(BuildContext context, String pagePath, {Map<String, dynamic>? param, required Function then}) {
+  static void goPageForResult(String pagePath, {Map<String, dynamic>? param, required Function then}) {
     Get.toNamed(pagePath, arguments: param)?.then((value) => then(value));
   }
 
   // ページを切り替えて現在のページを置き換える
-  static void goPageAndFinish(BuildContext context, String pagePath, {Map<String, dynamic>? param}) {
+  static void goPageAndFinish( String pagePath, {Map<String, dynamic>? param}) {
     Get.offNamed(pagePath, arguments: param);
   }
 
   // 現在のページを閉じる
-  static void finishPage({BuildContext? context, dynamic param}) {
+  static void finishPage({dynamic param}) {
     Get.back(result: param);
   }
 
   // ジャンプして以前のすべてのページを削除する
-  static void pushNamedAndRemoveUntil(BuildContext context, String fromPage, {Map<String, dynamic>? param, bool isRoute = true}) {
+  static void pushNamedAndRemoveUntil( String fromPage, {Map<String, dynamic>? param, bool isRoute = true}) {
     Get.offAllNamed(fromPage, arguments: param);
   }
 }
