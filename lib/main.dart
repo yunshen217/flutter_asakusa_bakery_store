@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_asakusa_bakery_store/common/push_messages.dart';
 import 'package:get/get.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
@@ -13,7 +14,6 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/navigation_service.dart';
-import 'package:flutter_asakusa_bakery_store/page/login/login_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/home/home_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/person_page.dart';
@@ -21,6 +21,10 @@ import 'package:flutter_asakusa_bakery_store/view/NavigationIconView.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // 初始化推送
+  pushMessages.initFCM();
+  // 初始化深度链接监听器，用于处理从外部应用跳转到此应用的深度链接
+  pushMessages.initDeepLinkListener();
   Global.init().then((e) =>
       runApp(const MyApp())); //Global.init()返回`Future的异步方法，首屏加载前执行全局的初始化工作
   SystemChrome.setSystemUIOverlayStyle(
@@ -46,16 +50,20 @@ class MyApp extends StatelessWidget {
             appBarTheme: const AppBarTheme(
                 color: Colors.white, surfaceTintColor: Colors.transparent),
             scaffoldBackgroundColor: Colors.white),
-        onGenerateRoute: onGenerateRoute,
+        // onGenerateRoute: onGenerateRoute,
         // initialRoute: Global.token.isEmpty ? "/LoginPage" : "/",
         navigatorObservers: [FlutterSmartDialog.observer],
         builder: FlutterSmartDialog.init(),
+        debugShowCheckedModeBanner: false,
         navigatorKey: NavigationService.navigatorKey, // 设置 navigatorKey
-        routes: {
-          '/LoginPage': (context) => const LoginPage(),
-          // 其他页面路由
-        },
-        home: const MyHomePage());
+        // routes: {
+        //   '/LoginPage': (context) => const LoginPage(),
+        //   // 其他页面路由
+        // },
+        // initialRoute: '/LoginPage',
+        getPages: Routes.pages,
+        home: const MyHomePage()
+        );
   }
 }
 

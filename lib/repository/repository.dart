@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart' show NotifyType;
 
 import '../common/Global.dart';
 import '../common/custom_widget.dart';
-import 'package:shopping_client/common/constant.dart';
 import 'baseInterceptors.dart';
 
 typedef Response<T> = void Function(T result);

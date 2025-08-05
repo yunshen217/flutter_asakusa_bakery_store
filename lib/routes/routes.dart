@@ -1,132 +1,84 @@
-import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
+import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';
+import 'package:flutter_asakusa_bakery_store/page/order/reservation_details.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/Inbound_and_outbound_storage.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/change_of_bus_service.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/in_library_detail.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/in_library_management.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/material_addition.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/notice_page.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/product_detail.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/product_management.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/store_setup.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/time_management.dart';
+import 'package:get/get.dart';
 
 import '../page/login/login_page.dart';
 import '../page/home/home_page.dart';
 import '../page/order/order_page.dart';
 import '../page/person/person_page.dart';
 
-final routes = {
-  ///登陆
-  '/LoginPage': (content, {arguments}) => const LoginPage(),
-
-  ///订单
-  '/OrderPage': (content, {arguments}) => const OrderPage(),
-
-  ///选择地址
-  '/HomePage': (content, {arguments}) => const HomePage(),
-
-  ///修改密码
-  '/PersonPage': (content, {arguments}) => const PersonPage(),
-
-  ///忘记密码
-  // '/ForgetPage': (content, {arguments}) => ForgetPage(arguments),
-};
-
-//固定写法命名路由传参
-// ignore: missing_return, top_level_function_literal_block
-var onGenerateRoute = (RouteSettings settings) {
-  final String? name = settings.name;
-  final Function pageContentBuilder = routes[name]!;
-  if (settings.arguments != null) {
-    return CupertinoPageRoute(
-        builder: (context) =>
-            pageContentBuilder(context, arguments: settings.arguments));
-  } else {
-    return CupertinoPageRoute(
-        builder: (context) => pageContentBuilder(context));
-  }
-};
-
 class Routes {
   Routes._();
 
-  static List<BuildContext> pages = [];
+  // ルートリスト
+  static final List<GetPage> pages = [
+    GetPage(name: '/LoginPage', page: () => const LoginPage()),
+    GetPage(name: '/OrderPage', page: () => const OrderPage()),
+    GetPage(name: '/HomePage', page: () => const HomePage()),
+    GetPage(name: '/PersonPage', page: () => const PersonPage()),
+    GetPage(name: '/ForgetPage', page: () => const ForgetPage()),
+    // 注文の詳細
+    GetPage(name: '/OrderDetail', page: () => const OrderDetail()),
+    // 予約の詳細
+    GetPage(name: '/ReservationDetails', page: () => const ReservationDetails()),
+    // 通知
+    GetPage(name: '/NoticePage', page: () => const NoticePage()),
+    // 店舗設定
+    GetPage(name: '/StoreSetup', page: () => const StoreSetup()),
+    // 時間管理
+    GetPage(name: '/TimeManagement', page: () => const TimeManagement()),
+    // 商品管理
+    GetPage(name: '/ProductManagement', page: () => const ProductManagement()),
+    // 商品詳細
+    GetPage(name: '/ProductDetail', page: () => const ProductDetail()),
+    // 在庫管理
+    GetPage(name: '/InLibraryManagement', page: () => const InLibraryManagement()),
+    // 材料の追加
+    GetPage(name: '/MaterialAddition', page: () => const MaterialAddition()),
+    // 倉庫の詳細
+    GetPage(name: '/InLibraryDetail', page: () => const InLibraryDetail()),
+    // 入出庫
+    GetPage(name: '/InboundAndOutboundStorage', page: () => const InboundAndOutboundStorage()),
+    // バスフ-ドの変更
+    GetPage(name: '/ChangeOfBusService', page: () => const ChangeOfBusService()),
+    
+  ];
 
-  ///路由 LinkedHashMap map = LinkedHashMap.from({'arg': '111'});
-  ///接受构造方法  /Demo': (content, {arguments}) => Demo(arguments)
-  static void goPage(BuildContext context, String pagePath,
-      {Map<dynamic, dynamic>? param}) {
-    Navigator.pushNamed(context, pagePath,
-        arguments: param ?? {} as LinkedHashMap);
-    // Get.toNamed("pagePath", parameters: map);
+  // Get.to() を使用してページを移動する
+  static void goPage(String pagePath, {Map<String, dynamic>? param}) {
+    Get.toNamed(pagePath, arguments: param);
   }
 
-  ///路由 LinkedHashMap map = LinkedHashMap.from({'arg': '111'});
-  ///接受构造方法  /Demo': (content, {arguments}) => Demo(arguments)
-  static void goPageForResult(BuildContext context, String pagePath,
-      {Map<dynamic, dynamic>? param, then}) {
-    Navigator.pushNamed(context, pagePath,
-            arguments: param ?? {} as LinkedHashMap)
-        .then((value) => then(value));
-    // Get.toNamed("pagePath", parameters: map);
+  // ページを移動し、結果を受け取る
+  static void goPageForResult(String pagePath, {Map<String, dynamic>? param, required Function then}) {
+    Get.toNamed(pagePath, arguments: param)?.then((value) => then(value));
   }
 
-  ///路由 LinkedHashMap map = LinkedHashMap.from({'arg': '111'});  关闭跳转界面
-  ///接受 接受构造方法 /Demo': (content, {arguments}) => Demo(arguments)
-  static void goPageAndFinish(BuildContext context, String pagePath,
-      {Map<dynamic, dynamic>? param}) {
-    Navigator.pushReplacementNamed(context, pagePath,
-        arguments: param ?? {} as LinkedHashMap);
+  // ページを切り替えて現在のページを置き換える
+  static void goPageAndFinish( String pagePath, {Map<String, dynamic>? param}) {
+    Get.offNamed(pagePath, arguments: param);
   }
 
-  static void finishPage(
-      {BuildContext? context,
-      LinkedHashMap<dynamic, dynamic>? map,
-      dynamic param}) {
-    if (Navigator.canPop(context!)) Navigator.pop(context, param);
+  // 現在のページを閉じる
+  static void finishPage({dynamic param}) {
+    Get.back(result: param);
   }
 
-  ///fromPage 为当前页
-  ///eg:A=>B=>C=>D=>E
-  ///fromPage为 B 调用此方法 只有 B界面和主页面“/”存活
-  ///其余界面会被干掉
-  ///(Route<dynamic> route) => false 只存活一个界面 String fromPage
-  static void pushNamedAndRemoveUntil(
-      {BuildContext? context,
-      String? fromPage,
-      Map? param,
-      bool isRoute = true}) {
-    Navigator.pushNamedAndRemoveUntil(context!, fromPage!,
-        isRoute ? ModalRoute.withName("/") : (Route<dynamic> route) => false,
-        arguments: param);
-  }
-
-  ///关闭制定界面集合 start
-  ///添加page的 context
-  ///isClear 添加银行卡的分支
-  ///默认为true
-  ///当为 false [popPage] 配合使用 popPage 参数二 给为false
-  ///[removePage]联合使用
-  /// @override
-  //   void initState() {
-  //     Routes.addPage(context);
-  //     print("B===>initState");
-  //     super.initState();
-  //   }
-  static addPage(BuildContext page) => pages.add(page);
-
-  ///移除page的 context
-  ///[addPage]联合使用
-  // @override
-  // void dispose() {
-  //   print("B===>dispose");
-  //   Routes.removePage(context);
-  //   super.dispose();
-  // }
-  static removePage(BuildContext page) {
-    if (pages.isNotEmpty) pages.removeLast();
-  }
-
-  ///关闭制定界面集合
-  ///eg:A=>B=>C=>D=>E
-  ///此时C和D界面 在initStats调用了[addPage]方法
-  ///用户在<E>界面点击[popPage]及关闭了C和D界面 A和B界面依然存活
-  static popPage() {
-    print("object");
-    for (var element in pages) {
-      finishPage();
-    }
-    pages.clear();
+  // ジャンプして以前のすべてのページを削除する
+  static void pushNamedAndRemoveUntil( String fromPage, {Map<String, dynamic>? param, bool isRoute = true}) {
+    Get.offAllNamed(fromPage, arguments: param);
   }
 }
