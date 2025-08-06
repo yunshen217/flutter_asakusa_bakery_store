@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_installations/firebase_installations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
@@ -15,16 +17,21 @@ class PushMessages {
       // 请求推送权限
       _requestPermissions();
       // 监听应用处于前台时的推送消息
+      print("监听应用处于前台时的推送消息");
       FirebaseMessaging.onMessage.listen(_firebaseMessagingForegroundHandler);
       // 监听后台时的推送消息。
+      print("监听后台时的推送消息。");
       FirebaseMessaging.onBackgroundMessage(
           _firebaseMessagingBackgroundHandler);
       // 监听用户点击通知后的事件。
+      print("监听用户点击通知后的事件。");
       FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
 
       ///监听后台通知点击事件
+      print("监听后台通知点击事件");
       RemoteMessage? initialMessage = await FirebaseMessaging.instance
           .getInitialMessage(); // 获取初始消息，通常用于当用户点击推送通知打开应用时。
+      print("获取初始消息，通常用于当用户点击推送通知打开应用时。----------- $initialMessage");
       if (initialMessage != null) {
         print('App was opened from a notification!');
         print('Message data: ${initialMessage.data}');
@@ -46,6 +53,7 @@ class PushMessages {
       RemoteMessage message) async {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
+    print("heiheihei----------------------");
     if (message.data['messageType'] != "0") {
       Routes.goPage("/OrderDetailPage",
           param: {Constant.ID: message.data['orderId']});
@@ -66,37 +74,26 @@ class PushMessages {
     }
   }
 
-  ///后台消息
-  @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    // Firebase SDK 的初始化
-    // 通常在应用启动时只需要调用一次，但在后台或终止状态下接收推送时可能需要再次初始化 Firebase。
-    await Firebase.initializeApp();
-    print(message);
-    print('Handling a background message: ${message.messageId}');
-    if (message.data['messageType'] != "0") {
-      Routes.goPage("/OrderDetailPage",
-          param: {Constant.ID: message.data['orderId']});
-    } else {
-      Routes.goPage("/MessagePage", param: {'tabIndex': 1});
-    }
-  }
+  
 
   ///token  获取设备的推送令牌并存储在 Global.putToken() 中。这个令牌用于发送推送通知。
   Future<void> getDeviceToken() async {
-    // if (Platform.isIOS) {
-    //   String? token = await FirebaseMessaging.instance.getAPNSToken();
-    //   print('Device Token: $token');
-    //   Global.putToken(token);
-    // } else {
-    //   String? token = await FirebaseMessaging.instance.getToken();
-    //   print('Device Token: $token');
-    //   Global.putToken(token);
-    // }
-    String? token = await FirebaseMessaging.instance.getToken();
-    Global.putToken(token);
-    print('Device Token: $token');
+    print("token ------------${Platform.isIOS}");
+    if (Platform.isIOS) {
+      String? token = await FirebaseMessaging.instance.getAPNSToken();
+      print('Device Token: $token');
+      Global.putToken(token);
+    } else {
+      print("000000--------------");
+      String? token = await FirebaseMessaging.instance.getToken();
+      print('Device Token: $token');
+      Global.putToken(token);
+      final fid = await FirebaseInstallations.id;
+print('FID = $fid'); 
+    }
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // Global.putToken(token);
+    // print('Device Token: $token');
   }
 
   /// 请求推送权限
@@ -143,3 +140,21 @@ class PushMessages {
     });
   }
 }
+///后台消息
+  @pragma('vm:entry-point')
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    // Firebase SDK 的初始化
+    // 通常在应用启动时只需要调用一次，但在后台或终止状态下接收推送时可能需要再次初始化 Firebase。
+    await Firebase.initializeApp();
+    print(message);
+    print('Handling a background message: ${message.messageId}');
+    if (message.data != null) {
+      if (message.data['messageType'] != "0") {
+        Routes.goPage("/OrderDetailPage",
+            param: {Constant.ID: message.data['orderId']});
+      } else {
+        Routes.goPage("/MessagePage", param: {'tabIndex': 1});
+      }
+    }
+  }
