@@ -60,8 +60,9 @@ dependencies:
   #谷歌地图
   google_maps_flutter: ^2.6.0
   #推送
-  firebase_core: ^2.16.0
-  firebase_messaging: ^14.6.3
+  firebase_core: ^2.32.0
+  firebase_messaging: ^14.7.10
+  firebase_installations: ^16.3.6
   uni_links: ^0.5.1
   # 图表
   flutter_echarts: ^2.5.0
