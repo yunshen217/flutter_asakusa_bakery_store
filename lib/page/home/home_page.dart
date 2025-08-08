@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/utils.dart';
+import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
+import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/home_order_card.dart';
+import 'package:flutter_asakusa_bakery_store/view/home/to_login_page.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 
 /// 主页
 class HomePage extends StatefulWidget {
@@ -55,6 +61,12 @@ class _HomePageState extends State<HomePage>
   // 是否全选
   RxBool isAllSelected = false.obs;
 
+  bool notLogin = false;
+
+  RxInt pageNum = 1.obs;
+  int pageSize = 10;
+  RxString isSend = "0".obs;
+
   @override
   void initState() {
     super.initState();
@@ -62,13 +74,28 @@ class _HomePageState extends State<HomePage>
     orderDetailsSelected.assignAll(
       List.generate(orderDetails.length, (_) => false.obs),
     );
-    time.value = Utils().getCurrentDate();
+    // time.value = Utils().getCurrentDate();
+    time.value = '2025-07-28';
+    notLogin = Global.userInfo!.refreshToken == null;
+    getOrderList();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  getOrderList() {
+    backEndRepository.doPost(Constant.orderList,params: {
+      "pageNum":pageNum.value,
+      "pageSize":pageNum.value,
+      "type":'${orderStateIndex.value+=1}',
+      "orderDate":time.value,
+      "isSend":isSend.value
+    }, successRequest: (res){
+      print("res -------------------- $res");
+    });
   }
 
   /// 编辑单号弹窗
@@ -172,17 +199,17 @@ class _HomePageState extends State<HomePage>
                               tabs.value = ["すべて", "配達", "引取"];
                             }
                             isAllSelected.value = false;
-                            if(isAllSelected.value){
-                                orderDetailsSelected.assignAll(
+                            if (isAllSelected.value) {
+                              orderDetailsSelected.assignAll(
                                   orderDetailsSelected
                                       .map((e) => true.obs)
                                       .toList());
-                              }else{
-                                orderDetailsSelected.assignAll(
+                            } else {
+                              orderDetailsSelected.assignAll(
                                   orderDetailsSelected
                                       .map((e) => false.obs)
                                       .toList());
-                              }
+                            }
                           }));
                     })),
               ),
@@ -210,124 +237,158 @@ class _HomePageState extends State<HomePage>
                     )),
               ),
               Expanded(
-                  child: SingleChildScrollView(
-                child: Obx(() => Column(
-                      children: List.generate(orderDetails.length, (i) {
-                        final selected = orderDetailsSelected[i].value; // 读一次即可
-                        Widget widget = Container();
-                        if (tabIndex.value == 0) {
-                          widget = Obx(
-                            () => HomeOrderCard(
-                              orderStateIndex: orderStateIndex.value,
-                              orderDetail: {},
-                              isSelected: selected,
-                              isStorePickup: orderDetails[i],
-                              onTap: () => orderDetailsSelected[i].toggle(),
-                              editTrackingPopup: _editTrackingPopup,
-                              finishOnTap: () {},
-                            ),
-                          );
-                        }
-                        if (tabIndex.value == 1) {
-                          widget = orderDetails[i]
-                              ? Container()
-                              : Obx(
-                                  () => HomeOrderCard(
-                                    orderStateIndex: orderStateIndex.value,
-                                    orderDetail: {},
-                                    isSelected: selected,
-                                    isStorePickup: orderDetails[i],
-                                    onTap: () =>
-                                        orderDetailsSelected[i].toggle(),
-                                    editTrackingPopup: _editTrackingPopup,
-                                    finishOnTap: () {},
-                                  ),
-                                );
-                        }
-                        if (tabIndex.value == 2) {
-                          if (orderStateIndex.value == 2) {
-                            widget = Container();
-                          } else {
-                            widget = !orderDetails[i]
-                                ? Container()
-                                : Obx(
-                                    () => HomeOrderCard(
-                                      orderStateIndex: orderStateIndex.value,
-                                      orderDetail: {},
-                                      isSelected: selected,
-                                      isStorePickup: orderDetails[i],
-                                      onTap: () =>
-                                          orderDetailsSelected[i].toggle(),
-                                      editTrackingPopup: _editTrackingPopup,
-                                      finishOnTap: () {},
-                                    ),
-                                  );
-                          }
-                        }
-                        return widget;
-                      }),
-                    )),
-              )),
-              Obx(() => orderStateIndex.value == 0 || orderStateIndex.value == 1
-                  ? const SizedBox(
-                      height: 70,
-                    )
-                  : Container())
+                  child: notLogin
+                      ? const ToLoginPage()
+                      : SingleChildScrollView(
+                          child: Obx(() => Column(
+                                children:
+                                    List.generate(orderDetails.length, (i) {
+                                  final selected =
+                                      orderDetailsSelected[i].value; // 读一次即可
+                                  Widget widget = Container();
+                                  if (tabIndex.value == 0) {
+                                    widget = Obx(
+                                      () => HomeOrderCard(
+                                        orderStateIndex: orderStateIndex.value,
+                                        orderDetail: {},
+                                        isSelected: selected,
+                                        isStorePickup: orderDetails[i],
+                                        onTap: () =>
+                                            orderDetailsSelected[i].toggle(),
+                                        editTrackingPopup: _editTrackingPopup,
+                                        finishOnTap: () {},
+                                      ),
+                                    );
+                                  }
+                                  if (tabIndex.value == 1) {
+                                    widget = orderDetails[i]
+                                        ? Container()
+                                        : Obx(
+                                            () => HomeOrderCard(
+                                              orderStateIndex:
+                                                  orderStateIndex.value,
+                                              orderDetail: {},
+                                              isSelected: selected,
+                                              isStorePickup: orderDetails[i],
+                                              onTap: () =>
+                                                  orderDetailsSelected[i]
+                                                      .toggle(),
+                                              editTrackingPopup:
+                                                  _editTrackingPopup,
+                                              finishOnTap: () {},
+                                            ),
+                                          );
+                                  }
+                                  if (tabIndex.value == 2) {
+                                    if (orderStateIndex.value == 2) {
+                                      widget = Container();
+                                    } else {
+                                      widget = !orderDetails[i]
+                                          ? Container()
+                                          : Obx(
+                                              () => HomeOrderCard(
+                                                orderStateIndex:
+                                                    orderStateIndex.value,
+                                                orderDetail: {},
+                                                isSelected: selected,
+                                                isStorePickup: orderDetails[i],
+                                                onTap: () =>
+                                                    orderDetailsSelected[i]
+                                                        .toggle(),
+                                                editTrackingPopup:
+                                                    _editTrackingPopup,
+                                                finishOnTap: () {},
+                                              ),
+                                            );
+                                    }
+                                  }
+                                  return widget;
+                                }),
+                              )),
+                        )),
+              Obx(() =>
+                  (orderStateIndex.value == 0 || orderStateIndex.value == 1) ||
+                          notLogin
+                      ? const SizedBox(
+                          height: 70,
+                        )
+                      : Container())
             ],
           ),
           Positioned(
               bottom: 0,
-              child: Obx(() => orderStateIndex.value == 2 ||
-                      orderStateIndex.value == 3
+              child: Obx(() => (orderStateIndex.value == 2 ||
+                          orderStateIndex.value == 3) ||
+                      notLogin
                   ? Container()
                   : Container(
                       width: Get.width,
-                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
                       decoration:
                           BoxDecoration(color: CustomColor.white, boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), 
-                          blurRadius: 8, 
-                          spreadRadius: 0, 
-                          offset: const Offset(0, 4), 
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 4),
                         ),
                       ]),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          customWidget.setOutLinedButton("すべて選択",
-                              circular: 8.0,
-                              minimumSize: const Size(79, 30),
-                              fontColor: CustomColor.black_3,
-                              lineColor: CustomColor.blackD,
-                              linewidth: 0.5, onPressed: () {
-                            if (tabIndex.value == 0) {
-                              isAllSelected.value = !isAllSelected.value;
-                              if(isAllSelected.value){
-                                orderDetailsSelected.assignAll(
-                                  orderDetailsSelected
-                                      .map((e) => true.obs)
-                                      .toList());
-                              }else{
-                                orderDetailsSelected.assignAll(
-                                  orderDetailsSelected
-                                      .map((e) => false.obs)
-                                      .toList());
-                              }
-                              
-                            }
-                            // if(tabIndex.value == 1){
-                            //   orderDetailsSelected.assignAll(orderDetailsSelected.map((e)=>(e.value == true?false:e.value).obs).toList());
-                            // }
-                            // if(tabIndex.value == 2){
-                            //   orderDetailsSelected.assignAll(orderDetailsSelected.map((e)=>(e.value == false?true:e.value).obs).toList());
-                            // }
-                          }),
+                          Row(
+                            children: [
+                              customWidget.setOutLinedButton("全ての郵送",
+                                  circular: 8.0,
+                                  minimumSize: const Size(79, 35),
+                                  fontColor: CustomColor.black_3,
+                                  lineColor: CustomColor.blackD,
+                                  linewidth: 0.5, onPressed: () {
+                                if (tabIndex.value == 0) {
+                                  isAllSelected.value = !isAllSelected.value;
+                                  if (isAllSelected.value) {
+                                    orderDetailsSelected.assignAll(
+                                        orderDetailsSelected
+                                            .map((e) => true.obs)
+                                            .toList());
+                                  } else {
+                                    orderDetailsSelected.assignAll(
+                                        orderDetailsSelected
+                                            .map((e) => false.obs)
+                                            .toList());
+                                  }
+                                }
+                              }),
+                              customWidget.setOutLinedButton("全ての引取",
+                                  circular: 8.0,
+                                  minimumSize: const Size(79, 35),
+                                  fontColor: CustomColor.black_3,
+                                  lineColor: CustomColor.blackD,
+                                  margin: EdgeInsets.only(left: 10),
+                                  linewidth: 0.5, onPressed: () {
+                                if (tabIndex.value == 0) {
+                                  isAllSelected.value = !isAllSelected.value;
+                                  if (isAllSelected.value) {
+                                    orderDetailsSelected.assignAll(
+                                        orderDetailsSelected
+                                            .map((e) => true.obs)
+                                            .toList());
+                                  } else {
+                                    orderDetailsSelected.assignAll(
+                                        orderDetailsSelected
+                                            .map((e) => false.obs)
+                                            .toList());
+                                  }
+                                }
+                              }),
+                            ],
+                          ),
                           customWidget.setCupertinoButton(
-                              orderStateIndex.value == 0 ? "完了" : "受け取り/発送済み",
+                              orderStateIndex.value == 0 ? "一括処理" : "受け取り/発送済み",
                               minimumSize: 120,
-                              height: 30,
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              height: 35,
                               fontWeight: FontWeight.normal,
                               fontSize: 12,
                               textColor: CustomColor.black_3,

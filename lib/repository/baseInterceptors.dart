@@ -255,6 +255,7 @@ class BaseInterceptors extends InterceptorsWrapper {
         print("error===> ${info?.code} ${info?.message}");
         print('Headers: ${response.requestOptions.headers}');
         print(response.data);
+        customWidget.toastShow(response.data["msg"]??"");
         print("--------------------end--------------------");
       }
       // if (response.requestOptions.path != Constant.psItemKindList &&

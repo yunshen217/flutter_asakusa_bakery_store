@@ -45,29 +45,39 @@ class Constant {
   static const int FLAG_SEVENTEEN = 17;
 
   /// 正式
-  static var base_url = "https://app.asakusa-bakery.com/api/";
+  // static var base_url = "https://app.asakusa-bakery.com/api/";
 
-  static var web_url = "https://app.asakusa-bakery.com/";
+  // static var web_url = "https://app.asakusa-bakery.com/api";
 
-  static var picture_url = "https://asakusabakery.s3.ap-northeast-1.amazonaws.com";
+  // static var picture_url = "https://asakusabakery.s3.ap-northeast-1.amazonaws.com";
 
   /// 测试环境
-  //static var base_url = "https://test.asakusa-bakery.com/api/";
-  // //static var base_url = "https://test.asakusa-bakery.com/prod-api/";
-  //static var web_url = "https://test.asakusa-bakery.com/api/";
-  // //static var web_url = "https://test.asakusa-bakery.com/";
-  // //static var picture_url = "https://test.asakusa-bakery.com/";
-  //static var picture_url =
-  //    "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
+  static var base_url = "https://test.asakusa-bakery.com/api/";
+  static var web_url = "https://test.asakusa-bakery.com/api/";
+  static var picture_url =
+     "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
+
+
+  static final login = "${base_url}merchant/auth/login";
+  static final refreshToken = "${base_url}merchant/auth/refresh-token";
+  static final resetAccountPassword = "${base_url}merchant/auth/password/reset";
+  static final orderList = "${base_url}merchant/orders";
+
+
+
+
+
+
+
 
   static final homes = "${base_url}customer/merchants";
-  static final resetAccountPassword = "${base_url}customer/auth/password/reset";
-  static final login = "${base_url}customer/auth/login";
+  static final resetPassword = "${base_url}customer/auth/password/reset";
+  
   static final sendEmailCode = "${base_url}customer/auth/verification-code";
   static final register = "${base_url}customer/auth/register";
   static final deleteCustomerAccount = "${base_url}customer/auth/deactivate";
-  static final resetPassword = "${base_url}customer/auth/password";
-  static final refreshToken = "${base_url}customer/auth/refresh-token";
+  
+  
 
   static final editCustomerAddress = "${base_url}customer/addresses";
   static final editDefaultAddress = "${base_url}customer/addresses/default/";
@@ -78,7 +88,6 @@ class Constant {
   static final submitOrder = "${base_url}customer/orders/submit";
   static final payMoney = "${base_url}customer/orders/payment/paypay";
   static final orderCancle = "${base_url}customer/orders/";
-  static final orderList = "${base_url}customer/orders/list";
   static final orderDetail = "${base_url}customer/orders/";
 
   static final psMerchantDetail = "${base_url}customer/merchants/";
