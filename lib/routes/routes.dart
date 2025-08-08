@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_asakusa_bakery_store/main.dart';
 import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/reservation_details.dart';
@@ -25,6 +26,7 @@ class Routes {
 
   // ルートリスト
   static final List<GetPage> pages = [
+    GetPage(name: '/MyHomePage', page: () => const MyHomePage()),
     GetPage(name: '/LoginPage', page: () => const LoginPage()),
     GetPage(name: '/OrderPage', page: () => const OrderPage()),
     GetPage(name: '/HomePage', page: () => const HomePage()),

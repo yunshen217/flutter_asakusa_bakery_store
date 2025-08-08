@@ -884,6 +884,9 @@ class CustomWidget {
     FontWeight titleFontWeight = FontWeight.normal,
     contentPadding = const EdgeInsets.fromLTRB(24, 20, 24, 0),
     mainAxisAlignment = MainAxisAlignment.end,
+    String cancelText = "いいえ",
+    String submitText = "はい",
+    bool cancelBtnIsOutLinedButton = true,
     Widget? child,
     VoidCallback? onPressed,
   }) {
@@ -909,21 +912,32 @@ class CustomWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              setOutLinedButton(
-                "いいえ",
+              cancelBtnIsOutLinedButton?setOutLinedButton(
+                cancelText,
                 minimumSize: const Size(90, 40),
                 circular: 10,
                 fontColor: CustomColor.black_3,
                 lineColor: CustomColor.blackD,
                 fontSize: 15,
                 onPressed: () => Get.back(),
+              ):setCupertinoButton(
+                submitText,
+                height: 40,
+                minimumSize: 90,
+                textColor: CustomColor.black_3,
+                color: CustomColor.blackD,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                fontSize: 15,
+                onPressed: () => Get.back(),
+                fontWeight: FontWeight.normal,
               ),
               setCupertinoButton(
-                "はい",
+                submitText,
                 height: 40,
                 minimumSize: 90,
                 textColor: CustomColor.black_3,
                 color: CustomColor.redE8,
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 fontSize: 15,
                 onPressed: onPressed,
                 fontWeight: FontWeight.normal,

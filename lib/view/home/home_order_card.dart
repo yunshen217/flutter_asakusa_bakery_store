@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
@@ -35,8 +34,11 @@ class HomeOrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Routes.goPage( '/OrderDetail',param: {"isStorePickup":isStorePickup,"orderStateIndex":orderStateIndex});
+      onTap: () {
+        Routes.goPage('/OrderDetail', param: {
+          "isStorePickup": isStorePickup,
+          "orderStateIndex": orderStateIndex
+        });
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(15, 0, 15, 10),
@@ -73,7 +75,7 @@ class HomeOrderCard extends StatelessWidget {
                     ],
                   ),
             Container(
-              margin: EdgeInsets.only(top: isStorePickup == false ? 0 : 15),
+              margin: EdgeInsets.only(top: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -82,14 +84,15 @@ class HomeOrderCard extends StatelessWidget {
                     color: CustomColor.black_3,
                     fontSize: 14,
                   ),
-                   if (orderStateIndex == 0 || orderStateIndex == 1)customWidget.setCupertinoButton("注文取消",
-                      height: 40,
-                      minimumSize: 80,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 15,
-                      textColor: CustomColor.black_3,
-                      color: CustomColor.grayC7,
-                      onPressed: finishOnTap)
+                  if (orderStateIndex == 0 || orderStateIndex == 1)
+                    customWidget.setCupertinoButton("注文取消",
+                        height: 35,
+                        minimumSize: 80,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                        textColor: CustomColor.black_3,
+                        color: CustomColor.grayC7,
+                        onPressed: finishOnTap)
                 ],
               ),
             ),
@@ -102,10 +105,25 @@ class HomeOrderCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  customWidget.setRichText("受取方式：", isStorePickup ? "引取" : "配達", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
-                  customWidget.setRichText("受取番号：", "C297", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
-                  customWidget.setRichText("数量：", "竹炭ココナッツバンx1 黑胡麻ロ-ルンx1", margin:  const EdgeInsets.only(bottom: 10),fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
-                  customWidget.setRichText("コメント：","", fontSize: 14,subFontSize: 14,color: CustomColor.black_9),
+                  customWidget.setRichText("受取方式：", isStorePickup ? "引取" : "配達",
+                      margin: const EdgeInsets.only(bottom: 10),
+                      fontSize: 14,
+                      subFontSize: 14,
+                      color: CustomColor.black_9),
+                  customWidget.setRichText("受取番号：", "C297",
+                      margin: const EdgeInsets.only(bottom: 10),
+                      fontSize: 14,
+                      subFontSize: 14,
+                      color: CustomColor.black_9),
+                  customWidget.setRichText("数量：", "竹炭ココナッツバンx1 黑胡麻ロ-ルンx1",
+                      margin: const EdgeInsets.only(bottom: 10),
+                      fontSize: 14,
+                      subFontSize: 14,
+                      color: CustomColor.black_9),
+                  customWidget.setRichText("コメント：", "",
+                      fontSize: 14,
+                      subFontSize: 14,
+                      color: CustomColor.black_9),
                 ],
               ),
             ),
@@ -123,16 +141,16 @@ class HomeOrderCard extends StatelessWidget {
                 ),
                 if (orderStateIndex == 0) ...[
                   customWidget.setCupertinoButton("焼き上がリ",
-                      height: 40,
-                      minimumSize: 80,
+                      height: 35,
+                      minimumSize: 95,
                       fontWeight: FontWeight.normal,
                       fontSize: 15,
                       textColor: CustomColor.black_3,
                       onPressed: finishOnTap)
                 ],
                 if (orderStateIndex == 1 && isStorePickup == true) ...[
-                  customWidget.setCupertinoButton("已取",
-                      height: 40,
+                  customWidget.setCupertinoButton("引渡",
+                      height: 35,
                       minimumSize: 80,
                       fontWeight: FontWeight.normal,
                       fontSize: 15,
@@ -142,32 +160,32 @@ class HomeOrderCard extends StatelessWidget {
                 if (orderStateIndex == 1 && isStorePickup == false) ...[
                   Row(
                     children: [
-                      GestureDetector(
-                        onTap: editTrackingPopup,
-                        child: Container(
-                          width: 90,
-                          height: 40,
-                          // ignore: prefer_const_constructors
-                          margin: EdgeInsets.only(right: 10),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: CustomColor.grayF8,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  width: 1, color: CustomColor.blackD)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              customWidget.setAssetsImg("edit.png",
-                                  width: 16, height: 16),
-                              customWidget.setText("送状番号",
-                                  fontSize: 12, color: CustomColor.black_3)
-                            ],
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: editTrackingPopup,
+                      //   child: Container(
+                      //     width: 90,
+                      //     height: 40,
+                      //     // ignore: prefer_const_constructors
+                      //     margin: EdgeInsets.only(right: 10),
+                      //     alignment: Alignment.center,
+                      //     decoration: BoxDecoration(
+                      //         color: CustomColor.grayF8,
+                      //         borderRadius: BorderRadius.circular(10),
+                      //         border: Border.all(
+                      //             width: 1, color: CustomColor.blackD)),
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         customWidget.setAssetsImg("edit.png",
+                      //             width: 16, height: 16),
+                      //         customWidget.setText("送状番号",
+                      //             fontSize: 12, color: CustomColor.black_3)
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       customWidget.setCupertinoButton("出荷",
-                          height: 40,
+                          height: 35,
                           minimumSize: 80,
                           fontWeight: FontWeight.normal,
                           fontSize: 15,

@@ -53,7 +53,6 @@ class PushMessages {
       RemoteMessage message) async {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
-    print("heiheihei----------------------");
     if (message.data['messageType'] != "0") {
       Routes.goPage("/OrderDetailPage",
           param: {Constant.ID: message.data['orderId']});
@@ -78,18 +77,16 @@ class PushMessages {
 
   ///token  获取设备的推送令牌并存储在 Global.putToken() 中。这个令牌用于发送推送通知。
   Future<void> getDeviceToken() async {
-    print("token ------------${Platform.isIOS}");
     if (Platform.isIOS) {
       String? token = await FirebaseMessaging.instance.getAPNSToken();
       print('Device Token: $token');
       Global.putToken(token);
     } else {
-      print("000000--------------");
       String? token = await FirebaseMessaging.instance.getToken();
       print('Device Token: $token');
       Global.putToken(token);
-      final fid = await FirebaseInstallations.id;
-print('FID = $fid'); 
+      // final fid = await FirebaseInstallations.id;
+      // print('FID = $fid'); 
     }
     // String? token = await FirebaseMessaging.instance.getToken();
     // Global.putToken(token);

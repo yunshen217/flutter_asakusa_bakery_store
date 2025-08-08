@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/utils.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
+import 'package:flutter_asakusa_bakery_store/view/home/to_login_page.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:get/get.dart';
 
@@ -40,12 +42,15 @@ class _OrderPageState extends State<OrderPage>
     "yAxis": ["6", "10", "111", "45", "80"],
   }.obs;
 
+  bool notLogin = false;
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
     timeStart.value = Utils().getCurrentDate();
     timeEnd.value = Utils().getCurrentDate();
+    notLogin = Global.userInfo!.refreshToken == null;
   }
 
   @override
@@ -157,7 +162,7 @@ class _OrderPageState extends State<OrderPage>
                         )),
                   ],
                 ))),
-        body: Obx(() =>
+        body:notLogin?const ToLoginPage(): Obx(() =>
             mainTabIndex.value == 0 ? listDataWidget() : chartDataWidget()),
       ),
     );
