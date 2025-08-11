@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/model/order_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 
 /// 今日の注文カード
@@ -10,7 +11,7 @@ class HomeOrderCard extends StatelessWidget {
   int orderStateIndex;
 
   /// 注文の詳細
-  Map orderDetail;
+  OrderListModelRecords orderDetail;
   // 上部のラジオボタンをクリックした後に実行されるメソッド
   Function()? onTap;
   // 選択されていますか
@@ -33,6 +34,15 @@ class HomeOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String numberText = "";
+    if (orderDetail.psOrderDetails!.isNotEmpty) {
+      for (var data in orderDetail.psOrderDetails!) {
+        numberText == ""
+            ? numberText += '${data!.itemName} ×${data.itemCount}  '
+            : numberText += ' ${data!.itemName} ×${data.itemCount}  ';
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         Routes.goPage('/OrderDetail', param: {
@@ -52,7 +62,7 @@ class HomeOrderCard extends StatelessWidget {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      customWidget.setRichText("", "A3013405769958",
+                      customWidget.setRichText("", orderDetail.orderNo,
                           color: CustomColor.black_3,
                           subtitleColor: CustomColor.black_3,
                           fontSize: 15,
@@ -75,12 +85,12 @@ class HomeOrderCard extends StatelessWidget {
                     ],
                   ),
             Container(
-              margin: EdgeInsets.only(top: 15),
+              margin: const EdgeInsets.only(top: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   customWidget.setText(
-                    "田中",
+                    orderDetail.sendName!,
                     color: CustomColor.black_3,
                     fontSize: 14,
                   ),
@@ -110,17 +120,17 @@ class HomeOrderCard extends StatelessWidget {
                       fontSize: 14,
                       subFontSize: 14,
                       color: CustomColor.black_9),
-                  customWidget.setRichText("受取番号：", "C297",
+                  customWidget.setRichText("受取番号：", orderDetail.pickupNo,
                       margin: const EdgeInsets.only(bottom: 10),
                       fontSize: 14,
                       subFontSize: 14,
                       color: CustomColor.black_9),
-                  customWidget.setRichText("数量：", "竹炭ココナッツバンx1 黑胡麻ロ-ルンx1",
+                  customWidget.setRichText("数量：", numberText,
                       margin: const EdgeInsets.only(bottom: 10),
                       fontSize: 14,
                       subFontSize: 14,
                       color: CustomColor.black_9),
-                  customWidget.setRichText("コメント：", "",
+                  customWidget.setRichText("コメント：", orderDetail.remark,
                       fontSize: 14,
                       subFontSize: 14,
                       color: CustomColor.black_9),
@@ -135,7 +145,7 @@ class HomeOrderCard extends StatelessWidget {
                   children: [
                     customWidget.setText(isStorePickup ? "引取時間：" : "配達時間：",
                         color: CustomColor.gray_6, fontSize: 12),
-                    customWidget.setText("2025-07-25",
+                    customWidget.setText(orderDetail.appointmentTime!,
                         color: CustomColor.black_3, fontSize: 16),
                   ],
                 ),
@@ -200,7 +210,7 @@ class HomeOrderCard extends StatelessWidget {
                     children: [
                       customWidget.setText("送状番号",
                           color: CustomColor.gray_6, fontSize: 12),
-                      customWidget.setText("YD03161240",
+                      customWidget.setText(orderDetail.sendNo!,
                           color: CustomColor.black_3, fontSize: 16),
                     ],
                   ),

@@ -174,14 +174,7 @@ class _OrderPageState extends State<OrderPage>
       color: CustomColor.redE8,
       onRefresh: () async => getData(0),
       child: listData.isEmpty
-          ? CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                    child: Center(
-                        child: customWidget.setAssetsImg("no_data_2.png",
-                            width: 160, height: 135)))
-              ],
-            )
+          ? customWidget.noData()
           : ListView.builder(
               controller: _scrollController,
               shrinkWrap: true,
