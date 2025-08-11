@@ -71,6 +71,7 @@ dependencies:
   permission_handler: ^11.3.1   # 权限
   photo_manager: ^3.6.4 # 图片选择
   wechat_assets_picker: ^9.5.1
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,17 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
-import 'package:flutter_asakusa_bakery_store/common/utils.dart';
-import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
-import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
+import 'package:flutter_asakusa_bakery_store/common/refreshable_list_view.dart';
+import 'package:flutter_asakusa_bakery_store/page/home/mixin/home_page_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/home_order_card.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/to_login_page.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 
 /// 主页
 class HomePage extends StatefulWidget {
@@ -22,62 +18,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, HomePageMixin {
   late AnimationController _controller;
-  TextEditingController _editcontroller = TextEditingController();
-  // 订单状态
-  RxInt orderStateIndex = 0.obs;
-  // 订单状态组件
-  List orderState = [
-    {
-      "selected_icon": "order_state_make_select@3x.png",
-      "un_selected_icon": "order_state_make@3x.png",
-      "name": '製造中'
-    },
-    {
-      "selected_icon": "order_state_receive_select@3x.png",
-      "un_selected_icon": "order_state_receive@3x.png",
-      "name": '出荷待'
-    },
-    {
-      "selected_icon": "order_state_mail_select@3x.png",
-      "un_selected_icon": "order_state_mail@3x.png",
-      "name": '出荷済'
-    },
-    {
-      "selected_icon": "order_state_finish_select@3x.png",
-      "un_selected_icon": "order_state_finish@3x.png",
-      "name": '完了'
-    },
-  ];
-  // tab
-  RxInt tabIndex = 0.obs;
-  RxList<String> tabs = ["すべて", "配達", "引取"].obs;
-  // false：配達 true：引取
-  List orderDetails = [true, false, false];
-  List<RxBool> orderDetailsSelected = <RxBool>[].obs;
-
-  RxString time = "".obs;
-  // 是否全选
-  RxBool isAllSelected = false.obs;
-
-  bool notLogin = false;
-
-  RxInt pageNum = 1.obs;
-  int pageSize = 10;
-  RxString isSend = "0".obs;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    orderDetailsSelected.assignAll(
-      List.generate(orderDetails.length, (_) => false.obs),
-    );
     // time.value = Utils().getCurrentDate();
     time.value = '2025-07-28';
     notLogin = Global.userInfo!.refreshToken == null;
-    getOrderList();
+    onRefresh();
   }
 
   @override
@@ -86,21 +37,8 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  getOrderList() {
-    backEndRepository.doPost(Constant.orderList,params: {
-      "pageNum":pageNum.value,
-      "pageSize":pageNum.value,
-      "type":'${orderStateIndex.value+=1}',
-      "orderDate":time.value,
-      "isSend":isSend.value
-    }, successRequest: (res){
-      print("res -------------------- $res");
-    });
-  }
-
-  /// 编辑单号弹窗
   void _editTrackingPopup() {
-    Widget widget = customWidget.setTextFieldForLogin(_editcontroller,
+    Widget widget = customWidget.setTextFieldForLogin(editcontroller,
         hintText: "番号を入カしてください",
         suffix: Container(
           padding: const EdgeInsets.all(10),
@@ -193,23 +131,16 @@ class _HomePageState extends State<HomePage>
                           fontSize: 12,
                           onTap: () {
                             orderStateIndex.value = i;
+                            orderDetailsSelected.value = [];
                             if (orderStateIndex.value == 2) {
                               tabs.value = ["すべて", "配達"];
                             } else {
                               tabs.value = ["すべて", "配達", "引取"];
                             }
-                            isAllSelected.value = false;
-                            if (isAllSelected.value) {
-                              orderDetailsSelected.assignAll(
-                                  orderDetailsSelected
-                                      .map((e) => true.obs)
-                                      .toList());
-                            } else {
-                              orderDetailsSelected.assignAll(
-                                  orderDetailsSelected
-                                      .map((e) => false.obs)
-                                      .toList());
-                            }
+                            tabIndex.value = 0;
+                            isAllSelectedMail.value = false;
+                            isAllSelectedStorePickup.value = false;
+                            onRefresh();
                           }));
                     })),
               ),
@@ -232,87 +163,70 @@ class _HomePageState extends State<HomePage>
                                     : Colors.transparent,
                                 lineTopMargin: 2, onTap: () {
                               tabIndex.value = i;
+                              orderDetailsSelected.value = [];
+                              judgeTheValueOfIsSend();
+                              onRefresh();
                             }));
                       }),
                     )),
               ),
-              Expanded(
-                  child: notLogin
-                      ? const ToLoginPage()
-                      : SingleChildScrollView(
-                          child: Obx(() => Column(
-                                children:
-                                    List.generate(orderDetails.length, (i) {
-                                  final selected =
-                                      orderDetailsSelected[i].value; // 读一次即可
-                                  Widget widget = Container();
-                                  if (tabIndex.value == 0) {
-                                    widget = Obx(
-                                      () => HomeOrderCard(
-                                        orderStateIndex: orderStateIndex.value,
-                                        orderDetail: {},
-                                        isSelected: selected,
-                                        isStorePickup: orderDetails[i],
-                                        onTap: () =>
-                                            orderDetailsSelected[i].toggle(),
-                                        editTrackingPopup: _editTrackingPopup,
-                                        finishOnTap: () {},
-                                      ),
-                                    );
-                                  }
-                                  if (tabIndex.value == 1) {
-                                    widget = orderDetails[i]
-                                        ? Container()
-                                        : Obx(
-                                            () => HomeOrderCard(
-                                              orderStateIndex:
-                                                  orderStateIndex.value,
-                                              orderDetail: {},
-                                              isSelected: selected,
-                                              isStorePickup: orderDetails[i],
-                                              onTap: () =>
-                                                  orderDetailsSelected[i]
-                                                      .toggle(),
-                                              editTrackingPopup:
-                                                  _editTrackingPopup,
-                                              finishOnTap: () {},
-                                            ),
-                                          );
-                                  }
-                                  if (tabIndex.value == 2) {
-                                    if (orderStateIndex.value == 2) {
-                                      widget = Container();
-                                    } else {
-                                      widget = !orderDetails[i]
-                                          ? Container()
-                                          : Obx(
-                                              () => HomeOrderCard(
-                                                orderStateIndex:
-                                                    orderStateIndex.value,
-                                                orderDetail: {},
-                                                isSelected: selected,
-                                                isStorePickup: orderDetails[i],
-                                                onTap: () =>
-                                                    orderDetailsSelected[i]
-                                                        .toggle(),
-                                                editTrackingPopup:
-                                                    _editTrackingPopup,
-                                                finishOnTap: () {},
-                                              ),
-                                            );
-                                    }
-                                  }
-                                  return widget;
-                                }),
-                              )),
-                        )),
+              notLogin
+                  ? const Expanded(child: ToLoginPage())
+                  : Expanded(
+                      child: Obx(() => records.isEmpty
+                          ? customWidget.noData()
+                          : RefreshableListView(
+                              refreshController: refreshController,
+                              onRefresh: onRefresh,
+                              onLoading: onLoading,
+                              itemWidget: (context) => SingleChildScrollView(
+                                child: Obx(
+                                  () => Column(
+                                    children:
+                                        List.generate(records.length, (i) {
+                                      bool isSelected = false;
+                                      if (tabIndex.value == 0) {
+                                        if(isAllSelectedMail.value){
+                                          records[i].isSend == 1?isSelected = true:isSelected = false;
+                                        }
+                                        if(isAllSelectedStorePickup.value){
+                                          records[i].isSend == 0?isSelected = true:isSelected = false;
+                                        }
+                                      }else if(tabIndex.value == 1 && isAllSelectedMail.value){
+                                        records[i].isSend == 1?isSelected = true:isSelected = false;
+                                      }else if(tabIndex.value == 0 && isAllSelectedStorePickup.value){
+                                        records[i].isSend == 0?isSelected = true:isSelected = false;
+                                      }
+                                      orderDetailsSelected.add(isSelected.obs);
+                                      return Obx(
+                                        () => HomeOrderCard(
+                                          orderStateIndex:
+                                              orderStateIndex.value,
+                                          orderDetail: records[i],
+                                          isSelected:
+                                              orderDetailsSelected[i].value,
+                                          isStorePickup: records[i].isSend == 0,
+                                          onTap: () =>
+                                              orderDetailsSelected[i].toggle(),
+                                          editTrackingPopup: _editTrackingPopup,
+                                          finishOnTap: () {},
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ),
+                              ),
+                            )),
+                    ),
               Obx(() =>
                   (orderStateIndex.value == 0 || orderStateIndex.value == 1) ||
                           notLogin
                       ? const SizedBox(
                           height: 70,
                         )
-                      : Container())
+                      : Container(
+                          height: 50,
+                        ))
             ],
           ),
           Positioned(
@@ -339,55 +253,43 @@ class _HomePageState extends State<HomePage>
                         children: [
                           Row(
                             children: [
-                              customWidget.setOutLinedButton("全ての郵送",
-                                  circular: 8.0,
-                                  minimumSize: const Size(79, 35),
-                                  fontColor: CustomColor.black_3,
-                                  lineColor: CustomColor.blackD,
-                                  linewidth: 0.5, onPressed: () {
-                                if (tabIndex.value == 0) {
-                                  isAllSelected.value = !isAllSelected.value;
-                                  if (isAllSelected.value) {
-                                    orderDetailsSelected.assignAll(
-                                        orderDetailsSelected
-                                            .map((e) => true.obs)
-                                            .toList());
-                                  } else {
-                                    orderDetailsSelected.assignAll(
-                                        orderDetailsSelected
-                                            .map((e) => false.obs)
-                                            .toList());
-                                  }
-                                }
-                              }),
-                              customWidget.setOutLinedButton("全ての引取",
-                                  circular: 8.0,
-                                  minimumSize: const Size(79, 35),
-                                  fontColor: CustomColor.black_3,
-                                  lineColor: CustomColor.blackD,
-                                  margin: EdgeInsets.only(left: 10),
-                                  linewidth: 0.5, onPressed: () {
-                                if (tabIndex.value == 0) {
-                                  isAllSelected.value = !isAllSelected.value;
-                                  if (isAllSelected.value) {
-                                    orderDetailsSelected.assignAll(
-                                        orderDetailsSelected
-                                            .map((e) => true.obs)
-                                            .toList());
-                                  } else {
-                                    orderDetailsSelected.assignAll(
-                                        orderDetailsSelected
-                                            .map((e) => false.obs)
-                                            .toList());
-                                  }
-                                }
-                              }),
+                              Obx(() =>
+                                  tabIndex.value == 0 || tabIndex.value == 1
+                                      ? customWidget.setOutLinedButton("全ての郵送",
+                                          circular: 8.0,
+                                          minimumSize: const Size(79, 35),
+                                          fontColor: CustomColor.black_3,
+                                          lineColor: CustomColor.blackD,
+                                          linewidth: 0.5, onPressed: () {
+                                          isAllSelectedMail.value =
+                                              !isAllSelectedMail.value;
+                                          isAllSelectedStorePickup.value = false;
+                                          allSelectedMail();
+                                        })
+                                      : Container()),
+                              Obx(() => tabIndex.value == 0 ||
+                                      tabIndex.value == 2
+                                  ? customWidget.setOutLinedButton("全ての引取",
+                                      circular: 8.0,
+                                      minimumSize: const Size(79, 35),
+                                      fontColor: CustomColor.black_3,
+                                      lineColor: CustomColor.blackD,
+                                      margin: EdgeInsets.only(
+                                          left: tabIndex.value == 2 ? 0 : 10),
+                                      linewidth: 0.5, onPressed: () {
+                                      isAllSelectedStorePickup.value =
+                                          !isAllSelectedStorePickup.value;
+                                      isAllSelectedMail.value = false;
+                                      allSelectedStorePickup();
+                                    })
+                                  : Container()),
                             ],
                           ),
                           customWidget.setCupertinoButton(
                               orderStateIndex.value == 0 ? "一括処理" : "受け取り/発送済み",
                               minimumSize: 120,
-                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               height: 35,
                               fontWeight: FontWeight.normal,
                               fontSize: 12,

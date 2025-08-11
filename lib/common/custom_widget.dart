@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_pickers/pickers.dart';
 import 'package:flutter_pickers/style/picker_style.dart';
 import 'package:flutter_pickers/time_picker/model/date_mode.dart';
@@ -285,6 +286,17 @@ class CustomWidget {
         padding: padding,
         margin: margin,
         child: Image.network(imgPath, width: width, height: height, fit: fit));
+  }
+
+  Widget noData() {
+    return CustomScrollView(
+      slivers: [
+        SliverFillRemaining(
+            child: Center(
+                child: customWidget.setAssetsImg("no_data_2.png",
+                    width: 160, height: 135)))
+      ],
+    );
   }
 
   Widget setContain(
@@ -749,7 +761,9 @@ class CustomWidget {
             content: Center(
                 child: isChild
                     ? child
-                    : setTextOverflow(content!, fontWeight: FontWeight.w500,margin: EdgeInsets.only(bottom: 10))),
+                    : setTextOverflow(content!,
+                        fontWeight: FontWeight.w500,
+                        margin: EdgeInsets.only(bottom: 10))),
             insetAnimationDuration: const Duration(milliseconds: 500),
             insetAnimationCurve: Curves.linear,
             actions: [
@@ -912,25 +926,27 @@ class CustomWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              cancelBtnIsOutLinedButton?setOutLinedButton(
-                cancelText,
-                minimumSize: const Size(90, 40),
-                circular: 10,
-                fontColor: CustomColor.black_3,
-                lineColor: CustomColor.blackD,
-                fontSize: 15,
-                onPressed: () => Get.back(),
-              ):setCupertinoButton(
-                submitText,
-                height: 40,
-                minimumSize: 90,
-                textColor: CustomColor.black_3,
-                color: CustomColor.blackD,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                fontSize: 15,
-                onPressed: () => Get.back(),
-                fontWeight: FontWeight.normal,
-              ),
+              cancelBtnIsOutLinedButton
+                  ? setOutLinedButton(
+                      cancelText,
+                      minimumSize: const Size(90, 40),
+                      circular: 10,
+                      fontColor: CustomColor.black_3,
+                      lineColor: CustomColor.blackD,
+                      fontSize: 15,
+                      onPressed: () => Get.back(),
+                    )
+                  : setCupertinoButton(
+                      submitText,
+                      height: 40,
+                      minimumSize: 90,
+                      textColor: CustomColor.black_3,
+                      color: CustomColor.blackD,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      fontSize: 15,
+                      onPressed: () => Get.back(),
+                      fontWeight: FontWeight.normal,
+                    ),
               setCupertinoButton(
                 submitText,
                 height: 40,

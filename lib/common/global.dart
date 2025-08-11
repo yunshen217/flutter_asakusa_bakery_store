@@ -18,8 +18,8 @@ class Global {
       defValue: UserModel(userName: "ログイン", userId: ""));
 
   static Future<void> putUserInfo(dynamic user) async {
-  try {
-    print("ユーザー情報の保存を開始しています...");
+    try {
+      print("ユーザー情報の保存を開始しています...");
     bool success = await SpUtil.putObject(Constant.USER_MODEL, user) ?? false;
     if (success) {
       print("ユーザー情報が保存されました： ${user}");
