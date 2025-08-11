@@ -66,7 +66,7 @@ class OrderListModelRecords {
 */
 
   int? id;
-  // 0 キャンセル 1 支払待 2 注文確定 3 製作中 4 焼き上り 5 出荷済 6 受取済
+  // 1-CONFIRMED/MAKING，2-READY，3-DISPATCHED，4-COMPLETED
   int? orderStatus;
   int? isSend;
   String? updateTime;

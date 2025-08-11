@@ -62,6 +62,8 @@ class Constant {
   static final refreshToken = "${base_url}merchant/auth/refresh-token";
   static final resetAccountPassword = "${base_url}merchant/auth/password/reset";
   static final orderList = "${base_url}merchant/orders";
+  static final orderStatus = "${base_url}merchant/orders/status";
+  static final orderStatusBatch = "${base_url}merchant/orders/status/batch";
 
 
 

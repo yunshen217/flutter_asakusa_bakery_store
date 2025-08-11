@@ -53,7 +53,7 @@ class _PersonPageState extends State<PersonPage>
                   margin: EdgeInsets.fromLTRB(15, 55, 15, 15),
                   padding: EdgeInsets.all(15),
                   SizedBox(
-                    width: Get.width - 30 - 30,
+                    width: MediaQuery.of(context).size.width - 30 - 30,
                     child: Column(
                       children: [
                         customWidget.setAssetsImg(

@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage>
     // time.value = Utils().getCurrentDate();
     time.value = '2025-07-28';
     notLogin = Global.userInfo!.refreshToken == null;
+    print("notLogin -------------------- $notLogin ----------------------- ${Global.userInfo!.refreshToken == null}");
     onRefresh();
   }
 
@@ -131,7 +132,7 @@ class _HomePageState extends State<HomePage>
                           fontSize: 12,
                           onTap: () {
                             orderStateIndex.value = i;
-                            orderDetailsSelected.value = [];
+                            orderDetailsSelectedId.value = [];
                             if (orderStateIndex.value == 2) {
                               tabs.value = ["すべて", "配達"];
                             } else {
@@ -163,7 +164,6 @@ class _HomePageState extends State<HomePage>
                                     : Colors.transparent,
                                 lineTopMargin: 2, onTap: () {
                               tabIndex.value = i;
-                              orderDetailsSelected.value = [];
                               judgeTheValueOfIsSend();
                               onRefresh();
                             }));
@@ -184,32 +184,49 @@ class _HomePageState extends State<HomePage>
                                   () => Column(
                                     children:
                                         List.generate(records.length, (i) {
-                                      bool isSelected = false;
-                                      if (tabIndex.value == 0) {
-                                        if(isAllSelectedMail.value){
-                                          records[i].isSend == 1?isSelected = true:isSelected = false;
+                                      RxBool isSelected = false.obs;
+                                      if (orderDetailsSelectedId.isNotEmpty) {
+                                        for (var item
+                                            in orderDetailsSelectedId) {
+                                          if (records[i].id == item) {
+                                            isSelected.value = true;
+                                          }
                                         }
-                                        if(isAllSelectedStorePickup.value){
-                                          records[i].isSend == 0?isSelected = true:isSelected = false;
-                                        }
-                                      }else if(tabIndex.value == 1 && isAllSelectedMail.value){
-                                        records[i].isSend == 1?isSelected = true:isSelected = false;
-                                      }else if(tabIndex.value == 0 && isAllSelectedStorePickup.value){
-                                        records[i].isSend == 0?isSelected = true:isSelected = false;
                                       }
-                                      orderDetailsSelected.add(isSelected.obs);
                                       return Obx(
                                         () => HomeOrderCard(
                                           orderStateIndex:
                                               orderStateIndex.value,
                                           orderDetail: records[i],
-                                          isSelected:
-                                              orderDetailsSelected[i].value,
+                                          isSelected: isSelected.value,
                                           isStorePickup: records[i].isSend == 0,
-                                          onTap: () =>
-                                              orderDetailsSelected[i].toggle(),
+                                          onTap: () {
+                                            isSelected.toggle();
+                                            if (isSelected.value) {
+                                              orderDetailsSelectedId
+                                                  .add(records[i].id);
+                                            } else {
+                                              orderDetailsSelectedId
+                                                  .remove(records[i].id);
+                                            }
+                                          },
                                           editTrackingPopup: _editTrackingPopup,
-                                          finishOnTap: () {},
+                                          cancelOrder: () {
+                                            customWidget.showConfirmDialog(
+                                              context,
+                                              title: "",
+                                              child: customWidget.setText(
+                                                  "キャンセルを確認しますか?",
+                                                  textAlign: TextAlign.center),
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      bottom: 20),
+                                              onPressed: () => cancelOrder(
+                                                  '${records[i].id}'),
+                                            );
+                                          },
+                                          finishOnTap: () => getOrderStatus(
+                                              '${records[i].id}'),
                                         ),
                                       );
                                     }),
@@ -220,13 +237,9 @@ class _HomePageState extends State<HomePage>
                     ),
               Obx(() =>
                   (orderStateIndex.value == 0 || orderStateIndex.value == 1) ||
-                          notLogin
-                      ? const SizedBox(
-                          height: 70,
-                        )
-                      : Container(
-                          height: 50,
-                        ))
+                          !notLogin
+                      ? const SizedBox( height: 70,)
+                      : Container(height: 0,))
             ],
           ),
           Positioned(
@@ -253,20 +266,20 @@ class _HomePageState extends State<HomePage>
                         children: [
                           Row(
                             children: [
-                              Obx(() =>
-                                  tabIndex.value == 0 || tabIndex.value == 1
-                                      ? customWidget.setOutLinedButton("全ての郵送",
-                                          circular: 8.0,
-                                          minimumSize: const Size(79, 35),
-                                          fontColor: CustomColor.black_3,
-                                          lineColor: CustomColor.blackD,
-                                          linewidth: 0.5, onPressed: () {
-                                          isAllSelectedMail.value =
-                                              !isAllSelectedMail.value;
-                                          isAllSelectedStorePickup.value = false;
-                                          allSelectedMail();
-                                        })
-                                      : Container()),
+                              Obx(() => tabIndex.value == 0 ||
+                                      tabIndex.value == 1
+                                  ? customWidget.setOutLinedButton("全ての郵送",
+                                      circular: 8.0,
+                                      minimumSize: const Size(79, 35),
+                                      fontColor: CustomColor.black_3,
+                                      lineColor: CustomColor.blackD,
+                                      linewidth: 0.5, onPressed: () {
+                                      isAllSelectedMail.value =
+                                          !isAllSelectedMail.value;
+                                      isAllSelectedStorePickup.value = false;
+                                      allSelectedMail();
+                                    })
+                                  : Container()),
                               Obx(() => tabIndex.value == 0 ||
                                       tabIndex.value == 2
                                   ? customWidget.setOutLinedButton("全ての引取",
@@ -295,7 +308,7 @@ class _HomePageState extends State<HomePage>
                               fontSize: 12,
                               textColor: CustomColor.black_3,
                               color: CustomColor.redE8,
-                              onPressed: () {})
+                              onPressed: () => getOrderStatusBatch())
                         ],
                       ),
                     )))
