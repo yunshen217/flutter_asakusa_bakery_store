@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/order_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get.dart';
@@ -35,7 +38,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
   // tab
   RxInt tabIndex = 0.obs;
   RxList<String> tabs = ["すべて", "配達", "引取"].obs;
-  RxList<RxBool> orderDetailsSelected = <RxBool>[].obs;
+  RxList orderDetailsSelectedId = [].obs;
 
   RxString time = "".obs;
   // 配達
@@ -62,7 +65,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
     refreshController.loadComplete();
   }
 
-  getOrderList() {
+  getOrderList() async {
     int num = orderStateIndex.value + 1;
     print("orderStateIndex ----------------- ${num}");
     Map<String, dynamic> param = {
@@ -73,7 +76,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
       "isSend": tabIndex.value == 0 ? null : isSend.value
     };
     print("map ------------------ $param");
-    backEndRepository.doPost(Constant.orderList, params: param,
+    await backEndRepository.doPost(Constant.orderList, params: param,
         successRequest: (res) {
       print("res ---------------- ${res["data"]}");
       OrderListModel orderList = OrderListModel.fromJson(res["data"]);
@@ -81,12 +84,41 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
         final newRecords =
             orderList.records!.whereType<OrderListModelRecords>().toList();
         if (pageNum.value == 1) {
-          records.assignAll(newRecords);
+          records.assignAll(newRecords);  
         } else {
           records.addAll(newRecords);
         }
       }
     });
+  }
+
+  getOrderStatus(String id) async{
+    Map<String, dynamic> param = {
+      "id":id,
+      "type":'${orderStateIndex.value + 1}'
+    };
+    await backEndRepository.doPut(Constant.orderStatus,params: param,successRequest: (result) {
+      customWidget.toastShowNotIcon("更新完了");
+      onRefresh();
+    },);
+  }
+
+  cancelOrder(String id) async{
+    Get.back();
+    await backEndRepository.doGet('${Constant.base_url}merchant/orders/$id/refund',successRequest: (result) {
+      onRefresh();
+    },);
+  }
+
+  getOrderStatusBatch() async{
+    Map<String, dynamic> param = {
+      "idList":orderDetailsSelectedId,
+      "type":'${orderStateIndex.value + 1}'
+    };
+    await backEndRepository.doPut(Constant.orderStatusBatch,params: param,successRequest: (result) {
+      customWidget.toastShowNotIcon("更新完了");
+      onRefresh();
+    },);
   }
 
   judgeTheValueOfIsSend() {
@@ -103,32 +135,31 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
   }
 
   allSelectedMail() {
-    if (tabIndex.value == 0) {
-      for (var i = 0; i < records.length; i++) {
-        if (records[i].isSend == 1) {
-          orderDetailsSelected[i].value = isAllSelectedMail.value;
-        }else{
-          orderDetailsSelected[i].value = false;
-        }
+    orderDetailsSelectedId.value = [];
+    for (final data in records) {
+      final id = data.id;
+
+      if (tabIndex.value == 0 &&
+          isAllSelectedMail.value &&
+          int.parse(data.isSend.toString()) == 1) {
+        orderDetailsSelectedId.add(id);
+      } else if (tabIndex.value == 1) {
+        orderDetailsSelectedId.add(id);
       }
-    } else {
-      orderDetailsSelected
-          .assignAll(records.map((e) => isAllSelectedMail.value.obs));
     }
   }
 
-  allSelectedStorePickup(){
-    if (tabIndex.value == 0) {
-      for (var i = 0; i < records.length; i++) {
-        if (records[i].isSend == 0) {
-          orderDetailsSelected[i].value = isAllSelectedStorePickup.value;
-        }else{
-          orderDetailsSelected[i].value = false;
-        }
+  allSelectedStorePickup() {
+    orderDetailsSelectedId.value = [];
+    for (final data in records) {
+      final id = data.id;
+      if (tabIndex.value == 0 &&
+          isAllSelectedStorePickup.value &&
+          int.parse(data.isSend.toString()) == 0) {
+        orderDetailsSelectedId.add(id);
+      } else if (tabIndex.value == 2) {
+        orderDetailsSelectedId.add(id);
       }
-    } else {
-      orderDetailsSelected
-          .assignAll(records.map((e) => isAllSelectedStorePickup.value.obs));
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/order_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
+import 'package:get/get.dart';
 
 /// 今日の注文カード
 // ignore: must_be_immutable
@@ -22,6 +23,7 @@ class HomeOrderCard extends StatelessWidget {
   Function()? finishOnTap;
   // 編集番号ボタン
   Function()? editTrackingPopup;
+  Function()? cancelOrder;
   HomeOrderCard(
       {super.key,
       required this.orderStateIndex,
@@ -30,7 +32,8 @@ class HomeOrderCard extends StatelessWidget {
       this.isSelected,
       required this.isStorePickup,
       this.editTrackingPopup,
-      this.finishOnTap});
+      this.finishOnTap,
+      this.cancelOrder});
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +49,8 @@ class HomeOrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Routes.goPage('/OrderDetail', param: {
-          "isStorePickup": isStorePickup,
-          "orderStateIndex": orderStateIndex
+          "orderStateIndex": orderStateIndex,
+          "id":orderDetail.id
         });
       },
       child: Container(
@@ -69,7 +72,7 @@ class HomeOrderCard extends StatelessWidget {
                           subFontSize: 18),
                       if (orderStateIndex == 0 || orderStateIndex == 1) ...[
                         GestureDetector(
-                          onTap: onTap,
+                          onTap: ()=>onTap!(),
                           child: customWidget.setAssetsImg(
                               isSelected != null && isSelected == true
                                   ? "order_circle_select@3x.png"
@@ -102,11 +105,12 @@ class HomeOrderCard extends StatelessWidget {
                         fontSize: 15,
                         textColor: CustomColor.black_3,
                         color: CustomColor.grayC7,
-                        onPressed: finishOnTap)
+                        onPressed: cancelOrder)
                 ],
               ),
             ),
             Container(
+              width: Get.width-20,
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
