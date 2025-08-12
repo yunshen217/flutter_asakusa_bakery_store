@@ -1,5 +1,5 @@
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_asakusa_bakery_store/main.dart';
 import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/page/order/mixin/reservation_details_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
@@ -12,74 +13,32 @@ class ReservationDetails extends StatefulWidget {
   State<ReservationDetails> createState() => _ReservationDetailsState();
 }
 
-class _ReservationDetailsState extends State<ReservationDetails> {
-  RxString time = "2024-03-21".obs;
-
-  /// 詳細データリスト
-  RxList detailsData = [
-    {
-      "name": "test",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "12"
-    },
-    {
-      "name": "黑骑士バン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "12"
-    },
-    {
-      "name": "コ-ヒ-クリ-ムチ-ズバン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "12"
-    },
-    {
-      "name": "ココナッツバン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "0"
-    },
-    {
-      "name": "黑骑士バン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "2"
-    },
-    {
-      "name": "コ-ヒ-クリ-ムチ-ズバン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "0"
-    },
-    {
-      "name": "ココナッツバン",
-      "plannedQuantity": "12",
-      "orderNumber": "0",
-      "inventory": "3"
-    }
-  ].obs;
-
-  RxList<TextEditingController> controllerList = <TextEditingController>[].obs;
-  RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
+class _ReservationDetailsState extends State<ReservationDetails> with ReservationDetailsMixin{
+  // time
+  final arguments = Get.arguments;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controllerList.clear();
+    time.value = arguments["time"]??"";
+    getPlansItems();
     controllerList.assignAll(
       List.generate(detailsData.length, (_) => TextEditingController()),
     );
     focusNodeList.assignAll(
       List.generate(detailsData.length, (_) => FocusNode()),
     );
+
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     for (final c in controllerList) {
+      c.dispose();
+    }
+    for (final c in focusNodeList) {
       c.dispose();
     }
     super.dispose();
@@ -133,28 +92,28 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                         // 按钮
                         Row(
                           children: [
-                            customWidget.setCupertinoButton("注文数書戾",
-                                fontSize: 12,
-                                textColor: CustomColor.black_3,
-                                height: 30,
-                                circular: 8,
-                                fontWeight: FontWeight.normal,
-                                minimumSize: 85,
-                                margin: const EdgeInsets.only(right: 10),
-                                onPressed: () {
-                              customWidget.showConfirmDialog(context,
-                                  title: "",
-                                  contentPadding:const EdgeInsets.fromLTRB(24, 0, 24, 10),
-                                  barrierDismissible:false,
-                                  useDefaultWidth:true,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  child: customWidget.setText(
-                                      "全商品の注文数を計画数に上書きしますか?",
-                                      maxLines: 100,
-                                      textAlign: TextAlign.center,
-                                      color: CustomColor.black_9),
-                                  onPressed: (){});
-                            }),
+                            // customWidget.setCupertinoButton("注文数書戾",
+                            //     fontSize: 12,
+                            //     textColor: CustomColor.black_3,
+                            //     height: 30,
+                            //     circular: 8,
+                            //     fontWeight: FontWeight.normal,
+                            //     minimumSize: 85,
+                            //     margin: const EdgeInsets.only(right: 10),
+                            //     onPressed: () {
+                            //   customWidget.showConfirmDialog(context,
+                            //       title: "",
+                            //       contentPadding:const EdgeInsets.fromLTRB(24, 0, 24, 10),
+                            //       barrierDismissible:false,
+                            //       useDefaultWidth:true,
+                            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //       child: customWidget.setText(
+                            //           "全商品の注文数を計画数に上書きしますか?",
+                            //           maxLines: 100,
+                            //           textAlign: TextAlign.center,
+                            //           color: CustomColor.black_9),
+                            //       onPressed: (){});
+                            // }),
                             customWidget.setCupertinoButton("予約中止",
                                 fontSize: 12,
                                 textColor: CustomColor.black_3,

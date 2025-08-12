@@ -30,8 +30,6 @@ class BackEndRepository {
 
   //header start
   static final Map<String, dynamic> _optionsMap = {
-    'connectTimeout': 15 * 1000,
-    'receiveTimeout': 15 * 1000,
     "userId": Global.token,
     'ContentType': ContentType.parse("application/json;charset=UTF-8"),
     // "responseType": ResponseType.json,
@@ -62,6 +60,8 @@ class BackEndRepository {
     ErrorResponse? errorRequest,
     Map<String, dynamic>? params,
   }) async {
+    print('url = $url');
+print('params = $params');
     try {
       Options requestOption;
       if (url == Constant.getCreditCardToken) {

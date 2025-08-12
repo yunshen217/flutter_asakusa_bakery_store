@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
+import 'package:flutter_asakusa_bakery_store/common/refreshable_list_view.dart';
 import 'package:flutter_asakusa_bakery_store/common/utils.dart';
+import 'package:flutter_asakusa_bakery_store/page/order/mixin/order_page_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/to_login_page.dart';
@@ -18,31 +19,8 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, OrderPageMixin {
   late AnimationController _controller;
-  final ScrollController _scrollController = ScrollController();
-
-  List<Tab> tabs = [const Tab(text: "リスト"), const Tab(text: "グラフ")];
-
-  /// リスト ： 0、グラフ ： 1
-  RxInt mainTabIndex = 0.obs;
-
-  /// 初期時間
-  RxString timeStart = "".obs;
-
-  /// 終了時間
-  RxString timeEnd = "".obs;
-
-  /// リストデータ
-  RxList listData = [1, 1, 1].obs;
-
-  /// グラフデータ
-  RxMap chartsData = {
-    "xAxis": ['7/1', '7/2', '7/2', '7/2', '7/2'],
-    "yAxis": ["6", "10", "111", "45", "80"],
-  }.obs;
-
-  bool notLogin = false;
 
   @override
   void initState() {
@@ -50,7 +28,9 @@ class _OrderPageState extends State<OrderPage>
     _controller = AnimationController(vsync: this);
     timeStart.value = Utils().getCurrentDate();
     timeEnd.value = Utils().getCurrentDate();
+    // getDetailData();
     notLogin = Global.userInfo!.refreshToken == null;
+    getOrderList();
   }
 
   @override
@@ -84,8 +64,8 @@ class _OrderPageState extends State<OrderPage>
       child: BaseScaffold(
         backgroundColor: CustomColor.bg,
         appBar: customWidget.setAppBar(
-            isLeftShow: false, 
-            centerTitle: false, 
+            isLeftShow: false,
+            centerTitle: false,
             isTitle: false,
             titleChild: customWidget.setText("計画&予約",
                 fontSize: 18, color: CustomColor.black_3),
@@ -113,8 +93,7 @@ class _OrderPageState extends State<OrderPage>
                           "mainTabIndex.value --------------- ${mainTabIndex.value}");
                     }))),
             bottom: PreferredSize(
-                preferredSize:
-                    const Size.fromHeight(50), 
+                preferredSize: const Size.fromHeight(50),
                 child: Column(
                   children: [
                     Container(
@@ -136,6 +115,7 @@ class _OrderPageState extends State<OrderPage>
                                     minYear: DateTime.now().year,
                                     confirm: (date) {
                                       timeStart.value = date;
+                                      onRefresh();
                                     },
                                   );
                                 })),
@@ -155,6 +135,7 @@ class _OrderPageState extends State<OrderPage>
                                         return;
                                       }
                                       timeEnd.value = date;
+                                      onRefresh();
                                     },
                                   );
                                 })),
@@ -162,73 +143,94 @@ class _OrderPageState extends State<OrderPage>
                         )),
                   ],
                 ))),
-        body:notLogin?const ToLoginPage(): Obx(() =>
-            mainTabIndex.value == 0 ? listDataWidget() : chartDataWidget()),
+        body: notLogin
+            ? const ToLoginPage()
+            : Obx(() =>
+                mainTabIndex.value == 0 ? listDataWidget() : chartDataWidget()),
       ),
     );
   }
 
-
   Widget listDataWidget() {
-    return RefreshIndicator(
-      color: CustomColor.redE8,
-      onRefresh: () async => getData(0),
-      child: listData.isEmpty
+    return RefreshableListView(
+      refreshController: refreshController,
+      onRefresh: onRefresh,
+      onLoading: onLoading,
+      itemWidget: (context) => orderPlansData.isEmpty
           ? customWidget.noData()
-          : ListView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 15, vertical: 10), 
-              itemBuilder: (_, index) {
-                if (listData.isEmpty) {
-                  return const SizedBox();
-                }
-                return InkWell(
-                  onTap: () =>Routes.goPage('/ReservationDetails'),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                        color: CustomColor.white,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      children: [
-                        customWidget.setRowText("2024-03-18", "预约中",
-                            text2Color: CustomColor.redE8,
-                            margin: const EdgeInsets.only(bottom: 15)),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 15),
-                          decoration: BoxDecoration(
-                            color: CustomColor.grayF8,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: [
-                              customWidget.setRowText("計画倜数", "20",
-                                  margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("予約倜数", "5",
-                                  margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("当日在庫数", "100",
-                                  margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("予約件数", '0',
-                                  margin: const EdgeInsets.only(bottom: 10)),
-                              customWidget.setRowText("予約金额", '\$ 10',
-                                  margin: const EdgeInsets.only(bottom: 0)),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-              itemCount: listData.length),
+          : SingleChildScrollView(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Obx(() => Column(
+                      children: List.generate(
+                        orderPlansData.length,
+                        (index) {
+                          if (orderPlansData.isEmpty) {
+                            return const SizedBox();
+                          }
+                          final item = orderPlansData[index];
+                          String status = item.status == "1"
+                              ? "準備中"
+                              : (item.status == "2" ? "営業中" : "休み");
+                          return InkWell(
+                            onTap: () => Routes.goPage('/ReservationDetails',param: {"time":item.reserveDate!}),
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              margin: const EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                  color: CustomColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Column(
+                                children: [
+                                  customWidget.setRowText(
+                                      item.reserveDate!, status,
+                                      text2Color: CustomColor.redE8,
+                                      margin:
+                                          const EdgeInsets.only(bottom: 15)),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 15),
+                                    decoration: BoxDecoration(
+                                      color: CustomColor.grayF8,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        customWidget.setRowText(
+                                            "計画倜数", '${item.planCount!}',
+                                            margin: const EdgeInsets.only(
+                                                bottom: 10)),
+                                        customWidget.setRowText(
+                                            "予約倜数", '${item.orderCount!}',
+                                            margin: const EdgeInsets.only(
+                                                bottom: 10)),
+                                        customWidget.setRowText(
+                                            "当日在庫数", "${item.todayInStore}",
+                                            margin: const EdgeInsets.only(
+                                                bottom: 10)),
+                                        customWidget.setRowText(
+                                            "予約件数", '${item.totalCount}',
+                                            margin: const EdgeInsets.only(
+                                                bottom: 10)),
+                                        customWidget.setRowText(
+                                            "予約金额", '\$ ${item.allAmount}',
+                                            margin: const EdgeInsets.only(
+                                                bottom: 0)),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )),
+              ),
+            ),
     );
   }
-
 
   Widget chartBox(String text1, String text2) {
     return Container(
@@ -240,6 +242,12 @@ class _OrderPageState extends State<OrderPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          GestureDetector(
+            onTap: () {
+              getDetailData();
+            },
+            child: Text("hahahha"),
+          ),
           customWidget.setText(text1, fontSize: 12, color: CustomColor.gray_6),
           const SizedBox(
             height: 5,
@@ -249,7 +257,6 @@ class _OrderPageState extends State<OrderPage>
       ),
     );
   }
-
 
   Widget chartDataWidget() {
     return SingleChildScrollView(
@@ -263,15 +270,16 @@ class _OrderPageState extends State<OrderPage>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                chartBox("鄄便番号", "5"),
-                chartBox("商品数", "100"),
-                chartBox("商品の金额", "8200"),
+                Obx(()=>chartBox("郵送件数", sendOrderCount.value)),
+                Obx(()=>chartBox("商品数", totalCount.value)),
+                Obx(()=>chartBox("商品の金额", allAmount.value)),
               ],
             ),
             Container(
               height: 200,
-              margin: EdgeInsets.only(top: 15),
-              child: Obx(() => Echarts(option: '''
+              margin: const EdgeInsets.only(top: 15),
+              child: Obx(() => Echarts(
+                    option: '''
         {
           grid: { left: '3%', right: '4%', bottom: '3%',top:'10%', containLabel: true },
           xAxis: {
@@ -309,7 +317,24 @@ class _OrderPageState extends State<OrderPage>
             }
           }]
         }
-        ''')),
+        ''',
+        extraScript: '''
+            chart.on('click', function(params) {
+              if(params.componentType === 'series') {
+                // var xAxisValue = params.name;
+                // Messager.postMessage(xAxisValue);
+                Messager.postMessage(params.dataIndex.toString());
+              }
+            });
+        ''',
+        onMessage: (String message) {
+          print("00------------$message");
+                final index = int.tryParse(message) ?? -1;
+                sendOrderCount.value = orderPlansData[index].sendOrderCount.toString();
+        totalCount.value = orderPlansData[index].totalCount.toString();
+        allAmount.value = orderPlansData[index].allAmount.toString();
+              },
+            )),
             )
           ],
         ),

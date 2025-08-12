@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
@@ -360,12 +359,23 @@ class _OrderDetailState extends State<OrderDetail> {
                                 color: CustomColor.black_3)
                           ]),
                           TableRow(children: [
-                            customWidget.setTextOverflow("ク-ル料",
+                            customWidget.setTextOverflow("クール料",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
                                 color: CustomColor.gray_6),
                             customWidget.setTextOverflow("￥ ${orderDetailData.value!.refrigerationFee}",
+                                padding: const EdgeInsets.all(5),
+                                fontSize: 12,
+                                color: CustomColor.black_3)
+                          ]),
+                          TableRow(children: [
+                            customWidget.setTextOverflow("獲得ポイント",
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                fontSize: 12,
+                                color: CustomColor.gray_6),
+                            customWidget.setTextOverflow("${orderDetailData.value!.usedPoint}pt",
                                 padding: const EdgeInsets.all(5),
                                 fontSize: 12,
                                 color: CustomColor.black_3)
@@ -381,6 +391,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                 fontSize: 12,
                                 color: CustomColor.black_3)
                           ]),
+                          
                           TableRow(children: [
                             customWidget.setTextOverflow("合計消費税",
                                 padding:
