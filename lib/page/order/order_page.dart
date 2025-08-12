@@ -28,9 +28,9 @@ class _OrderPageState extends State<OrderPage>
     _controller = AnimationController(vsync: this);
     timeStart.value = Utils().getCurrentDate();
     timeEnd.value = Utils().getCurrentDate();
-    // getDetailData();
+    getDetailData();
     notLogin = Global.userInfo!.refreshToken == null;
-    getOrderList();
+    
   }
 
   @override
@@ -242,12 +242,6 @@ class _OrderPageState extends State<OrderPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: () {
-              getDetailData();
-            },
-            child: Text("hahahha"),
-          ),
           customWidget.setText(text1, fontSize: 12, color: CustomColor.gray_6),
           const SizedBox(
             height: 5,
