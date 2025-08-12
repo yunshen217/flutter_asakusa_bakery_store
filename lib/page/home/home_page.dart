@@ -3,6 +3,7 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/refreshable_list_view.dart';
+import 'package:flutter_asakusa_bakery_store/common/utils.dart';
 import 'package:flutter_asakusa_bakery_store/page/home/mixin/home_page_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/home_order_card.dart';
@@ -25,10 +26,9 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    // time.value = Utils().getCurrentDate();
-    time.value = '2025-07-28';
+    time.value = Utils().getCurrentDate();
+    // time.value = '2025-07-28';
     notLogin = Global.userInfo!.refreshToken == null;
-    print("notLogin -------------------- $notLogin ----------------------- ${Global.userInfo!.refreshToken == null}");
     onRefresh();
   }
 
@@ -84,6 +84,7 @@ class _HomePageState extends State<HomePage>
                             minYear: DateTime.now().year,
                             confirm: (date) {
                               time.value = date;
+                              onRefresh();
                             },
                           );
                         },
@@ -237,7 +238,7 @@ class _HomePageState extends State<HomePage>
                     ),
               Obx(() =>
                   (orderStateIndex.value == 0 || orderStateIndex.value == 1) ||
-                          !notLogin
+                          notLogin
                       ? const SizedBox( height: 70,)
                       : Container(height: 0,))
             ],

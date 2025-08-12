@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
@@ -97,6 +96,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
       "id":id,
       "type":'${orderStateIndex.value + 1}'
     };
+    print("Aa112233 --------------- $param");
     await backEndRepository.doPut(Constant.orderStatus,params: param,successRequest: (result) {
       customWidget.toastShowNotIcon("更新完了");
       onRefresh();
@@ -143,7 +143,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
           isAllSelectedMail.value &&
           int.parse(data.isSend.toString()) == 1) {
         orderDetailsSelectedId.add(id);
-      } else if (tabIndex.value == 1) {
+      } else if (tabIndex.value == 1 && isAllSelectedMail.value) {
         orderDetailsSelectedId.add(id);
       }
     }
@@ -157,7 +157,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
           isAllSelectedStorePickup.value &&
           int.parse(data.isSend.toString()) == 0) {
         orderDetailsSelectedId.add(id);
-      } else if (tabIndex.value == 2) {
+      } else if (tabIndex.value == 2 && isAllSelectedStorePickup.value) {
         orderDetailsSelectedId.add(id);
       }
     }

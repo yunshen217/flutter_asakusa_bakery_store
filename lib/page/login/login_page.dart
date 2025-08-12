@@ -33,6 +33,10 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    accountController!.text="1246158996@qq.com";
+    pwController!.text="Aa112233";
+    // accountController!.text="weidong.sun@eagletech-global.com";
+    // pwController!.text="AX98Yn5tHBgyBcW";
   }
 
   @override
@@ -133,12 +137,20 @@ class _LoginPageState extends State<LoginPage>
                                         return;
                                       }
                                     }
+                                     print('''
+{
+                                      "email": ${accountController!.text},
+                                      "password": ${pwController!.text},
+                                      "deviceToken": ${Global.token},
+                                    }
+''');
                                     backEndRepository
                                         .doPost(Constant.login, params: {
                                       "email": accountController!.text,
                                       "password": pwController!.text,
                                       "deviceToken": Global.token
                                     }, successRequest: (res) {
+                                     
                                       print("登录成功返回的数据: $res");
                                       _formKey.currentState?.save();
                                       TextInput.finishAutofillContext();

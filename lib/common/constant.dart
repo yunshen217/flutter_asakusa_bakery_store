@@ -57,6 +57,12 @@ class Constant {
   static var picture_url =
      "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
 
+  // 测试环境后期
+  // static var base_url = "https://test.asakusa-bakery.com/prod-api/";
+  // static var web_url = "https://test.asakusa-bakery.com/prod-api/";
+  // static var picture_url =
+  //    "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
+
 
   static final login = "${base_url}merchant/auth/login";
   static final refreshToken = "${base_url}merchant/auth/refresh-token";
@@ -64,6 +70,9 @@ class Constant {
   static final orderList = "${base_url}merchant/orders";
   static final orderStatus = "${base_url}merchant/orders/status";
   static final orderStatusBatch = "${base_url}merchant/orders/status/batch";
+  static final ordersPlans = "${base_url}merchant/plans/orders";
+  static final detail = "${base_url}merchant/detail";
+  static final plansItems = "${base_url}merchant/plans/items";
 
 
 
