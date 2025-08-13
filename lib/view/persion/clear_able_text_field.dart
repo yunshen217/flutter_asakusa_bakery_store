@@ -10,6 +10,7 @@ class ClearableTextField extends StatefulWidget {
   final bool readOnly;
   final bool isNum;
   final bool isPsd;
+  final dynamic margin;
 
   const ClearableTextField(
       {Key? key,
@@ -17,7 +18,8 @@ class ClearableTextField extends StatefulWidget {
       required this.hintText,
       this.readOnly = false,
       this.isNum = false,
-      this.isPsd = false})
+      this.isPsd = false,
+      this.margin = const EdgeInsets.symmetric(horizontal: 15)})
       : super(key: key);
 
   @override
@@ -83,7 +85,7 @@ class _ClearableTextFieldState extends State<ClearableTextField> {
             : CustomColor.blackD,
         width: 0.5,
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 15),
+      margin: widget.margin,
     );
   }
 }

@@ -305,12 +305,13 @@ class CustomWidget {
     EdgeInsets padding = const EdgeInsets.all(15),
     Border? border, // 显式声明为可空类型
     double circular = 10,
+    color = Colors.white
   }) {
     return Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color,
         border: border ?? Border.all(color: Colors.transparent), // 使用 ?? 处理空值
         borderRadius: BorderRadius.circular(circular),
       ),
@@ -359,7 +360,8 @@ class CustomWidget {
       bool isBg,
       bool isTextEditing,
       TextEditingController controller,
-      FocusNode focusNode) {
+      FocusNode focusNode,
+      Function onTap) {
     controller.text = plannedQuantity;
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 11, 0, 11),
@@ -387,6 +389,7 @@ class CustomWidget {
                           margin: const EdgeInsets.only(top: 10),
                           textAlign: TextAlign.center,
                           fillColor: Colors.transparent,
+                          onTap: onTap,
                           borderSide: const BorderSide(
                               color: CustomColor.blackD, width: 1))
                       : customWidget.setText(plannedQuantity,
@@ -452,6 +455,7 @@ class CustomWidget {
       readOnly = false,
       counter = true,
       onChanged,
+      onTap,
       obscureText = false,
       Widget? suffixIcon,
       fillColor = CustomColor.grayF5,
@@ -475,6 +479,7 @@ class CustomWidget {
           cursorColor: CustomColor.redE8,
           keyboardType: keyboardType,
           onChanged: onChanged,
+          onTap: onTap,
           style: setTextStyle(
               color: CustomColor.black_3,
               fontSize: 14,

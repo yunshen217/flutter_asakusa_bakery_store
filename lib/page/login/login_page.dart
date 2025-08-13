@@ -33,10 +33,10 @@ class _LoginPageState extends State<LoginPage>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    accountController!.text="1246158996@qq.com";
-    pwController!.text="Aa112233";
-    // accountController!.text="weidong.sun@eagletech-global.com";
-    // pwController!.text="AX98Yn5tHBgyBcW";
+    // accountController!.text="1246158996@qq.com";
+    // pwController!.text="Aa112233";
+    accountController!.text="weidong.sun@eagletech-global.com";
+    pwController!.text="AX98Yn5tHBgyBcW";
   }
 
   @override

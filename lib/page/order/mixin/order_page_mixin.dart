@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/common/loading_toast.dart';
 import 'package:flutter_asakusa_bakery_store/model/detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/order_plans_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
@@ -29,7 +30,7 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
 
   bool notLogin = false;
 
-  RxList<OrderPlansModel> orderPlansData = [OrderPlansModel.fromJson({})].obs;
+  RxList<OrderPlansModel> orderPlansData = <OrderPlansModel>[].obs;
   RxString sendOrderCount = "".obs;
   RxString totalCount = "".obs;
   RxString allAmount = "".obs;
@@ -49,13 +50,16 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
   }
 
   getOrderList() async {
+    LoadingToast.show(context, "Loading...");
     await backEndRepository.doPost(Constant.ordersPlans,
         params: {"startDate": timeStart.value, "endDate": timeEnd.value},
         successRequest: (res) {
+          LoadingToast.remove();
       orderPlansData.value = [];
       orderPlansData.value = (res['data'] as List)
           .map((e) => OrderPlansModel.fromJson(e ?? {}))
           .toList();
+      
       if(orderPlansData.isNotEmpty){
         List<String> xAxis = [];
         List<String> yAxis = [];

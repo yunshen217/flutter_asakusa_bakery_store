@@ -171,10 +171,10 @@ class _OrderPageState extends State<OrderPage>
                           }
                           final item = orderPlansData[index];
                           String status = item.status == "1"
-                              ? "準備中"
-                              : (item.status == "2" ? "営業中" : "休み");
+                              ? "予約時間未満"
+                              : (item.status == "2" ? "予約中" : (item.status == "3" ? "店休":"予約一時中止"));
                           return InkWell(
-                            onTap: () => Routes.goPage('/ReservationDetails',param: {"time":item.reserveDate!}),
+                            onTap: () => Routes.goPage('/ReservationDetails',param: {"time":item.reserveDate!,"status":status}),
                             child: Container(
                               padding: const EdgeInsets.all(15),
                               margin: const EdgeInsets.only(bottom: 10),

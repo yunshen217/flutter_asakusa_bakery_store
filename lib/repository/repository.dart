@@ -168,8 +168,10 @@ print('params = $params');
   Future<void> doPut(String url,
       {Response? successRequest,
       ErrorResponse? errorRequest,
+      bool isMapData = true,
+      List? paramList,
       Map<String, dynamic>? params}) async {
-    await _dio.put(url, data: params, options: getAuthOptions()).then((value) {
+    await _dio.put(url, data:isMapData? params:paramList, options: getAuthOptions()).then((value) {
       successRequest!(value.data);
     }).onError((error, stackTrace) {
       print(error);

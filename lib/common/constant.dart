@@ -52,16 +52,16 @@ class Constant {
   // static var picture_url = "https://asakusabakery.s3.ap-northeast-1.amazonaws.com";
 
   /// 测试环境
-  static var base_url = "https://test.asakusa-bakery.com/api/";
-  static var web_url = "https://test.asakusa-bakery.com/api/";
-  static var picture_url =
-     "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
-
-  // 测试环境后期
-  // static var base_url = "https://test.asakusa-bakery.com/prod-api/";
-  // static var web_url = "https://test.asakusa-bakery.com/prod-api/";
+  // static var base_url = "https://test.asakusa-bakery.com/api/";
+  // static var web_url = "https://test.asakusa-bakery.com/api/";
   // static var picture_url =
   //    "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
+
+  // 测试环境后期
+  static var base_url = "https://test.asakusa-bakery.com/prod-api/";
+  static var web_url = "https://test.asakusa-bakery.com/prod-api/";
+  static var picture_url =
+     "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
 
 
   static final login = "${base_url}merchant/auth/login";
@@ -73,6 +73,9 @@ class Constant {
   static final ordersPlans = "${base_url}merchant/plans/orders";
   static final detail = "${base_url}merchant/detail";
   static final plansItems = "${base_url}merchant/plans/items";
+  static final plansReserveStatus = "${base_url}merchant/plans/reserve/status";
+  static final commonSearchParam = "${base_url}common/search-param";
+  static final plansCount = "${base_url}merchant/plans/count";
 
 
 
@@ -81,56 +84,56 @@ class Constant {
 
 
 
-  static final homes = "${base_url}customer/merchants";
-  static final resetPassword = "${base_url}customer/auth/password/reset";
+  // static final homes = "${base_url}customer/merchants";
+  // static final resetPassword = "${base_url}customer/auth/password/reset";
   
-  static final sendEmailCode = "${base_url}customer/auth/verification-code";
-  static final register = "${base_url}customer/auth/register";
-  static final deleteCustomerAccount = "${base_url}customer/auth/deactivate";
+  // static final sendEmailCode = "${base_url}customer/auth/verification-code";
+  // static final register = "${base_url}customer/auth/register";
+  // static final deleteCustomerAccount = "${base_url}customer/auth/deactivate";
   
   
 
-  static final editCustomerAddress = "${base_url}customer/addresses";
-  static final editDefaultAddress = "${base_url}customer/addresses/default/";
-  static final psCustomerAddressList = "${base_url}customer/addresses";
-  static final deleteAddress = "${base_url}customer/addresses/";
+  // static final editCustomerAddress = "${base_url}customer/addresses";
+  // static final editDefaultAddress = "${base_url}customer/addresses/default/";
+  // static final psCustomerAddressList = "${base_url}customer/addresses";
+  // static final deleteAddress = "${base_url}customer/addresses/";
 
-  static final calculatePrice = "${base_url}customer/orders/calculate";
-  static final submitOrder = "${base_url}customer/orders/submit";
-  static final payMoney = "${base_url}customer/orders/payment/paypay";
-  static final orderCancle = "${base_url}customer/orders/";
+  // static final calculatePrice = "${base_url}customer/orders/calculate";
+  // static final submitOrder = "${base_url}customer/orders/submit";
+  // static final payMoney = "${base_url}customer/orders/payment/paypay";
+  // static final orderCancle = "${base_url}customer/orders/";
   static final orderDetail = "${base_url}customer/orders/";
 
-  static final psMerchantDetail = "${base_url}customer/merchants/";
-  static final queryPsTimePeriod = "${base_url}customer/merchants/time-periods";
+  // static final psMerchantDetail = "${base_url}customer/merchants/";
+  // static final queryPsTimePeriod = "${base_url}customer/merchants/time-periods";
 
-  static final getRestWeekDay = "${base_url}customer/days/rest";
+  // static final getRestWeekDay = "${base_url}customer/days/rest";
   static final getFirstAvailableDay = "${base_url}customer/days/";
-  static final getRsvStopDay = "${base_url}customer/days/";
+  // static final getRsvStopDay = "${base_url}customer/days/";
 
   static final psItemKindList = "${base_url}customer/items/";
-  static final psItemList = "${base_url}customer/items";
-  static final psItemDetail = "${base_url}customer/items/";
-  static final allPsItemList = "${base_url}customer/items/all";
+  // static final psItemList = "${base_url}customer/items";
+  // static final psItemDetail = "${base_url}customer/items/";
+  // static final allPsItemList = "${base_url}customer/items/all";
 
-  static final getMessageList = "${base_url}customer/messages";
-  static final getUncheckNotice =
-      "${base_url}customer/messages/system/unchecked";
-  static final checkNotice = "${base_url}customer/messages/system/check/";
-  static final getSystemNotice = "${base_url}customer/messages/system";
-  static final remarkOrderList = "${base_url}customer/remarkOrderList/";
-  static final remarkOrder = "${base_url}customer/remarkOrder";
-  static final editCustomerInfo = "${base_url}customer/info";
-  static final customerInfoDetail = "${base_url}customer/info";
-  static final getPoint = "${base_url}customer/points";
+  // static final getMessageList = "${base_url}customer/messages";
+  // static final getUncheckNotice =
+  //     "${base_url}customer/messages/system/unchecked";
+  // static final checkNotice = "${base_url}customer/messages/system/check/";
+  // static final getSystemNotice = "${base_url}customer/messages/system";
+  // static final remarkOrderList = "${base_url}customer/remarkOrderList/";
+  // static final remarkOrder = "${base_url}customer/remarkOrder";
+  // static final editCustomerInfo = "${base_url}customer/info";
+  // static final customerInfoDetail = "${base_url}customer/info";
+  // static final getPoint = "${base_url}customer/points";
 
-  static final getInfoByPostcode = "${base_url}common/postcode/";
-  static final getSearchParam = "${base_url}common/search-param";
+  // static final getInfoByPostcode = "${base_url}common/postcode/";
+  // static final getSearchParam = "${base_url}common/search-param";
   static final getLink = "${base_url}common/sns";
 
   static final getCreditCardToken = "https://api3.veritrans.co.jp/4gtoken";
-  static final creditCard = "${base_url}customer/cards";
-  static final defaultCreditCard = "${base_url}customer/cards/default";
-  static final creditCardPay = "${base_url}customer/orders/payment/card";
-  static final creditCardApiKey = "${base_url}customer/key";
+  // static final creditCard = "${base_url}customer/cards";
+  // static final defaultCreditCard = "${base_url}customer/cards/default";
+  // static final creditCardPay = "${base_url}customer/orders/payment/card";
+  // static final creditCardApiKey = "${base_url}customer/key";
 }

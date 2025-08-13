@@ -19,19 +19,19 @@ class BaseInterceptors extends InterceptorsWrapper {
   BaseInterceptors(this.dio);
 
   final exactExcludedPaths = {
-    Constant.psItemKindList,
-    Constant.getLink,
-    Constant.queryPsTimePeriod,
-    Constant.calculatePrice,
-    Constant.psItemList,
-    Constant.customerInfoDetail,
-    Constant.psCustomerAddressList,
+    // Constant.psItemKindList,
+    // Constant.getLink,
+    // Constant.queryPsTimePeriod,
+    // Constant.calculatePrice,
+    // Constant.psItemList,
+    // Constant.customerInfoDetail,
+    // Constant.psCustomerAddressList,
     Constant.orderList,
-    Constant.getSearchParam,
-    Constant.allPsItemList,
-    Constant.homes,
-    Constant.submitOrder,
-    Constant.getRestWeekDay,
+    // Constant.getSearchParam,
+    // Constant.allPsItemList,
+    // Constant.homes,
+    // Constant.submitOrder,
+    // Constant.getRestWeekDay,
   };
 
   final prefixExcludedPaths = [
