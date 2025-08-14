@@ -4,14 +4,12 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/common_search_param_model.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 
 // ignore: must_be_immutable
 class SiftWrapWidget extends StatelessWidget {
-  // RxList<RxBool> siftBtnDataIsSelectes;
-  RxString siftBtnDataIsSelectesId;
+  RxList<RxBool> siftBtnDataIsSelectes;
   RxList<CommonSearchParamModelItemKindList?> siftBtnData;
-  RxString kindId;
+  RxList kindId;
   RxBool sift;
   String title;
   Widget child;
@@ -20,7 +18,7 @@ class SiftWrapWidget extends StatelessWidget {
   Function()? cancelOnTap;
   SiftWrapWidget(
       {super.key,
-      required this.siftBtnDataIsSelectesId,
+      required this.siftBtnDataIsSelectes,
       required this.siftBtnData,
       required this.sift,
       this.title = "パンの種類",
@@ -46,26 +44,26 @@ class SiftWrapWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 margin: const EdgeInsets.only(top: 10, bottom: 10)),
             Wrap(
-                  spacing: 12, // 水平间距
-                  runSpacing: 10, // 垂直间距（换行后的行间距）
+                  spacing: 12, 
+                  runSpacing: 10, 
                   children: List.generate(siftBtnData.length, (index) {
                     final label = siftBtnData[index];
                     return Obx(()=>GestureDetector(
                       onTap: () {
-                        siftBtnDataIsSelectesId.value = '${index+1}';
-                        kindId.value = '${label.id}';
+                        siftBtnDataIsSelectes[index].value = !siftBtnDataIsSelectes[index].value;
+                        siftBtnDataIsSelectes[index].value?kindId.add(label.id):kindId.remove(label.id);
                       },
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(10, 3, 10, 5),
                         decoration: BoxDecoration(
-                            color: siftBtnDataIsSelectesId.value=='${index+1}'
+                            color: siftBtnDataIsSelectes[index].value
                                 ? CustomColor.redE84F43
                                 : CustomColor.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: CustomColor.redE84F43)),
                         child: customWidget.setText(label!.kindName!,
                             fontSize: 12,
-                            color: siftBtnDataIsSelectesId.value=='${index+1}'
+                            color: siftBtnDataIsSelectes[index].value
                                 ? CustomColor.white
                                 : CustomColor.redE84F43),
                       ),

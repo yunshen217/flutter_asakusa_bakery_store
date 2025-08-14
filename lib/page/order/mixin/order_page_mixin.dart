@@ -24,8 +24,9 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
 
   /// グラフデータ
   RxMap chartsData = {
-    "xAxis": ['7/1', '7/2', '7/2', '7/2', '7/2'],
-    "yAxis": ["6", "10", "111", "45", "80"],
+    "xAxis": [],
+    "yAxis": [],
+    "barYAxis":[]
   }.obs;
 
   bool notLogin = false;
@@ -54,25 +55,27 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
     await backEndRepository.doPost(Constant.ordersPlans,
         params: {"startDate": timeStart.value, "endDate": timeEnd.value},
         successRequest: (res) {
-          LoadingToast.remove();
-      orderPlansData.value = [];
+          
+      orderPlansData.clear();
       orderPlansData.value = (res['data'] as List)
           .map((e) => OrderPlansModel.fromJson(e ?? {}))
           .toList();
-      
+      LoadingToast.remove();
       if(orderPlansData.isNotEmpty){
         List<String> xAxis = [];
         List<String> yAxis = [];
+        List<String> barYAxis = [];
         sendOrderCount.value = orderPlansData[0].sendOrderCount.toString();
         totalCount.value = orderPlansData[0].totalCount.toString();
         allAmount.value = orderPlansData[0].allAmount.toString();
         for (var data in orderPlansData) {
           xAxis.add(formatDateSlash(DateTime.parse(data.reserveDate!)));
           yAxis.add(data.totalCount.toString());
+          barYAxis.add(data.allAmount.toString());
         }
         chartsData["xAxis"] = xAxis;
         chartsData["yAxis"] = yAxis;
-        
+        chartsData["barYAxis"] = barYAxis;
       }
     });
   }
