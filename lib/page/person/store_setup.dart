@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/mixin/store_setup_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/calendar/calendar_widget.dart';
 import 'package:flutter_asakusa_bakery_store/view/calendar/models/date_model.dart';
 import 'package:flutter_asakusa_bakery_store/view/persion/clear_able_text_field.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 /// 店舗設定
 class StoreSetup extends StatefulWidget {
@@ -18,106 +18,8 @@ class StoreSetup extends StatefulWidget {
   State<StoreSetup> createState() => _StoreSetupState();
 }
 
-class _StoreSetupState extends State<StoreSetup> {
-  /// 店名
-  TextEditingController storeNameController = TextEditingController();
-
-  /// 店舗説明
-  TextEditingController storeDescriptionController = TextEditingController();
-  FocusNode storeDescriptionFocusNode = FocusNode();
-
-  /// 郵便番号
-  TextEditingController postalCodeController = TextEditingController();
-
-  /// 省
-  TextEditingController provinceController = TextEditingController();
-
-  /// 市
-  TextEditingController cityController = TextEditingController();
-
-  /// 街道
-  TextEditingController streetController = TextEditingController();
-
-  /// 住所
-  TextEditingController addressController = TextEditingController();
-
-  /// 電話番号
-  TextEditingController phoneController = TextEditingController();
-
-  /// 顧客の注文金額上限
-  TextEditingController orderAmountMaxController = TextEditingController();
-
-  /// 顧客の日次注文金額上限
-  TextEditingController dailyOrderAmountMaxController = TextEditingController();
-
-  /// 店舗ごとの毎日の予約商品の上限
-  TextEditingController productNumberMaxController = TextEditingController();
-
-  /// 店舗ごとの毎日の予約金額上限
-  TextEditingController productAmountMaxController = TextEditingController();
-
-  /// 積分比率
-  TextEditingController pointsRatioController = TextEditingController();
-  TextEditingController linkController1 = TextEditingController();
-  TextEditingController linkController2 = TextEditingController();
-  TextEditingController linkController3 = TextEditingController();
-  TextEditingController linkController4 = TextEditingController();
-
-  /// ホームページ
-  TextEditingController homeController = TextEditingController();
-
-  /// 食事スペースはありますか？
-  RxString isThereDiningSpace = "イ-トインスペ-スあり".obs;
-
-  /// 食事スペースのデータはありますか？
-  List<String> isThereDiningSpaceData = ["なし", "あります"];
-
-  /// 最大予約可能日数
-  RxString bookingDayMax = '最大予約可能日数'.obs;
-
-  /// 日数
-  RxList days = [].obs;
-
-  /// 予約締切日数
-  RxString reservationsAreClosedDay = '予約締切日数'.obs;
-
-  /// 予約締切時間
-  RxString appointmentTime = '予約締切時間'.obs;
-
-  /// 時間-時
-  RxList timeHour = [].obs;
-
-  /// 時間-分
-  List<String> timeMinute = ["00", "30"];
-
-  /// 開始時間
-  RxString startTime = '開始時間'.obs;
-
-  /// 終了時間
-  RxString endTime = '終了時間'.obs;
-
-  /// 休息日のデータ
-  List restDays = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"];
-
-  /// 休息日データの選択データ
-  List<bool> selected = [];
-
-  /// 特別休暇
-  RxString specialHolidays = '選択済み'.obs;
-  final RxString _date = ''.obs;
-
-  /// SNS
-  List snsData = ["Instagram", "X", "LINE", "Facebook"];
-  RxString sns1 = "SNS1".obs;
-  RxString sns2 = "SNS2".obs;
-  RxString sns3 = "SNS3".obs;
-  RxString sns4 = "SNS4".obs;
-
-  List<String> mOrderDates = ["2025-07-08", "2025-07-09", "2025-07-10"];
-
-  RxList<AssetEntity> image = <AssetEntity>[].obs;
-  RxList<DateTime> selectedDates = <DateTime>[].obs;
-
+class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -130,7 +32,8 @@ class _StoreSetupState extends State<StoreSetup> {
     selected = List<bool>.generate(restDays.length,
         (index) => (index >= restDays.length - 2 ? true : false));
     final today = DateTime.now();
-    _date.value = DateFormat('yyyy-MM-dd').format(today);
+    date.value = DateFormat('yyyy-MM-dd').format(today);
+    getDetailData();
   }
 
   @override
@@ -315,7 +218,7 @@ class _StoreSetupState extends State<StoreSetup> {
         infoWidget.titleWidget("特别休日", false),
         Obx(() => infoWidget.pickerSelected(specialHolidays.value,
             specialHolidays.value == "", () => showCalendar())),
-        infoWidget.titleWidget("顧客每回注文金额上限", false),
+        infoWidget.titleWidget("顧客每回注文金額上限", false),
         ClearableTextField(
             controller: orderAmountMaxController,
             hintText: '顧客每回注文金額上限を入力してください',
@@ -435,8 +338,8 @@ class _StoreSetupState extends State<StoreSetup> {
   }
 
   void showCalendar() {
-    if (_date.value.isEmpty) {
-      _date.value = '2025-01-01';
+    if (date.value.isEmpty) {
+      date.value = '2025-01-01';
     }
 
     customWidget.showCustomNoTitleDialog(
@@ -451,7 +354,7 @@ class _StoreSetupState extends State<StoreSetup> {
           height: 390,
           width: Get.width,
           child: CustomCalendarViewer(
-            initDate: _date.value,
+            initDate: date.value,
             calendarType: CustomCalendarType.multiDates, // 1️⃣ Key: Change to multiple choices
             calendarStyle: CustomCalendarStyle.normal,
             animateDirection: CustomCalendarAnimatedDirection.horizontal,

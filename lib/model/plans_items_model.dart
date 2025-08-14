@@ -9,10 +9,12 @@ class PlansItemsModel {
   "orderCount": 0,
   "stockCount": 8,
   "kindName": "パン"
+  "filePath":""
 } 
 */
 
   int? id;
+  String? filePath;
   int? status;
   String? itemName;
   int? planCount;
@@ -22,6 +24,7 @@ class PlansItemsModel {
 
   PlansItemsModel({
     this.id,
+    this.filePath,
     this.status,
     this.itemName,
     this.planCount,
@@ -31,6 +34,7 @@ class PlansItemsModel {
   });
   PlansItemsModel.fromJson(Map<String, dynamic> json) {
     id = int.tryParse(json['id']?.toString() ?? '')??0;
+    filePath = json['filePath']?.toString()??"";
     status = int.tryParse(json['status']?.toString() ?? '')??0;
     itemName = json['itemName']?.toString()??"";
     planCount = int.tryParse(json['planCount']?.toString() ?? '')??0;
@@ -41,6 +45,7 @@ class PlansItemsModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
+    data['filePath'] = filePath;
     data['status'] = status;
     data['itemName'] = itemName;
     data['planCount'] = planCount;

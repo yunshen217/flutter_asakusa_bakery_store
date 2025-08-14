@@ -155,7 +155,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                     circular: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                     margin: const EdgeInsets.all(0)),
-                customWidget.rowWithTextEditing("商品名", "計画数", "注文数", "在庫数",
+                customWidget.rowWithTextEditing("","商品名", "計画数", "注文数", "在庫数",
                     true, false, TextEditingController(), FocusNode(),(){}),
                 Expanded(
                     child: Obx(()=>detailsData.isEmpty&&!isFirstLogin.value?customWidget.noData(): ListView.builder(
@@ -163,6 +163,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                         itemBuilder: (context, index) {
                           final item = detailsData[index];
                           return customWidget.rowWithTextEditing(
+                            item.filePath!,
                           item.itemName!,
                           '${item.planCount}',
                           '${item.orderCount}',
@@ -185,9 +186,9 @@ class _ReservationDetailsState extends State<ReservationDetails>
             () => SlideUpPanel(
               showPanel: isPanelVisible.value,
               child: SiftWrapWidget(
-                siftBtnDataIsSelectesId: siftBtnDataIsSelectesId,
+                siftBtnDataIsSelectes: siftBtnDataIsSelectes,
                 siftBtnData: commonSearchList,
-                kindId: kindId,
+                kindId: kindIdList,
                 sift: isPanelVisible,
                 cancelText: "キャンセル",
                 subOnTap: () {
@@ -248,7 +249,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                         }
                         if(plansCountList.isNotEmpty){
                           getPlansCount(context);
-                          
+                          print("plansCountList --------------- $plansCountList");
                         }
                       });
                     }),

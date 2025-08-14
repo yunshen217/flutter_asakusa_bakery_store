@@ -8,6 +8,7 @@ import 'package:flutter_asakusa_bakery_store/model/plans_items_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
   RxString time = "2024-03-21".obs;
@@ -16,8 +17,8 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
   TextEditingController searchController = TextEditingController();
 
   /// ボタンがクリックされたかどうか
-  // RxList<RxBool> siftBtnDataIsSelectes = <RxBool>[].obs;
-  RxString siftBtnDataIsSelectesId = "".obs;
+  RxList<RxBool> siftBtnDataIsSelectes = <RxBool>[].obs;
+  // RxString siftBtnDataIsSelectesId = "".obs;
 
   /// 詳細データリスト
   RxList<PlansItemsModel> detailsData = <PlansItemsModel>[].obs;
@@ -27,7 +28,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
   FocusNode currentFocusNode = FocusNode();
 
   RxString itemName = "".obs;
-  RxString kindId = "".obs;
+  RxList kindIdList = [].obs;
 
   RxBool isFirstLogin = false.obs;
 
@@ -42,7 +43,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
     Map<String, dynamic> params = {
       "orderDate": time.value,
       "itemName": itemName.value,
-      "kindId": kindId.value
+      "kindIdList": kindIdList
     };
     LoadingToast.show(context, "Loading...");
     await backEndRepository.doPost(
@@ -90,7 +91,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
         if (result["data"] != null) {
           commonSearchList.value =
               CommonSearchParamModel.fromJson(result["data"]).itemKindList!;
-          // siftBtnDataIsSelectes.value = List.generate(commonSearchList.length, (index) => false.obs);
+          siftBtnDataIsSelectes.value = List.generate(commonSearchList.length, (index) => false.obs);
         }
       },
     );

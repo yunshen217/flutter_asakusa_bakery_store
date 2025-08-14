@@ -39,8 +39,6 @@ class _OrderPageState extends State<OrderPage>
     super.dispose();
   }
 
-  void getData(tag) {}
-
   Widget timeSelected(String time, Function fun) {
     return GestureDetector(
       onTap: () => fun(),
@@ -89,8 +87,6 @@ class _OrderPageState extends State<OrderPage>
                         color: CustomColor.black_3,
                         unselectedLabelColor: CustomColor.black_3, onTab: (e) {
                       mainTabIndex.value = e;
-                      debugPrint(
-                          "mainTabIndex.value --------------- ${mainTabIndex.value}");
                     }))),
             bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(50),
@@ -156,7 +152,7 @@ class _OrderPageState extends State<OrderPage>
       refreshController: refreshController,
       onRefresh: onRefresh,
       onLoading: onLoading,
-      itemWidget: (context) => orderPlansData.isEmpty
+      itemWidget: (context) => Obx(()=>orderPlansData.isEmpty
           ? customWidget.noData()
           : SingleChildScrollView(
               child: Container(
@@ -229,7 +225,7 @@ class _OrderPageState extends State<OrderPage>
                     )),
               ),
             ),
-    );
+    ));
   }
 
   Widget chartBox(String text1, String text2) {
@@ -254,7 +250,9 @@ class _OrderPageState extends State<OrderPage>
 
   Widget chartDataWidget() {
     return SingleChildScrollView(
-      child: Container(
+      child: Column(
+        children: [
+          Container(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
@@ -322,7 +320,6 @@ class _OrderPageState extends State<OrderPage>
             });
         ''',
         onMessage: (String message) {
-          print("00------------$message");
                 final index = int.tryParse(message) ?? -1;
                 sendOrderCount.value = orderPlansData[index].sendOrderCount.toString();
         totalCount.value = orderPlansData[index].totalCount.toString();
@@ -333,6 +330,56 @@ class _OrderPageState extends State<OrderPage>
           ],
         ),
       ),
+      Container(
+          height: 200,
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+            color: CustomColor.white, borderRadius: BorderRadius.circular(10)),
+          child: Obx(() => Echarts(
+                option: '''
+        {
+          grid: { left: '3%', right: '4%', bottom: '3%',top:'10%', containLabel: true },
+          xAxis: {
+            type: 'category',
+            data: ${chartsData["xAxis"].map((e) => '"$e"').toList()},
+        axisLine: { lineStyle: { color: '#999999' } },   // 只留一条直线
+        axisTick: { show: false },                   // 去掉刻度
+        splitLine: { show: false },                  // 去掉垂直分割线
+        axisLabel: { interval: 0, rotate: 0 }
+                  },
+                  yAxis: {
+        type: 'value',
+        axisLabel: { show: false },   // 隐藏纵坐标数字
+        splitLine: { show: true }     // 保留横线
+                  },
+                  dataZoom: [{
+        type: 'inside',   // ← 关键：内置滑动，不显示滚动条
+        xAxisIndex: 0,
+        startValue: 0,    // 初始显示 0~4（共 5 根）
+        endValue: 4
+                  }],
+                  series: [{
+        name: '订单',
+        type: 'line',
+        data: ${chartsData["barYAxis"].map((e) => num.parse(e)).toList()}, // y轴要数字
+        itemStyle: { color: '#FFDAA1' },
+        barWidth: 26,
+        emphasis: { itemStyle: { color: '#FFA244' } },
+        label: {
+          show: true,
+          position: 'top',
+          color: '#ffa244',
+          fontSize:"14",
+          formatter: '{c}'
+        }
+                  }]
+                }
+                ''',
+        )),
+        ),
+        ],
+      )
     );
   }
 }

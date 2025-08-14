@@ -299,14 +299,12 @@ class CustomWidget {
     );
   }
 
-  Widget setContain(
-    Widget widget, {
-    EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 15),
-    EdgeInsets padding = const EdgeInsets.all(15),
-    Border? border, // 显式声明为可空类型
-    double circular = 10,
-    color = Colors.white
-  }) {
+  Widget setContain(Widget widget,
+      {EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 15),
+      EdgeInsets padding = const EdgeInsets.all(15),
+      Border? border, // 显式声明为可空类型
+      double circular = 10,
+      color = Colors.white}) {
     return Container(
       margin: margin,
       padding: padding,
@@ -353,6 +351,7 @@ class CustomWidget {
 
   /// 入力ボックス付きの表
   Widget rowWithTextEditing(
+    String img,
       String name,
       String plannedQuantity,
       String orderNumber,
@@ -363,6 +362,20 @@ class CustomWidget {
       FocusNode focusNode,
       Function onTap) {
     controller.text = plannedQuantity;
+    RxInt count =
+        int.parse(plannedQuantity == '計画数' ? "0" : plannedQuantity).obs;
+    void increment() {
+      count.value += 1;
+      controller.text = count.value.toString();
+    }
+
+    void decrement() {
+      if (count.value > int.parse(orderNumber)) {
+        count.value -= 1;
+        controller.text = count.value.toString();
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 11, 0, 11),
       decoration: BoxDecoration(
@@ -372,27 +385,70 @@ class CustomWidget {
       child: Row(
         children: [
           Expanded(
-              flex: 2,
               child: Container(
                   margin: const EdgeInsets.only(left: 15),
-                  child: customWidget.setText(name,
+                  child:isTextEditing?ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child:img == ""?Container(height: 70,): customWidget.setNetworkImg(img,height: 70,),
+                  ): customWidget.setText(name,
+                      maxLines: 1000,
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
                       fontSize: 12))),
           Expanded(
               flex: 1,
               child: Container(
-                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  margin: const EdgeInsets.only(left: 15),
+                  child: customWidget.setText(name,
+                      maxLines: 1000,
+                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                      fontSize: 12))),
+          Expanded(
+              child: Container(
+                  margin: const EdgeInsets.only(left: 0, right: 0),
                   child: isTextEditing
-                      ? customWidget.setTextField(controller, focusNode,
-                          height: 34,
-                          circular: 5,
-                          margin: const EdgeInsets.only(top: 10),
-                          textAlign: TextAlign.center,
-                          fillColor: Colors.transparent,
-                          onTap: onTap,
-                          borderSide: const BorderSide(
-                              color: CustomColor.blackD, width: 1))
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                                onTap: decrement,
+                                child: Obx(
+                                  () => Container(
+                                    margin: const EdgeInsets.only(right: 5),
+                                    child: Icon(Icons.remove,
+                                        size: 14,
+                                        color: count.value.toString() ==
+                                                orderNumber
+                                            ? CustomColor.blackD
+                                            : CustomColor.black_3),
+                                  ),
+                                )),
+                            SizedBox(
+                              width: 40,
+                              child: customWidget.setTextField(
+                                  controller, focusNode,
+                                  height: 34,
+                                  circular: 5,
+                                  left: 5,
+                                  right: 5,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  textAlign: TextAlign.center,
+                                  fillColor: Colors.transparent,
+                                  onTap: onTap,
+                                  borderSide: const BorderSide(
+                                      color: CustomColor.blackD, width: 1)),
+                            ),
+                            GestureDetector(
+                              onTap: increment,
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 5),
+                                child: const Icon(Icons.add,
+                                    size: 14, color: CustomColor.black_3),
+                              ),
+                            ),
+                          ],
+                        )
                       : customWidget.setText(plannedQuantity,
+                      textAlign: TextAlign.center,
                           color:
                               isBg ? CustomColor.gray_6 : CustomColor.black_3,
                           fontSize: 12))),
@@ -410,7 +466,7 @@ class CustomWidget {
                   margin: const EdgeInsets.only(left: 15, right: 15),
                   child: !isBg && int.parse(inventory) == 0
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             customWidget.setText(inventory,
                                 textAlign: TextAlign.center,

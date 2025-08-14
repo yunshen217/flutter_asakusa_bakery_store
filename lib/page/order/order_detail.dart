@@ -34,7 +34,6 @@ class _OrderDetailState extends State<OrderDetail> {
     backEndRepository.doGet(
       "${Constant.base_url}merchant/orders/${arguments["id"]}",
       successRequest: (result) {
-        print("result ---------------------- ${result["data"]}");
         orderDetailData.value =
             OrderDetailsModel.fromJson(result["data"] ?? {});
         paymentStatus.value = orderDetailData.value!.paymentStatus == "0"
@@ -48,9 +47,6 @@ class _OrderDetailState extends State<OrderDetail> {
                         : orderDetailData.value!.paymentStatus == "4"
                             ? "支払エラー"
                             : "";
-        print("paymentStatus.value ------- ${paymentStatus.value}");
-        print(
-            "orderDetailData.value!.orderStatus ------- ${orderDetailData.value!.orderStatus}");
         switch (orderDetailData.value!.orderStatus.toString()) {
           case "0":
             titleUI.value = {"title": "キャンセル", "img": ""};
@@ -375,7 +371,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
                                 color: CustomColor.gray_6),
-                            customWidget.setTextOverflow("${orderDetailData.value!.usedPoint}pt",
+                            customWidget.setTextOverflow("${orderDetailData.value!.earnedPoint}pt",
                                 padding: const EdgeInsets.all(5),
                                 fontSize: 12,
                                 color: CustomColor.black_3)

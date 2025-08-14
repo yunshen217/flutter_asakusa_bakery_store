@@ -40,7 +40,7 @@ class _SlideUpPanelState extends State<SlideUpPanel> {
         // 表示されたドロップダウンパネル
         AnimatedPositioned(
           duration: widget.animationDuration,
-          top: widget.showPanel ? 0 : -500, // 展開/折りたたみアニメーション
+          top: widget.showPanel ? 0 : -1000, // 展開/折りたたみアニメーション
           left: 0,
           right: 0,
           child: Container(
