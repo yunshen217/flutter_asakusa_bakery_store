@@ -96,7 +96,6 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
       "id":id,
       "type":'${orderStateIndex.value + 1}'
     };
-    print("Aa112233 --------------- $param");
     await backEndRepository.doPut(Constant.orderStatus,params: param,successRequest: (result) {
       customWidget.toastShowNotIcon("更新完了");
       onRefresh();

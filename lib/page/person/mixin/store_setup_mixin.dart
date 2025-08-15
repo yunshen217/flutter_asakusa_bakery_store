@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/detail_model.dart';
+import 'package:flutter_asakusa_bakery_store/model/post_code_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
@@ -54,7 +57,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   TextEditingController homeController = TextEditingController();
 
   /// 食事スペースはありますか？
-  RxString isThereDiningSpace = "イ-トインスペ-スあり".obs;
+  RxString isThereDiningSpace = "イートインスペースあり".obs;
 
   /// 食事スペースのデータはありますか？
   List<String> isThereDiningSpaceData = ["なし", "あります"];
@@ -87,10 +90,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   List restDays = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"];
 
   /// 休息日データの選択データ
-  List<bool> selected = [];
+  RxList<RxBool> selected = <RxBool>[].obs;
 
   /// 特別休暇
-  RxString specialHolidays = '選択済み'.obs;
+  RxString specialHolidays = '選択してください'.obs;
   final RxString date = ''.obs;
 
   /// SNS
@@ -105,6 +108,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   RxList<AssetEntity> image = <AssetEntity>[].obs;
   RxList<DateTime> selectedDates = <DateTime>[].obs;
   final detailModel = Rxn<DetailModel>();
+
+  RxList<String> fileIdList = <String>[].obs;
+
+  RxString prefecturesCode = "".obs;
 
   getDetailData() async {
     await backEndRepository.doGet(
@@ -122,51 +129,165 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
           addressController.text = detailModel.value!.building;
           phoneController.text = detailModel.value!.phoneNumber;
           isThereDiningSpace.value = detailModel.value!.eatingArea == "0"
-              ? ""
+              ? "イートインスペースあり"
               : detailModel.value!.eatingArea;
           bookingDayMax.value = detailModel.value!.approvalDays == 0
-              ? ""
+              ? "最大予約可能日数"
               : detailModel.value!.approvalDays.toString();
           reservationsAreClosedDay.value = detailModel.value!.deadLineDays == 0
-              ? ""
+              ? "予約締切日数"
               : detailModel.value!.deadLineDays.toString();
-          appointmentTime.value = detailModel.value!.deadLineTime.hour == 0 &&
-                  detailModel.value!.deadLineTime.minute == 0 &&
-                  detailModel.value!.deadLineTime.second == 0 &&
-                  detailModel.value!.deadLineTime.nano == 0
+          appointmentTime.value = detailModel.value!.deadLineTime == ""
+              ? "予約締切時間"
+              : detailModel.value!.deadLineTime;
+          startTime.value = detailModel.value!.businessHoursBegin == ""
+              ? "開始時間"
+              : detailModel.value!.businessHoursBegin;
+          endTime.value = detailModel.value!.businessHoursEnd == ""
+              ? "終了時間"
+              : detailModel.value!.businessHoursEnd;
+          orderAmountMaxController.text =
+              detailModel.value!.customerOrderLimit == 0
+                  ? ""
+                  : detailModel.value!.customerOrderLimit.toString();
+          dailyOrderAmountMaxController.text =
+              detailModel.value!.customerDailyOrderLimit == 0
+                  ? ""
+                  : detailModel.value!.customerDailyOrderLimit.toString();
+          productNumberMaxController.text =
+              detailModel.value!.revItemCountLimit == 0
+                  ? ""
+                  : detailModel.value!.revItemCountLimit.toString();
+          productAmountMaxController.text =
+              detailModel.value!.revAmountLimit == 0
+                  ? ""
+                  : detailModel.value!.revAmountLimit.toString();
+          pointsRatioController.text = detailModel.value!.pointRate == ""
               ? ""
-              : '${detailModel.value!.deadLineTime.hour}：${detailModel.value!.deadLineTime.minute}';
-          startTime.value = detailModel.value!.businessHoursBegin.hour == 0 &&
-                  detailModel.value!.businessHoursBegin.minute == 0 &&
-                  detailModel.value!.businessHoursBegin.second == 0 &&
-                  detailModel.value!.businessHoursBegin.nano == 0
-              ? ""
-              : '${detailModel.value!.businessHoursBegin.hour}：${detailModel.value!.businessHoursBegin.minute}';
-          endTime.value = detailModel.value!.businessHoursEnd.hour == 0 &&
-                  detailModel.value!.businessHoursEnd.minute == 0 &&
-                  detailModel.value!.businessHoursEnd.second == 0 &&
-                  detailModel.value!.businessHoursEnd.nano == 0
-              ? ""
-              : '${detailModel.value!.businessHoursEnd.hour}：${detailModel.value!.businessHoursEnd.minute}';
-          // orderAmountMaxController.text =
-          //     detailModel.value!.customerDailyOrderLimit == 0
-          //         ? ""
-          //         : detailModel.value!.customerDailyOrderLimit.toString();
-          // dailyOrderAmountMaxController.text = detailModel.value!.customerDailyOrderLimit == 0
-          //         ? ""
-          //         : detailModel.value!.customerDailyOrderLimit.toString();
-          productNumberMaxController.text = detailModel.value!.revItemCountLimit==0?"":detailModel.value!.revItemCountLimit.toString();
-          productAmountMaxController.text = detailModel.value!.revAmountLimit==0?"":detailModel.value!.revAmountLimit.toString();
-          pointsRatioController.text = detailModel.value!.pointRate == 0?"":detailModel.value!.pointRate.toString();
-          sns1.value = detailModel.value!.snsType1;
-          sns2.value = detailModel.value!.snsType2;
-          sns3.value = detailModel.value!.snsType3;
-          sns4.value = detailModel.value!.snsType4;
+              : detailModel.value!.pointRate.toString();
+          sns1.value = detailModel.value!.snsType1 == ""
+              ? "SNS1"
+              : detailModel.value!.snsType1;
+          sns2.value = detailModel.value!.snsType2 == ""
+              ? "SNS2"
+              : detailModel.value!.snsType2;
+          sns3.value = detailModel.value!.snsType3 == ""
+              ? "SNS3"
+              : detailModel.value!.snsType3;
+          sns4.value = detailModel.value!.snsType4 == ""
+              ? "SNS4"
+              : detailModel.value!.snsType4;
           linkController1.text = detailModel.value!.snsLink1;
           linkController2.text = detailModel.value!.snsLink2;
           linkController3.text = detailModel.value!.snsLink3;
           linkController4.text = detailModel.value!.snsLink4;
+          homeController.text = detailModel.value!.storeHomepageLink;
+          if (detailModel.value!.fixedHoliday.isNotEmpty) {
+            for (var i = 0; i < detailModel.value!.fixedHoliday.length; i++) {
+              String item = detailModel.value!.fixedHoliday[i];
+              selected[int.parse(item) - 1].value = true;
+            }
+          }
+          if (detailModel.value!.specialRestDayList.isNotEmpty) {
+            selectedDates.clear();
+            specialHolidays.value = "選択済み";
+            for (var item in detailModel.value!.specialRestDayList) {
+              selectedDates.add(DateTime.parse(item));
+            }
+          }
         }
+      },
+    );
+  }
+
+  getPostCode() async {
+    if (postalCodeController.text == "") return;
+    await backEndRepository.doGet(
+      "${Constant.base_url}common/postcode/${postalCodeController.text}",
+      successRequest: (result) {
+        if (result["data"] != null) {
+          PostCodeModel postCodeModel = PostCodeModel.fromJson(result["data"]);
+          provinceController.text = postCodeModel.prefectures!;
+          cityController.text = postCodeModel.municipalities!;
+          prefecturesCode.value = '${postCodeModel.prefecturesCode!}';
+        }
+      },
+    );
+  }
+
+  updateDetailData() async {
+    List fixedHoliday = [];
+    if(selected.isNotEmpty){
+      for (int i = 0;i<selected.length;i++) {
+        if(selected[i].value){
+          fixedHoliday.add("${i+1}");
+        }
+      }
+    }
+
+    List specialRestDayList = [];
+    if(selectedDates.isNotEmpty){
+      for (var data in selectedDates) {
+        specialRestDayList.add(DateFormat('yyyy-MM-dd').format(data));
+      }
+    }
+    Map<String, dynamic> params = {
+      "createBy": "",
+      "createTime": "",
+      "updateBy": "",
+      "updateTime": "",
+      "params": {},
+      "pageNum": 0,
+      "pageSize": 0,
+      "id": detailModel.value!.id,
+      "merchantName": storeNameController.text,
+      "merchantDescription": storeDescriptionController.text,
+      "phoneNumber": phoneController.text,
+      "status": "",
+      "longitudeLatitude": "",
+      "basicInformation": "",
+      "remark": "",
+      "loginIp": "",
+      "loginDate": "",
+      "businessHoursBegin": startTime.value == "開始時間"?"":startTime.value,
+      "businessHoursEnd": endTime.value == "終了時間"?"":endTime.value,
+      "fixedHoliday": fixedHoliday,
+      "specialRestDay": "",
+      "eatingArea": isThereDiningSpace.value == "イートインスペースあり"?"":isThereDiningSpace.value,
+      "postcode": postalCodeController.text,
+      "prefecturesCode": prefecturesCode.value,
+      "municipalities": "",
+      "streetAddress": streetController.text,
+      "building": addressController.text,
+      "snsType1": sns1.value == "SNS1"?"":sns1.value,
+      "snsType2": sns2.value == "SNS2"?"":sns2.value,
+      "snsType3": sns3.value == "SNS3"?"":sns3.value,
+      "snsType4": sns4.value == "SNS4"?"":sns4.value,
+      "snsLink1": linkController1.text,
+      "snsLink2": linkController2.text,
+      "snsLink3": linkController3.text,
+      "snsLink4": linkController4.text,
+      "businessStatus": "",
+      "storeHomepageLink": homeController.text,
+      "deliveryFlag": "",
+      "deadLineDays": reservationsAreClosedDay.value == "予約締切日数"?"":reservationsAreClosedDay.value,
+      "approvalDays": bookingDayMax.value == "最大予約可能日数"?"":bookingDayMax.value,
+      "deadLineTime": appointmentTime.value == "予約締切時間"?"":appointmentTime.value,
+      "email": "",
+      "customerOrderLimit": orderAmountMaxController.text,
+      "customerDailyOrderLimit": dailyOrderAmountMaxController.text,
+      "revItemCountLimit": productNumberMaxController.text,
+      "revAmountLimit": productAmountMaxController.text,
+      "fileIdList": fileIdList,
+      "specialRestDayList": specialRestDayList,
+      "pointRate":pointsRatioController.text // 比率
+    };
+    print("params -------------- $params");
+    await backEndRepository.doPut(
+      Constant.detail,
+      params: params,
+      successRequest: (result) {
+        customWidget.toastShowNotIcon("情報を補完してください");
       },
     );
   }

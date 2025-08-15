@@ -1,5 +1,5 @@
 class DetailModel {
-  final int id;
+  final String id;
   final String merchantName;
   final String merchantDescription;
   final String postcode;
@@ -9,11 +9,11 @@ class DetailModel {
   final String eatingArea;
   final int approvalDays;
   final int deadLineDays;
-  final Time deadLineTime;
-  final Time businessHoursBegin;
-  final Time businessHoursEnd;
+  final String deadLineTime;
+  final String businessHoursBegin;
+  final String businessHoursEnd;
   final String storeHomepageLink;
-  final int pointRate;
+  final String pointRate;
   final List<String> fixedHoliday;
   final List<String> specialRestDayList;
   final String prefectures;
@@ -35,7 +35,7 @@ class DetailModel {
   final List<FileModel> files;
 
   DetailModel({
-    this.id = 0,
+    this.id = "",
     this.merchantName = '',
     this.merchantDescription = '',
     this.postcode = '',
@@ -45,11 +45,11 @@ class DetailModel {
     this.eatingArea = '',
     this.approvalDays = 0,
     this.deadLineDays = 0,
-    this.deadLineTime = const Time(hour: 0, minute: 0, second: 0, nano: 0),
-    this.businessHoursBegin = const Time(hour: 0, minute: 0, second: 0, nano: 0),
-    this.businessHoursEnd = const Time(hour: 0, minute: 0, second: 0, nano: 0),
+    this.deadLineTime = '',
+    this.businessHoursBegin = '',
+    this.businessHoursEnd = '',
     this.storeHomepageLink = '',
-    this.pointRate = 0,
+    this.pointRate = "",
     this.fixedHoliday = const [],
     this.specialRestDayList = const [],
     this.prefectures = '',
@@ -73,7 +73,7 @@ class DetailModel {
 
   factory DetailModel.fromJson(Map<String, dynamic> json) {
     return DetailModel(
-      id: json['id'] ?? 0,
+      id: json['id'] ?? "",
       merchantName: json['merchantName'] ?? '',
       merchantDescription: json['merchantDescription'] ?? '',
       postcode: json['postcode'] ?? '',
@@ -81,13 +81,13 @@ class DetailModel {
       building: json['building'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       eatingArea: json['eatingArea'] ?? '',
-      approvalDays: json['approvalDays'] ?? 0,
+      approvalDays: int.tryParse(json['approvalDays'].toString()) ?? 0,
       deadLineDays: json['deadLineDays'] ?? 0,
-      deadLineTime: Time.fromJson(json['deadLineTime'] ?? {}),
-      businessHoursBegin: Time.fromJson(json['businessHoursBegin'] ?? {}),
-      businessHoursEnd: Time.fromJson(json['businessHoursEnd'] ?? {}),
+deadLineTime: json['deadLineTime'] ??'',
+      businessHoursBegin: json['businessHoursBegin'] ??'',
+      businessHoursEnd: json['businessHoursEnd'] ??'',
       storeHomepageLink: json['storeHomepageLink'] ?? '',
-      pointRate: json['pointRate'] ?? 0,
+      pointRate: json['pointRate'] ?? "",
       fixedHoliday: List<String>.from(json['fixedHoliday'] ?? []),
       specialRestDayList: List<String>.from(json['specialRestDayList'] ?? []),
       prefectures: json['prefectures'] ?? '',
@@ -123,9 +123,9 @@ class DetailModel {
         'eatingArea': eatingArea,
         'approvalDays': approvalDays,
         'deadLineDays': deadLineDays,
-        'deadLineTime': deadLineTime.toJson(),
-        'businessHoursBegin': businessHoursBegin.toJson(),
-        'businessHoursEnd': businessHoursEnd.toJson(),
+        'deadLineTime': deadLineTime,
+        'businessHoursBegin': businessHoursBegin,
+        'businessHoursEnd': businessHoursEnd,
         'storeHomepageLink': storeHomepageLink,
         'pointRate': pointRate,
         'fixedHoliday': fixedHoliday,
@@ -150,38 +150,8 @@ class DetailModel {
       };
 }
 
-class Time {
-  final int hour;
-  final int minute;
-  final int second;
-  final int nano;
-
-  const Time({
-    this.hour = 0,
-    this.minute = 0,
-    this.second = 0,
-    this.nano = 0,
-  });
-
-  factory Time.fromJson(Map<String, dynamic> json) {
-    return Time(
-      hour: json['hour'] ?? 0,
-      minute: json['minute'] ?? 0,
-      second: json['second'] ?? 0,
-      nano: json['nano'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'hour': hour,
-        'minute': minute,
-        'second': second,
-        'nano': nano,
-      };
-}
-
 class FileModel {
-  final int id;
+  final String id;
   final String createBy;
   final String createTime;
   final String updateBy;
@@ -190,10 +160,10 @@ class FileModel {
   final String fileName;
   final String filePath;
   final String fileKind;
-  final int businessId;
+  final String businessId;
 
   FileModel({
-    this.id = 0,
+    this.id = '',
     this.createBy = '',
     this.createTime = '',
     this.updateBy = '',
@@ -202,12 +172,12 @@ class FileModel {
     this.fileName = '',
     this.filePath = '',
     this.fileKind = '',
-    this.businessId = 0,
+    this.businessId = '',
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) {
     return FileModel(
-      id: json['id'] ?? 0,
+      id: json['id'] ?? '',
       createBy: json['createBy'] ?? '',
       createTime: json['createTime'] ?? '',
       updateBy: json['updateBy'] ?? '',
@@ -216,7 +186,7 @@ class FileModel {
       fileName: json['fileName'] ?? '',
       filePath: json['filePath'] ?? '',
       fileKind: json['fileKind'] ?? '',
-      businessId: json['businessId'] ?? 0,
+      businessId: json['businessId'] ?? '',
     );
   }
 

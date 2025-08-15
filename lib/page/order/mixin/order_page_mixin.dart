@@ -83,8 +83,8 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
   getDetailData() async{
     await backEndRepository.doGet(Constant.detail,successRequest: (result) {
       DetailModel detailModel = DetailModel.fromJson(result["data"]??{});
-      timeEnd.value =DateFormat('yyyy-MM-dd')
-    .format(DateTime.now().add( Duration(days: detailModel.approvalDays!))); 
+timeEnd.value =DateFormat('yyyy-MM-dd')
+    .format(DateTime.now().add( Duration(days: detailModel.approvalDays)));
     getOrderList();
     },);
   }

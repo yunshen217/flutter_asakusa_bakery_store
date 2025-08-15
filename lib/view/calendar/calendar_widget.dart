@@ -1470,10 +1470,10 @@ class _CustomCalendarViewerState extends State<CustomCalendarViewer>
             : edge(padding: EdgeInsets.zero),
         height: ((extraDays == 6 && daysInMonth > 29) ||
                 ((extraDays == 5 && daysInMonth > 30) && daysInMonth == 31))
-            ? 300
+            ? 350
             : (extraDays == 0 && daysInMonth == 28)
-                ? 205
-                : 255,
+                ? 255
+                : 305,
         child: GridView.builder(
           padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),

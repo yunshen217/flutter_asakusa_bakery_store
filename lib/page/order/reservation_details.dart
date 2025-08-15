@@ -203,12 +203,12 @@ class _ReservationDetailsState extends State<ReservationDetails>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    customWidget.setTextOverflow("キーフード",
+                    customWidget.setTextOverflow("パスワード",
                         fontWeight: FontWeight.bold,
                         margin: const EdgeInsets.only(top: 0, bottom: 10)),
                     ClearableTextField(
                         controller: searchController,
-                        hintText: 'キーフードを入カしてください',
+                        hintText: 'パスワードを入カしてください',
                         margin: const EdgeInsets.only(left: 0,right: 0,bottom: 10),
                         readOnly: false),
                   ],

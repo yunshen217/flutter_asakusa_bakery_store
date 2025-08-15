@@ -1,7 +1,10 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/japanese_text_delegate.dart';
+import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -35,8 +38,7 @@ class InfoWidget {
     );
   }
 
-
-  Widget pickerSelected(String text,bool isHitText, Function fun,
+  Widget pickerSelected(String text, bool isHitText, Function fun,
       {double width = double.infinity}) {
     return customWidget.setCardForHeight(
         margin: const EdgeInsets.symmetric(horizontal: 15),
@@ -51,18 +53,53 @@ class InfoWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            customWidget.setText(text,color:isHitText?CustomColor.black_9:CustomColor.black_3),
+            customWidget.setText(text,
+                color: isHitText ? CustomColor.black_9 : CustomColor.black_3),
             customWidget.setAssetsImg("cus_textfield_select@3x.png",
                 width: 24, height: 24)
           ],
         ));
   }
 
- 
-  Widget selectImage(
-      RxList<AssetEntity> image, BuildContext context, int imageLength) {
+  Widget selectImage(RxList<AssetEntity> image, BuildContext context,
+      int imageLength, RxList<String> fileIdList) {
+    final List<String> uploadedFilePaths = <String>[].obs;
+    Future<List<String>> getFilePaths(List<AssetEntity> assets) async {
+      List<String> filePaths = [];
+      for (var asset in assets) {
+        final file = await asset.file;
+        if (file != null) {
+          filePaths.add(file.path);
+        }
+      }
+      return filePaths;
+    }
+
+    void uploadImages(List<AssetEntity> images) async {
+      List<String> filePaths = await getFilePaths(images);
+
+      // すでにアップロードされた画像をフィルタリングする
+      List<String> newFilePaths =
+          filePaths.where((path) => !uploadedFilePaths.contains(path)).toList();
+
+      if (newFilePaths.isEmpty) {
+        return;
+      }
+
+      await backEndRepository.upFile(
+        '${Constant.base_url}common/upload/img',
+        newFilePaths,
+        (res) {
+          if (res.data is Map) {
+            uploadedFilePaths.addAll(newFilePaths);
+            fileIdList.add(res.data["data"]);
+            print("上传成功 ---------------- $fileIdList");
+          } 
+        },
+      );
+    }
+
     return Obx(() => Container(
-          // ← 只包一层 Obx
           margin: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
             children: [
@@ -70,7 +107,8 @@ class InfoWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(image.length, (index) {
                   return Container(
-                    margin: EdgeInsets.only(left:index != 0? ((Get.width - 315 - 30)/2):0),
+                    margin: EdgeInsets.only(
+                        left: index != 0 ? ((Get.width - 315 - 30) / 2) : 0),
                     child: Stack(
                       children: [
                         Container(
@@ -105,85 +143,109 @@ class InfoWidget {
               ),
               if (image.length < imageLength)
                 GestureDetector(
-                    onTap: () async {
-                      await customWidget.pickImageWithPermission(context,
-                          () async {
-                        final List<AssetEntity>? result =
-                            await AssetPicker.pickAssets(
-                          context,
-                          pickerConfig: AssetPickerConfig(
-                            maxAssets: 1,
-                            requestType: RequestType.image,
-                            textDelegate: JapaneseTextDelegate(),
-                          ),
-                        );
-                        if (result != null) {
-                          if (image.isEmpty) {
-                            image.assignAll(result);
-                          } else {
-                            if (image.length >= imageLength) return;
-                            image.addAll(result.take(imageLength - image.length));
-                          }
+                  onTap: () async {
+                    await customWidget.pickImageWithPermission(context,
+                        () async {
+                      final List<AssetEntity>? result =
+                          await AssetPicker.pickAssets(
+                        context,
+                        pickerConfig: AssetPickerConfig(
+                          maxAssets: 1,
+                          requestType: RequestType.image,
+                          textDelegate: JapaneseTextDelegate(),
+                        ),
+                      );
+                      if (result != null) {
+                        // 获取所有选择的图片的文件路径
+                        List<String> selectedFilePaths =
+                            await Future.wait(result.map((asset) async {
+                          final file = await asset.file;
+                          return file?.path ?? '';
+                        }));
+
+                        // 过滤掉已经上传过的图片
+                        List<AssetEntity> newImages = result.where((asset) {
+                          final filePath =
+                              selectedFilePaths[result.indexOf(asset)];
+                          return filePath.isNotEmpty &&
+                              !uploadedFilePaths.contains(filePath);
+                        }).toList();
+
+                        if (newImages.isEmpty) {
+                          return;
                         }
-                      });
-                    },
-                    child: Container(
-                      width: 98,
-                      height: 98,
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.only(top: 7, right: 7),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(width: 0.5, color: CustomColor.blackD)),
-                      child: customWidget.setAssetsImg("icon_add.png",
-                          width: 32, height: 32),
-                    ),
-                  )
+
+                        if (image.isEmpty) {
+                          image.assignAll(newImages);
+                        } else {
+                          if (image.length >= imageLength) return;
+                          image.addAll(
+                              newImages.take(imageLength - image.length));
+                        }
+                        // 上传图片
+                        uploadImages(newImages);
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 98,
+                    height: 98,
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(top: 7, right: 7),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border:
+                            Border.all(width: 0.5, color: CustomColor.blackD)),
+                    child: customWidget.setAssetsImg("icon_add.png",
+                        width: 32, height: 32),
+                  ),
+                )
             ],
           ),
         ));
   }
 
-
-  Widget bottomBtn(String leftTitle,String rightTitle,bool isShowLeft,Function leftOnTap,Function rightOnTap){
+  Widget bottomBtn(String leftTitle, String rightTitle, bool isShowLeft,
+      Function leftOnTap, Function rightOnTap) {
     return Positioned(
-              bottom: 0,
-              child: Container(
-                width: Get.width,
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
-                decoration: BoxDecoration(color: CustomColor.white, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2), 
-                    blurRadius: 8, 
-                    spreadRadius: 0,
-                    offset: const Offset(0, 4), 
-                  ),
-                ]),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    !isShowLeft?Container():customWidget.setCupertinoButton(leftTitle,
-                        minimumSize: (Get.width - 50) / 2,
-                        height: 30,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12,
-                        circular: 5,
-                        textColor: CustomColor.black_3,
-                        color: CustomColor.black_9,
-                        onPressed: leftOnTap),
-                    customWidget.setCupertinoButton(rightTitle,
-                        minimumSize: (Get.width - 50) / 2,
-                        height: 30,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12,
-                        circular: 5,
-                        textColor: CustomColor.black_3,
-                        color: CustomColor.redE8,
-                        onPressed: rightOnTap)
-                  ],
-                ),
-              ));
+        bottom: 0,
+        child: Container(
+          width: Get.width,
+          padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
+          decoration: BoxDecoration(color: CustomColor.white, boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              !isShowLeft
+                  ? Container()
+                  : customWidget.setCupertinoButton(leftTitle,
+                      minimumSize: (Get.width - 50) / 2,
+                      height: 30,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12,
+                      circular: 5,
+                      textColor: CustomColor.black_3,
+                      color: CustomColor.black_9,
+                      onPressed: leftOnTap),
+              customWidget.setCupertinoButton(rightTitle,
+                  minimumSize: (Get.width - 50) / 2,
+                  height: 30,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 12,
+                  circular: 5,
+                  textColor: CustomColor.black_3,
+                  color: CustomColor.redE8,
+                  onPressed: rightOnTap)
+            ],
+          ),
+        ));
   }
 }

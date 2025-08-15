@@ -117,7 +117,7 @@ print('params = $params');
       var form = await MultipartFile.fromFile(element);
       files.add(form);
     }
-    var formData = FormData.fromMap({'file': files});
+    var formData = FormData.fromMap({'multipartFile': files});
     await _dio
         .post(url, data: formData, options: getAuthOptions())
         .then((value) {
