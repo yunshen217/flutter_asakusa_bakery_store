@@ -18,8 +18,7 @@ class StoreSetup extends StatefulWidget {
   State<StoreSetup> createState() => _StoreSetupState();
 }
 
-class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
-  
+class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
   @override
   void initState() {
     // TODO: implement initState
@@ -29,8 +28,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
     timeHour.assignAll(
       List.generate(24, (i) => i.toString().padLeft(2, '0')),
     );
-    selected = List<bool>.generate(restDays.length,
-        (index) => (index >= restDays.length - 2 ? true : false));
+    selected.value = RxList<RxBool>.generate(restDays.length, (index) => false.obs);
     final today = DateTime.now();
     date.value = DateFormat('yyyy-MM-dd').format(today);
     getDetailData();
@@ -68,7 +66,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
           color: CustomColor.bg,
         ),
         infoWidget.titleWidget("店舗画像(3枚)", false),
-        infoWidget.selectImage(image, context, 3),
+        infoWidget.selectImage(image, context, 3,fileIdList),
         infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,
@@ -91,7 +89,8 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
         ClearableTextField(
             controller: postalCodeController,
             hintText: '郵便番号を入カしてください',
-            readOnly: false),
+            readOnly: false,
+            onTab: ()=>getPostCode(),),
         infoWidget.titleWidget("店舗住所", true),
         ClearableTextField(
             controller: provinceController, hintText: '都道府県', readOnly: true),
@@ -106,9 +105,9 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
         infoWidget.titleWidget("電話番号", false),
         ClearableTextField(
             controller: phoneController, hintText: '電話番号', readOnly: false),
-        infoWidget.titleWidget("イ-トインスペ-スあり", true),
+        infoWidget.titleWidget("イートインスペースあり", true),
         Obx(() => infoWidget.pickerSelected(isThereDiningSpace.value,
-                isThereDiningSpace.value == "イ-トインスペ-スあり", () {
+                isThereDiningSpace.value == "イートインスペースあり", () {
               customWidget.showCustomizationPicker(
                 context,
                 columnsData: [isThereDiningSpaceData],
@@ -191,7 +190,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
         infoWidget.titleWidget("定休日", false),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: GridView.count(
+          child: Obx(()=>GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 4,
@@ -203,17 +202,13 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
               (index) => customWidget.setOutLinedButton(
                 restDays[index],
                 fontColor:
-                    selected[index] ? CustomColor.white : CustomColor.redE8,
+                    selected[index].value ? CustomColor.white : CustomColor.redE8,
                 backgroundColor:
-                    selected[index] ? CustomColor.redE8 : CustomColor.white,
-                onPressed: () {
-                  setState(() {
-                    selected[index] = !selected[index];
-                  });
-                },
+                    selected[index].value ? CustomColor.redE8 : CustomColor.white,
+                onPressed: () =>selected[index].value = !selected[index].value,
               ),
             ),
-          ),
+          )),
         ),
         infoWidget.titleWidget("特别休日", false),
         Obx(() => infoWidget.pickerSelected(specialHolidays.value,
@@ -299,9 +294,9 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
         infoWidget.titleWidget("リンク4", false),
         ClearableTextField(
             controller: linkController4, hintText: 'リンク', readOnly: false),
-        infoWidget.titleWidget("ホ-ムペ-ジ", false),
+        infoWidget.titleWidget("ホームページ", false),
         ClearableTextField(
-            controller: homeController, hintText: 'ホ-ムペ-ジ', readOnly: false),
+            controller: homeController, hintText: 'ホームページ', readOnly: false),
         const SizedBox(
           height: 80,
         )
@@ -331,7 +326,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
               child: mainPageShow(),
             ),
           ),
-          infoWidget.bottomBtn("キャン乜ル", "保存", true, () {}, () {})
+          infoWidget.bottomBtn("キャン乜ル", "保存", true, () =>Get.back(), () =>updateDetailData())
         ],
       ),
     );
@@ -347,15 +342,18 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin{
       confirm: () {
         print(
             "选中的日期：${selectedDates.map((e) => e.toString().substring(0, 10)).join(', ')}");
-        selectedDates.isNotEmpty?specialHolidays.value= "選択済み择":specialHolidays.value= "選択してください";
+        selectedDates.isNotEmpty
+            ? specialHolidays.value = "選択済み"
+            : specialHolidays.value = "選択してください";
       },
       child: StatefulBuilder(builder: (_, state) {
         return SizedBox(
-          height: 390,
+          height: 460,
           width: Get.width,
           child: CustomCalendarViewer(
             initDate: date.value,
-            calendarType: CustomCalendarType.multiDates, // 1️⃣ Key: Change to multiple choices
+            calendarType: CustomCalendarType
+                .multiDates, // 1️⃣ Key: Change to multiple choices
             calendarStyle: CustomCalendarStyle.normal,
             animateDirection: CustomCalendarAnimatedDirection.horizontal,
             movingArrowSize: 15,

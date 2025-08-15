@@ -390,7 +390,7 @@ class CustomWidget {
                   child:isTextEditing?ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child:img == ""?Container(height: 70,): customWidget.setNetworkImg(img,height: 70,),
-                  ): customWidget.setText(name,
+                  ): customWidget.setText("",
                       maxLines: 1000,
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
                       fontSize: 12))),
@@ -413,12 +413,18 @@ class CustomWidget {
                                 onTap: decrement,
                                 child: Obx(
                                   () => Container(
-                                    margin: const EdgeInsets.only(right: 5),
+                                    margin: const EdgeInsets.only(right: 3),
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color:count.value.toString() ==
+                                                orderNumber?CustomColor.blackD: CustomColor.redE8,
+                                      borderRadius: BorderRadius.circular(5)
+                                    ),
                                     child: Icon(Icons.remove,
                                         size: 14,
                                         color: count.value.toString() ==
                                                 orderNumber
-                                            ? CustomColor.blackD
+                                            ? CustomColor.white
                                             : CustomColor.black_3),
                                   ),
                                 )),
@@ -440,7 +446,12 @@ class CustomWidget {
                             GestureDetector(
                               onTap: increment,
                               child: Container(
-                                margin: const EdgeInsets.only(left: 5),
+                                margin: const EdgeInsets.only(left: 3),
+                                padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: CustomColor.redE8,
+                                      borderRadius: BorderRadius.circular(5)
+                                    ),
                                 child: const Icon(Icons.add,
                                     size: 14, color: CustomColor.black_3),
                               ),

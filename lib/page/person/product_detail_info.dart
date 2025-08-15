@@ -8,7 +8,7 @@ import 'package:flutter_asakusa_bakery_store/view/persion/clear_able_text_field.
 import 'package:get/get.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-/// 商品详情 - 商品信息
+
 class ProductDetailInfo extends StatefulWidget {
   const ProductDetailInfo({super.key});
 
@@ -107,7 +107,8 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
     }
   ];
 
-  RxList<RxBool> allergyInfoIsSelected = [false.obs].obs;
+  RxList<RxBool> allergyInfoIsSelected = <RxBool>[].obs;
+  RxList<String> fileIdList = <String>[].obs;
   @override
   void initState() {
     // TODO: implement initState
@@ -156,7 +157,7 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
           children: [
             textEditingList(topTitle, topTitleController),
             infoWidget.titleWidget("商品画像(2枚)", false),
-            infoWidget.selectImage(image, context, 2),
+            infoWidget.selectImage(image, context, 2,fileIdList),
             infoWidget.titleWidget("商品カテゴリ", false),
             Obx(() => infoWidget.pickerSelected(productCategorySelected.value,
                     productCategorySelected.value == "商品カテゴリ", () {

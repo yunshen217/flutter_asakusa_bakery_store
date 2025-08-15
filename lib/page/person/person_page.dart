@@ -178,7 +178,7 @@ class _PersonPageState extends State<PersonPage>
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
                               const EdgeInsets.only(right: 15, left: 15),
-                          title: customWidget.setText("バスフ-ドの変更",
+                          title: customWidget.setText("パスワード変更",
                               fontWeight: FontWeight.bold),
                           leading: customWidget
                               .setAssetsImg("login_secret@3x.png", width: 24),
@@ -187,7 +187,7 @@ class _PersonPageState extends State<PersonPage>
                         trailing: const Icon(Icons.chevron_right),
                         contentPadding:
                             const EdgeInsets.only(right: 15, left: 15),
-                        title: customWidget.setText("ログオンの終了",
+                        title: customWidget.setText("ログオフ",
                             fontWeight: FontWeight.bold),
                         leading: customWidget
                             .setAssetsImg("person_loginout@3x.png", width: 24),

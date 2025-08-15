@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 
-/// 带有清除按钮的输入框
 class ClearableTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
@@ -11,6 +10,7 @@ class ClearableTextField extends StatefulWidget {
   final bool isNum;
   final bool isPsd;
   final dynamic margin;
+  final Function()? onTab;
 
   const ClearableTextField(
       {Key? key,
@@ -19,6 +19,7 @@ class ClearableTextField extends StatefulWidget {
       this.readOnly = false,
       this.isNum = false,
       this.isPsd = false,
+      this.onTab ,
       this.margin = const EdgeInsets.symmetric(horizontal: 15)})
       : super(key: key);
 
@@ -37,6 +38,10 @@ class _ClearableTextFieldState extends State<ClearableTextField> {
       setState(() {
         _hasFocus = _focusNode.hasFocus;
       });
+      if(!_focusNode.hasFocus){
+        widget.onTab?.call();
+      }
+      
     });
 
     widget.controller.addListener(() {
