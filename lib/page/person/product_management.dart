@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
-import 'package:flutter_asakusa_bakery_store/common/utils.dart';
+import 'package:flutter_asakusa_bakery_store/common/slide_up_panel.dart';
+import 'package:flutter_asakusa_bakery_store/model/items_list_model.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/mixin/product_management_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
+import 'package:flutter_asakusa_bakery_store/view/persion/sift_wrap_widget.dart';
 import 'package:get/get.dart';
 
 /// 商品管理
@@ -14,41 +18,13 @@ class ProductManagement extends StatefulWidget {
   State<ProductManagement> createState() => _ProductManagementState();
 }
 
-class _ProductManagementState extends State<ProductManagement> {
-  /// tab
-  List tabs = ["贩壳中", "开発中", "服壳中止"];
-  RxInt tabIndex = 0.obs;
-
-  /// 商品リストデータ
-  List productData = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-
-  /// フィルタリング
-  RxBool sift = false.obs;
-
-  /// フィルターボタン
-  RxList siftBtnData = [
-    "八ン",
-    "食バン",
-    "アイスバン",
-    "プレッツエル",
-    "ベ-グル",
-    "ク一キ",
-    "クッキ-",
-    "スコ-ン",
-    "スウ(酥)",
-    "月餅",
-    "その他",
-    "新商品",
-    "季限定"
-  ].obs;
-
-  /// ボタンがクリックされたかどうか
-  RxList<RxBool> siftBtnDataIsSelectes = [false.obs].obs;
+class _ProductManagementState extends State<ProductManagement> with ProductManagementMixin{
+  
   @override
   void initState() {
     super.initState();
-    siftBtnDataIsSelectes
-        .assignAll(List.generate(siftBtnData.length, (_) => false.obs));
+    getCommonSearchParam();
+    getItemsList();
   }
 
   Widget tabWidget() {
@@ -71,23 +47,24 @@ class _ProductManagementState extends State<ProductManagement> {
                             : Colors.transparent,
                         lineTopMargin: 2, onTap: () {
                       tabIndex.value = i;
+                      getItemsList();
                     }));
               }),
             ),
             GestureDetector(
-              onTap: () {sift.value = true;},
+              onTap: () => isPanelVisible.value = !isPanelVisible.value,
               child: customWidget.setAssetsImg("switch_btn@3x.png",
                   width: 20, height: 20),
             )
           ],
         ),
-        margin: const EdgeInsets.all(0),
+        margin: const EdgeInsets.only(bottom: 0),
         border: const Border(top: BorderSide(width: 1, color: CustomColor.bg)),
         circular: 0);
   }
 
 
-  Widget productCard(String img) {
+  Widget productCard(ItemsListModel item) {
     String imgPath = "person_product_make@3x.png";
     switch (tabIndex.value) {
       case 0:
@@ -113,7 +90,7 @@ class _ProductManagementState extends State<ProductManagement> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: customWidget.setNetworkImg(img, width: 60, height: 60),
+                    child:item.filePath==""?const SizedBox(width: 60,height: 60,): customWidget.setNetworkImg('${Constant.base_url}${item.filePath}', width: 60, height: 60),
                   ),
                   Container(
                     margin: const EdgeInsets.only(left: 15),
@@ -121,11 +98,11 @@ class _ProductManagementState extends State<ProductManagement> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center, // ✅ 垂直居中
                       children: [
-                        customWidget.setTextOverflow("test",
+                        customWidget.setTextOverflow(item.itemName!,
                             fontSize: 13,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(right: 6)),
-                        customWidget.setRichText("累計贩壳：", "70",
+                        customWidget.setRichText("累計贩壳：", "${item.totalSaleCount}",
                             fontSize: 12,
                             color: CustomColor.black_9,
                             subtitleColor: CustomColor.black_3)
@@ -145,9 +122,6 @@ class _ProductManagementState extends State<ProductManagement> {
 
   @override
   Widget build(BuildContext context) {
-    double textHeight =
-        utils.getTextHeight(text: "贩壳中", style: const TextStyle(fontSize: 14));
-    double allHeight = textHeight + 2 + 30;
     return BaseScaffold(
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
@@ -166,100 +140,37 @@ class _ProductManagementState extends State<ProductManagement> {
             height: double.infinity,
             child: Column(
               children: [
-                // tab
                 tabWidget(),
                 Expanded(
-                    child: ListView.builder(
+                    child: Obx(()=>ListView.builder(
                         itemCount: productData.length,
-                        padding: const EdgeInsets.only(bottom: 80),
+                        padding: const EdgeInsets.only(bottom: 80,top: 15),
                         itemBuilder: (context, index) {
-                          return Obx(() => productCard(
-                              "https://img95.699pic.com/photo/60078/6443.jpg_wh860.jpg"));
-                        }))
+                          return productCard(
+                              productData[index]);
+                        })))
               ],
             ),
           ),
-          Positioned(
-              top: allHeight,
-              child:Obx(()=>!sift.value?Container(): Container(
-                width: Get.width,
-                height: Get.height - allHeight - 69,
-                alignment: Alignment.topCenter,
-                decoration:
-                    BoxDecoration(color: CustomColor.black_3.withOpacity(0.4)),
-                child: Container(
-                    width: Get.width,
-                    padding: const EdgeInsets.all(15),
-                    color: CustomColor.white,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        customWidget.setTextOverflow("パンの種類",
-                            fontWeight: FontWeight.bold,
-                            margin: const EdgeInsets.only(top: 10, bottom: 10)),
-                        Obx(() => Wrap(
-                              spacing: 12, // 水平间距
-                              runSpacing: 10, // 垂直间距（换行后的行间距）
-                              children:
-                                  List.generate(siftBtnData.length, (index) {
-                                final label = siftBtnData[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    siftBtnDataIsSelectes[index].value =
-                                        !siftBtnDataIsSelectes[index].value;
-                                  },
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 3, 10, 5),
-                                    decoration: BoxDecoration(
-                                        color:
-                                            siftBtnDataIsSelectes[index].value
-                                                ? CustomColor.redE84F43
-                                                : CustomColor.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: CustomColor.redE84F43)),
-                                    child: customWidget.setText(label,
-                                        fontSize: 12,
-                                        color:
-                                            siftBtnDataIsSelectes[index].value
-                                                ? CustomColor.white
-                                                : CustomColor.redE84F43),
-                                  ),
-                                );
-                              }),
-                            )),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            customWidget.setCupertinoButton("クリア",
-                                minimumSize: (Get.width - 45) / 2,
-                                height: 36,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 13,
-                                textColor: CustomColor.black_3,
-                                color: CustomColor.blackD,
-                                onPressed: () {
-                                  sift.value = false;
-                                }),
-                            customWidget.setCupertinoButton("検索",
-                                minimumSize: (Get.width - 45) / 2,
-                                height: 36,
-                                fontWeight: FontWeight.normal,
-                                color: CustomColor.redE84F43,
-                                fontSize: 13,
-                                onPressed: () {
-                                  sift.value = false;
-                                }),
-                          ],
-                        )
-                      ],
-                    )),
-              ))),
+          Obx(
+            () => SlideUpPanel(
+              showPanel: isPanelVisible.value,
+              child: SiftWrapWidget(
+                siftBtnDataIsSelectes: siftBtnDataIsSelectes,
+                siftBtnData: commonSearchList,
+                kindId: kindIdList,
+                sift: isPanelVisible,
+                cancelText: "キャンセル",
+                subOnTap: () {
+                  getItemsList();
+                  isPanelVisible.value = false;
+                },
+                cancelOnTap: () {
+                  isPanelVisible.value = false;
+                },
+              ),
+            ),
+          ),
           Positioned(
               bottom: 0,
               child: Container(

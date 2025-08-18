@@ -9,7 +9,8 @@ class MessageModel {
   "message": "",
   "readFlag": "",
   "receiverId": 0,
-  "senderId": 0
+  "senderId": 0,
+  "createTime":""
 } 
 */
 
@@ -21,6 +22,7 @@ class MessageModel {
   String? readFlag;
   int? receiverId;
   int? senderId;
+  String? createTime;
 
   MessageModel({
     this.id,
@@ -31,6 +33,7 @@ class MessageModel {
     this.readFlag,
     this.receiverId,
     this.senderId,
+    this.createTime
   });
   MessageModel.fromJson(Map<String, dynamic> json) {
     id = json['id']?.toString()??"";
@@ -41,6 +44,8 @@ class MessageModel {
     readFlag = json['readFlag']?.toString()??"";
     receiverId = int.tryParse(json['receiverId']?.toString() ?? '')??0;
     senderId = int.tryParse(json['senderId']?.toString() ?? '')??0;
+    createTime = json['createTime']?.toString()??"";
+
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -52,6 +57,7 @@ class MessageModel {
     data['readFlag'] = readFlag;
     data['receiverId'] = receiverId;
     data['senderId'] = senderId;
+    data['createTime']=createTime;
     return data;
   }
 }

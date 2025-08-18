@@ -132,6 +132,8 @@ print('params = $params');
       {Response? successRequest,
       ErrorResponse? errorRequest,
       Map<String, dynamic>? params}) async {
+        print("doGet-url =============== $url");
+        print("doGet-params =============== $params");
     await _dio
         .get(url, queryParameters: params, options: getAuthOptions())
         .then((value) {

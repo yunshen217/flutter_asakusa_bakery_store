@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
@@ -61,149 +60,142 @@ class InfoWidget {
         ));
   }
 
-  Widget selectImage(RxList<AssetEntity> image, BuildContext context,
-      int imageLength, RxList<String> fileIdList) {
-    final List<String> uploadedFilePaths = <String>[].obs;
-    Future<List<String>> getFilePaths(List<AssetEntity> assets) async {
-      List<String> filePaths = [];
-      for (var asset in assets) {
-        final file = await asset.file;
-        if (file != null) {
-          filePaths.add(file.path);
-        }
-      }
-      return filePaths;
+  Widget selectImage({
+  required RxList<AssetEntity> localAssets,
+  required RxList<String> netUrls,
+  required RxList<String> fileIds,
+  required int maxLength,
+  required BuildContext context,
+}) {
+  /* ===== Internal status ===== */
+  final RxList<dynamic> images = <dynamic>[].obs; // String(url) / AssetEntity
+  final RxList<String> ids   = <String>[].obs;   // Corresponding to images
+
+  /* ===== Synchronize external data ===== */
+  void syncLists() {
+    images.clear();
+    ids.clear();
+    for (int i = 0; i < netUrls.length; i++) {
+      images.add(netUrls[i]);
+      ids.add(fileIds[i]);
     }
-
-    void uploadImages(List<AssetEntity> images) async {
-      List<String> filePaths = await getFilePaths(images);
-
-      // すでにアップロードされた画像をフィルタリングする
-      List<String> newFilePaths =
-          filePaths.where((path) => !uploadedFilePaths.contains(path)).toList();
-
-      if (newFilePaths.isEmpty) {
-        return;
-      }
-
-      await backEndRepository.upFile(
-        '${Constant.base_url}common/upload/img',
-        newFilePaths,
-        (res) {
-          if (res.data is Map) {
-            uploadedFilePaths.addAll(newFilePaths);
-            fileIdList.add(res.data["data"]);
-            print("上传成功 ---------------- $fileIdList");
-          } 
-        },
-      );
-    }
-
-    return Obx(() => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(image.length, (index) {
-                  return Container(
-                    margin: EdgeInsets.only(
-                        left: index != 0 ? ((Get.width - 315 - 30) / 2) : 0),
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 105,
-                          height: 105,
-                          padding: const EdgeInsets.only(top: 7, right: 7),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: AssetEntityImage(
-                              image[index],
-                              width: 98,
-                              height: 98,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              image.removeAt(index); // ← 直接删，外层 Obx 会刷新
-                            },
-                            child: customWidget.setAssetsImg("icon_clear.png",
-                                width: 20, height: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
-              if (image.length < imageLength)
-                GestureDetector(
-                  onTap: () async {
-                    await customWidget.pickImageWithPermission(context,
-                        () async {
-                      final List<AssetEntity>? result =
-                          await AssetPicker.pickAssets(
-                        context,
-                        pickerConfig: AssetPickerConfig(
-                          maxAssets: 1,
-                          requestType: RequestType.image,
-                          textDelegate: JapaneseTextDelegate(),
-                        ),
-                      );
-                      if (result != null) {
-                        // 获取所有选择的图片的文件路径
-                        List<String> selectedFilePaths =
-                            await Future.wait(result.map((asset) async {
-                          final file = await asset.file;
-                          return file?.path ?? '';
-                        }));
-
-                        // 过滤掉已经上传过的图片
-                        List<AssetEntity> newImages = result.where((asset) {
-                          final filePath =
-                              selectedFilePaths[result.indexOf(asset)];
-                          return filePath.isNotEmpty &&
-                              !uploadedFilePaths.contains(filePath);
-                        }).toList();
-
-                        if (newImages.isEmpty) {
-                          return;
-                        }
-
-                        if (image.isEmpty) {
-                          image.assignAll(newImages);
-                        } else {
-                          if (image.length >= imageLength) return;
-                          image.addAll(
-                              newImages.take(imageLength - image.length));
-                        }
-                        // 上传图片
-                        uploadImages(newImages);
-                      }
-                    });
-                  },
-                  child: Container(
-                    width: 98,
-                    height: 98,
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(top: 7, right: 7),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(width: 0.5, color: CustomColor.blackD)),
-                    child: customWidget.setAssetsImg("icon_add.png",
-                        width: 32, height: 32),
-                  ),
-                )
-            ],
-          ),
-        ));
+    images.addAll(localAssets);
+    ids.addAll(List.filled(localAssets.length, ''));
   }
+
+  /* ===== Sync for the first time to listen for external changes ===== */
+  syncLists();
+  everAll([netUrls, localAssets, fileIds], (_) => syncLists());
+
+  /* ===== upload ===== */
+  Future<void> upload(List<AssetEntity> assets) async {
+    final paths = <String>[];
+    for (final a in assets) {
+      final f = await a.file;
+      if (f != null) paths.add(f.path);
+    }
+    if (paths.isEmpty) return;
+
+    await backEndRepository.upFile(
+      '${Constant.base_url}common/upload/img',
+      paths,
+      (res) {
+        final id = res.data is Map ? res.data["data"] : res.data;
+        if (id is String) {
+          netUrls.add(id);
+          fileIds.add(id);
+        }
+      },
+    );
+  }
+
+  Future<void> pick() async {
+    final left = maxLength - images.length;
+    if (left <= 0) return;
+
+    final result = await AssetPicker.pickAssets(
+      context,
+      pickerConfig: AssetPickerConfig(
+        maxAssets: left,
+        requestType: RequestType.image,
+        textDelegate: JapaneseTextDelegate(),
+      ),
+    );
+    if (result != null) {
+      localAssets.addAll(result);
+      await upload(result);
+    }
+  }
+
+  /* ===== UI ===== */
+  return Obx(() {
+    final count = images.length;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      child: Wrap(
+        spacing: 10,   
+        runSpacing: 8, 
+        children: [
+          ...List.generate(count, (i) {
+            final item = images[i];
+            return SizedBox(
+              width: 120,
+              height: 120,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  item is String
+                      ? Container(padding: const EdgeInsets.only(top: 10,right: 10),child: ClipRRect(borderRadius: BorderRadius.circular(10),child: Image.network(item, fit: BoxFit.cover)))
+                      : Container(padding: const EdgeInsets.only(top: 10,right: 10),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: AssetEntityImage(item as AssetEntity,
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (item is String) {
+                          final idx = netUrls.indexOf(item);
+                          netUrls.removeAt(idx);
+                          fileIds.removeAt(idx);
+                        } else {
+                          localAssets.remove(item);
+                        }
+                      },
+                      child: Image.asset('assets/icon_clear.png',
+                          width: 20),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+          if (count < maxLength)
+            SizedBox(
+              width: 120,
+              height: 120,
+              child: GestureDetector(
+                onTap: pick,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10,right: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: Colors.black26),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/icon_add.png', width: 32),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  });
+}
 
   Widget bottomBtn(String leftTitle, String rightTitle, bool isShowLeft,
       Function leftOnTap, Function rightOnTap) {
