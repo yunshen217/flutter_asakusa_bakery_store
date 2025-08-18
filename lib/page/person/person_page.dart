@@ -34,29 +34,14 @@ class _PersonPageState extends State<PersonPage>
 
   getMessage() async {
     await backEndRepository.doGet(
-      "${Constant.base_url}merchant/messages/listGroup/2,5",
+      "${Constant.base_url}merchant/messages/unread-countGroup/2,5",
       successRequest: (result) {
-        int num = 0;
-        if (result["data"] != null) {
-          final data2 = result["data"]["2"] ?? [];
-          final data5 = result["data"]["5"] ?? [];
-
-          num = 0; // 重置计数器
-
-          for (var data in data2) {
-            if (data["readFlag"] == "0") {
-              num += 1;
-            }
-          }
-
-          for (var data in data5) {
-            if (data["readFlag"] == "0") {
-              num += 1;
-            }
-          }
-
-          messageNum.value = num;
+        int total = 0;
+        for (var data in result["data"]) {
+          final v = data["count"];
+          total += (v is String ? int.parse(v) : v as num).toInt();
         }
+        messageNum.value = total;
       },
     );
   }
@@ -113,7 +98,6 @@ class _PersonPageState extends State<PersonPage>
                               "person_shoppage@3x.png",
                               width: 24),
                           onTap: () => Routes.goPage("/StoreSetup")),
-                      // 通知
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -142,7 +126,10 @@ class _PersonPageState extends State<PersonPage>
                           leading: customWidget.setAssetsImg(
                               "person_notification@3x.png",
                               width: 24),
-                          onTap: () => Routes.goPage("/NoticePage")),
+                          onTap: ()async{
+                            Routes.goPage("/NoticePage");
+                            await getMessage();
+                          }),
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
@@ -153,7 +140,6 @@ class _PersonPageState extends State<PersonPage>
                               "person_commodity@3x.png",
                               width: 24),
                           onTap: () => Routes.goPage("/ProductManagement")),
-
                       ListTile(
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:

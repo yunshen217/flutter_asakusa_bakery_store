@@ -76,6 +76,7 @@ class Constant {
   static final plansReserveStatus = "${base_url}merchant/plans/reserve/status";
   static final commonSearchParam = "${base_url}common/search-param";
   static final plansCount = "${base_url}merchant/plans/count";
+  static final itemList = "${base_url}merchant/items/list";
 
 
 
@@ -128,7 +129,6 @@ class Constant {
   // static final getPoint = "${base_url}customer/points";
 
   // static final getInfoByPostcode = "${base_url}common/postcode/";
-  // static final getSearchParam = "${base_url}common/search-param";
   static final getLink = "${base_url}common/sns";
 
   static final getCreditCardToken = "https://api3.veritrans.co.jp/4gtoken";

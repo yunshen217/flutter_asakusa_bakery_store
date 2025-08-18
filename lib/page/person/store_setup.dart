@@ -66,7 +66,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
           color: CustomColor.bg,
         ),
         infoWidget.titleWidget("店舗画像(3枚)", false),
-        infoWidget.selectImage(image, context, 3,fileIdList),
+        infoWidget.selectImage(localAssets:image,context: context,maxLength: 3,fileIds:fileIdList,netUrls:assetsImg),
         infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,

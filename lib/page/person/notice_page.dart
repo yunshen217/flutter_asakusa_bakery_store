@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/model/message_model.dart';
+import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
-/// 通知
 class NoticePage extends StatefulWidget {
   const NoticePage({super.key});
 
@@ -16,23 +18,43 @@ class NoticePage extends StatefulWidget {
 class _NoticePageState extends State<NoticePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  RxInt type = 5.obs;
+  RxList<MessageModel> messageList = <MessageModel>[].obs;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    getUnreadUpdate();
+    getMessage();
+  }
+
+  getMessage() async{
+    await backEndRepository.doGet('${Constant.base_url}merchant/messages/${type.value}',successRequest: (result) {
+      if(result["data"]!=null){
+        messageList.clear();
+        messageList.addAll(
+          result["data"].map<MessageModel>((json) => MessageModel.fromJson(json)).toList(),
+        );
+      }
+    },);
+  }
+
+  getUnreadUpdate() async{
+    await backEndRepository.doPut("${Constant.base_url}merchant/messages/unread-update",successRequest: (result) {
+    },);
   }
 
   /// 通知リスト
-  RxList noticeList = [0, 0, 0, 0, 0].obs;
   Widget mainListShow() {
     return Obx(
-      () => ListView.separated(
+      () =>messageList.isEmpty?customWidget.noData(): ListView.separated(
           itemBuilder: (_, index) {
+            final item = messageList[index];
             return InkWell(
               onTap: () => _tabController.index == 0
                   ? Routes.goPage( '/OrderDetail',
-                      param: {"isStorePickup": false, "orderStateIndex": 1})
+                      param: {"id":item.businessId})
                   : Routes.goPage( '/InLibraryManagement'),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -44,14 +66,14 @@ class _NoticePageState extends State<NoticePage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           customWidget.setText(
-                            "新規注文のお知らせ:お客樣rrqqs が2025-07-28日に配送注文を予約しました。",
+                            item.message!,
                             maxLines: 100,
                             fontSize: 14,
                             color: CustomColor.black_3,
                           ),
-                          const SizedBox(height: 4), // 主副标题间距
+                          const SizedBox(height: 4), 
                           customWidget.setText(
-                            "2025-07-25 01:11:22",
+                            item.createTime!,
                             maxLines: 100,
                             fontSize: 12,
                             color: CustomColor.black_9,
@@ -61,7 +83,7 @@ class _NoticePageState extends State<NoticePage>
                     ),
                     const SizedBox(width: 8),
                     customWidget.setText(
-                      "[既読]",
+                      item.readFlag=="0"?"[未読]":"[既読]",
                       maxLines: 100,
                       fontSize: 12,
                       color: CustomColor.black_9,
@@ -80,7 +102,7 @@ class _NoticePageState extends State<NoticePage>
                   color: CustomColor.blackD,
                 ));
           },
-          itemCount: noticeList.length),
+          itemCount: messageList.length),
     );
   }
 
@@ -108,6 +130,10 @@ class _NoticePageState extends State<NoticePage>
                     Tab(text: 'お知らせ'),
                     Tab(text: '在庫アラ-ム'),
                   ],
+                  onTap: (value) {
+                    value == 0?type.value = 5:type.value = 2;
+                    getMessage();
+                  },
                   dividerHeight: 1, 
                   dividerColor: CustomColor.bg,
                   splashFactory: NoSplash.splashFactory,

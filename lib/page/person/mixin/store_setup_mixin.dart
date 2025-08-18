@@ -113,6 +113,8 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
 
   RxString prefecturesCode = "".obs;
 
+  RxList<String> assetsImg = <String>[].obs;
+
   getDetailData() async {
     await backEndRepository.doGet(
       Constant.detail,
@@ -193,6 +195,13 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
             specialHolidays.value = "選択済み";
             for (var item in detailModel.value!.specialRestDayList) {
               selectedDates.add(DateTime.parse(item));
+            }
+          }
+          assetsImg.clear();
+          if(detailModel.value!.files.isNotEmpty){
+            for (var data in detailModel.value!.files) {
+              assetsImg.add('${Constant.picture_url}${data.filePath}''${data.fileName}');
+              fileIdList.add(data.id);
             }
           }
         }

@@ -163,7 +163,7 @@ class _OrderDetailState extends State<OrderDetail> {
                         children: [
                           titleUI["img"] == ""
                               ? Container()
-                              : customWidget.setAssetsImg(titleUI["img"],
+                              : customWidget.setAssetsImg(titleUI["img"]==""?"order_detail_make@3x.png":titleUI["img"],
                                   width: 24, height: 24),
                           customWidget.setText(titleUI["title"]!,
                               fontSize: 18, color: CustomColor.black2D)

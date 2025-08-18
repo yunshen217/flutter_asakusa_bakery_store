@@ -109,6 +109,7 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
 
   RxList<RxBool> allergyInfoIsSelected = <RxBool>[].obs;
   RxList<String> fileIdList = <String>[].obs;
+  RxList<String> assetsImg = <String>[].obs;
   @override
   void initState() {
     // TODO: implement initState
@@ -157,7 +158,7 @@ class _ProductDetailInfoState extends State<ProductDetailInfo> {
           children: [
             textEditingList(topTitle, topTitleController),
             infoWidget.titleWidget("商品画像(2枚)", false),
-            infoWidget.selectImage(image, context, 2,fileIdList),
+            infoWidget.selectImage(localAssets:image,context: context,maxLength: 3,fileIds:fileIdList,netUrls:assetsImg),
             infoWidget.titleWidget("商品カテゴリ", false),
             Obx(() => infoWidget.pickerSelected(productCategorySelected.value,
                     productCategorySelected.value == "商品カテゴリ", () {
