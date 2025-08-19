@@ -18,8 +18,8 @@ class ProductManagement extends StatefulWidget {
   State<ProductManagement> createState() => _ProductManagementState();
 }
 
-class _ProductManagementState extends State<ProductManagement> with ProductManagementMixin{
-  
+class _ProductManagementState extends State<ProductManagement>
+    with ProductManagementMixin {
   @override
   void initState() {
     super.initState();
@@ -63,7 +63,6 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
         circular: 0);
   }
 
-
   Widget productCard(ItemsListModel item) {
     String imgPath = "person_product_make@3x.png";
     switch (tabIndex.value) {
@@ -78,7 +77,13 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
         break;
     }
     return GestureDetector(
-      onTap: () => Routes.goPage("ProductDetail",param: {"isHavePurge":true}),
+      onTap: () {
+        Get.toNamed('/ProductDetail',
+                arguments: {"isHavePurge": true, "id": item.id.toString()})!
+            .then((_) async {
+          await getItemsList();
+        });
+      },
       child: Stack(
         children: [
           customWidget.setCard(
@@ -90,7 +95,15 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:item.filePath==""?const SizedBox(width: 60,height: 60,): customWidget.setNetworkImg('${Constant.base_url}${item.filePath}', width: 60, height: 60),
+                    child: item.filePath == ""
+                        ? const SizedBox(
+                            width: 60,
+                            height: 60,
+                          )
+                        : customWidget.setNetworkImg(
+                            '${Constant.base_url}${item.filePath}',
+                            width: 60,
+                            height: 60),
                   ),
                   Container(
                     margin: const EdgeInsets.only(left: 15),
@@ -102,7 +115,8 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
                             fontSize: 13,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(right: 6)),
-                        customWidget.setRichText("累計贩壳：", "${item.totalSaleCount}",
+                        customWidget.setRichText(
+                            "累計贩壳：", "${item.totalSaleCount}",
                             fontSize: 12,
                             color: CustomColor.black_9,
                             subtitleColor: CustomColor.black_3)
@@ -142,12 +156,11 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
               children: [
                 tabWidget(),
                 Expanded(
-                    child: Obx(()=>ListView.builder(
+                    child: Obx(() => ListView.builder(
                         itemCount: productData.length,
-                        padding: const EdgeInsets.only(bottom: 80,top: 15),
+                        padding: const EdgeInsets.only(bottom: 80, top: 15),
                         itemBuilder: (context, index) {
-                          return productCard(
-                              productData[index]);
+                          return productCard(productData[index]);
                         })))
               ],
             ),
@@ -180,7 +193,8 @@ class _ProductManagementState extends State<ProductManagement> with ProductManag
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("追加",
-                  onPressed: ()=>Routes.goPage("ProductDetail",param: {"isHavePurge":false}),
+                      onPressed: () => Routes.goPage("ProductDetail",
+                          param: {"isHavePurge": false, "id": ""}),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),
