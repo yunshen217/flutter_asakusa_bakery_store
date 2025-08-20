@@ -15,6 +15,8 @@ class MaterialAddition extends StatefulWidget {
 }
 
 class _MaterialAdditionState extends State<MaterialAddition> {
+  /// isHaveDeletedBtn
+  final arguments = Get.arguments;
   // 材料名
   TextEditingController nameController = TextEditingController();
   // 入荷閩值
@@ -23,12 +25,21 @@ class _MaterialAdditionState extends State<MaterialAddition> {
   // アレルゲン区分
   RxString allergenCategory = "数値を入カしてください".obs;
   RxList allergenCategoryList = ["是", "否"].obs;
+
   /// 最小单位
   RxString minimumUnit = "数値を入カしてください".obs;
   RxList minimumUnitList = ["是", "否"].obs;
+
   /// 表示单位
   RxString displayUnit = "数値を入カしてください".obs;
   RxList displayUnitList = ["是", "否"].obs;
+  RxBool isHaveDeletedBtn = false.obs;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isHaveDeletedBtn.value = arguments["isHaveDeletedBtn"];
+  }
   @override
   void dispose() {
     nameController.dispose();
@@ -59,65 +70,73 @@ class _MaterialAdditionState extends State<MaterialAddition> {
                 hintText: '数値を入カしてください',
                 readOnly: false),
             infoWidget.titleWidget("アレルゲン区分", false),
-            Obx(()=>infoWidget.pickerSelected(
-                allergenCategory.value, allergenCategory.value == "数値を入カしてください",
-                () {
-              customWidget.showCustomizationPicker(
-                context,
-                columnsData: [
-                  allergenCategoryList.map((e) => e.toString()).toList()
-                ],
-                initialIndex: [0],
-                title: '商品カテゴリを選択してください',
-                confirm: (list) => allergenCategory.value = list[0],
-              );
-            })),
+            Obx(() => infoWidget.pickerSelected(allergenCategory.value,
+                    allergenCategory.value == "数値を入カしてください", () {
+                  customWidget.showCustomizationPicker(
+                    context,
+                    columnsData: [
+                      allergenCategoryList.map((e) => e.toString()).toList()
+                    ],
+                    initialIndex: [0],
+                    title: '商品カテゴリを選択してください',
+                    confirm: (list) => allergenCategory.value = list[0],
+                  );
+                })),
             infoWidget.titleWidget("最小单位", false),
-            Obx(()=>infoWidget.pickerSelected(
-                minimumUnit.value, minimumUnit.value == "数値を入カしてください",
-                () {
-              customWidget.showCustomizationPicker(
-                context,
-                columnsData: [
-                  minimumUnitList.map((e) => e.toString()).toList()
-                ],
-                initialIndex: [0],
-                title: '商品カテゴリを選択してください',
-                confirm: (list) => minimumUnit.value = list[0],
-              );
-            })),
+            Obx(() => infoWidget.pickerSelected(
+                    minimumUnit.value, minimumUnit.value == "数値を入カしてください", () {
+                  customWidget.showCustomizationPicker(
+                    context,
+                    columnsData: [
+                      minimumUnitList.map((e) => e.toString()).toList()
+                    ],
+                    initialIndex: [0],
+                    title: '商品カテゴリを選択してください',
+                    confirm: (list) => minimumUnit.value = list[0],
+                  );
+                })),
             infoWidget.titleWidget("表示单位", false),
-            Obx(()=>infoWidget.pickerSelected(
-                displayUnit.value, displayUnit.value == "数値を入カしてください",
-                () {
-              customWidget.showCustomizationPicker(
-                context,
-                columnsData: [
-                  displayUnitList.map((e) => e.toString()).toList()
-                ],
-                initialIndex: [0],
-                title: '商品カテゴリを選択してください',
-                confirm: (list) => displayUnit.value = list[0],
-              );
-            })),
+            Obx(() => infoWidget.pickerSelected(
+                    displayUnit.value, displayUnit.value == "数値を入カしてください", () {
+                  customWidget.showCustomizationPicker(
+                    context,
+                    columnsData: [
+                      displayUnitList.map((e) => e.toString()).toList()
+                    ],
+                    initialIndex: [0],
+                    title: '商品カテゴリを選択してください',
+                    confirm: (list) => displayUnit.value = list[0],
+                  );
+                })),
             infoWidget.titleWidget("入荷閩值", false),
             ClearableTextField(
                 controller: inboundQuantityThresholdController,
                 hintText: '数値を入カしてください',
                 readOnly: false),
-            Align(
-              alignment: Alignment.centerRight,
-              child: customWidget.setCupertinoButton("保存",
-                        minimumSize: (Get.width - 30) / 3,
-                        height: 30,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12,
-                        circular: 5,
-                        textColor: CustomColor.black_3,
-                        color: CustomColor.redE8,
-                        margin: EdgeInsets.only(top: 10,right: 15),
-                        onPressed: (){}),
-            )
+            Obx(()=>Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+               isHaveDeletedBtn.value? customWidget.setCupertinoButton("削除",
+                    height: 30,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                    circular: 5,
+                    textColor: CustomColor.black_3,
+                    color: CustomColor.blackD,
+                    margin: const EdgeInsets.only(top: 10, right: 15),
+                    onPressed: () {}):Container(),
+                customWidget.setCupertinoButton("保存",
+                    height: 30,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12,
+                    circular: 5,
+                    textColor: CustomColor.black_3,
+                    color: CustomColor.redE8,
+                    margin: const EdgeInsets.only(top: 10, right: 15),
+                    onPressed: () {}),
+              ],
+            ))
+            
           ],
         ),
       ),

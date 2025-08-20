@@ -77,6 +77,7 @@ class Constant {
   static final commonSearchParam = "${base_url}common/search-param";
   static final plansCount = "${base_url}merchant/plans/count";
   static final itemList = "${base_url}merchant/items/list";
+  static final ingredientsStocks = "${base_url}merchant/ingredients/stocks";
 
 
 

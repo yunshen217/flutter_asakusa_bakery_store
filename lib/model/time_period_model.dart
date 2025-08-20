@@ -1,8 +1,9 @@
+
 class TimePeriodModelTimePeriodList {
 /*
 {
-  "id": 3,
-  "label": "08:00~09:00"
+  "id": 0,
+  "label": ""
 } 
 */
 
@@ -30,18 +31,16 @@ class TimePeriodModel {
 {
   "timePeriodList": [
     {
-      "id": 3,
-      "label": "08:00~09:00"
+      "id": 0,
+      "label": ""
     }
   ],
-  "selectedTimePeriod": [
-    10
-  ]
+  "selectedTimePeriod": ""
 } 
 */
 
   List<TimePeriodModelTimePeriodList?>? timePeriodList;
-  List<int?>? selectedTimePeriod;
+  String? selectedTimePeriod;
 
   TimePeriodModel({
     this.timePeriodList,
@@ -56,17 +55,7 @@ class TimePeriodModel {
   });
     timePeriodList = arr0;
     }
-  if (json['selectedTimePeriod'] != null && (json['selectedTimePeriod'] is List)) {
-    final v = json['selectedTimePeriod'];
-    final arr0 = <int>[];
-    v.forEach((v) {
-      final parsedInt = int.tryParse(v.toString());
-      if (parsedInt != null) {
-        arr0.add(parsedInt);
-      }
-    });
-    selectedTimePeriod = arr0;
-  }
+    selectedTimePeriod = json['selectedTimePeriod']?.toString();
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -78,14 +67,7 @@ class TimePeriodModel {
   });
       data['timePeriodList'] = arr0;
     }
-    if (selectedTimePeriod != null) {
-      final v = selectedTimePeriod;
-      final arr0 = [];
-  v!.forEach((v) {
-  arr0.add(v);
-  });
-      data['selectedTimePeriod'] = arr0;
-    }
+    data['selectedTimePeriod'] = selectedTimePeriod;
     return data;
   }
 }

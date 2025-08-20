@@ -205,12 +205,16 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
               final item = productDetailModel.value!.psIngredientsList![i]!;
               controllerList.add(TextEditingController());
               focusNodeList.add(FocusNode());
+              String minUnitId = "";
+              for (var data in productIngredientListModel) {
+                if(data.id == item.id.toString()){
+                  minUnitId = data.minUnitId!;
+                }
+              }
               currentlyselectTheMaterial.add({
                 "id": item.id,
                 "count": item.count,
-                "minUnitId": ""
-
-                /// 注意是注意注意要改要改要改，返回数据中没有数据
+                "minUnitId": minUnitId
               });
             }
           }
