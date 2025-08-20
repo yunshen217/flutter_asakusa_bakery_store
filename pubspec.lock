@@ -169,6 +169,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.24.0"
+  firebase_installations:
+    dependency: "direct main"
+    description:
+      name: firebase_installations
+      sha256: "81493183261ef4cc60cf615f329c0a60055ff1d6c9ac574104b1933927f53c84"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "16.3.6"
   firebase_messaging:
     dependency: "direct main"
     description:
@@ -560,6 +568,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.1.5"
+  pull_to_refresh:
+    dependency: "direct main"
+    description:
+      name: pull_to_refresh
+      sha256: bbadd5a931837b57739cf08736bea63167e284e71fb23b218c8c9a6e042aad12
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   sanitize_html:
     dependency: transitive
     description:
