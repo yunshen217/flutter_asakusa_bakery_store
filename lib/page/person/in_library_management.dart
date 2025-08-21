@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/model/ingredients_stocks_model.dart';
+import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
@@ -14,24 +17,31 @@ class InLibraryManagement extends StatefulWidget {
 }
 
 class _InLibraryManagementState extends State<InLibraryManagement> {
-  RxList inLibraryManagementList = [
-    {
-      "name":"白生地",
-      "num":"94.99",
-      "stockArrivalAlert":"100",
-    },
-    {
-      "name":"黑生地",
-      "num":"94.99",
-      "stockArrivalAlert":"100",
-    },
-    {
-      "name":"白生地",
-      "num":"94.99",
-      "stockArrivalAlert":"100",
-    }
-  ].obs;
-  Widget _row(String name, String num, String stockArrivalAlert, Function onTap,
+
+  RxList<IngredientsStocksModel> ingredientsStocks =
+      <IngredientsStocksModel>[].obs;
+
+  @override
+  void initState() {
+    super.initState();
+    getIngredientsStocks();
+  }
+
+  getIngredientsStocks() async {
+    await backEndRepository.doGet(
+      Constant.ingredientsStocks,
+      successRequest: (result) {
+        if (result["data"] != null) {
+          ingredientsStocks.addAll(
+            (result['data'] as List? ?? [])
+                .map((e) => IngredientsStocksModel.fromJson(e ?? {})),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _row(String name, String num, String stockArrivalAlert, Function rightOnTap,Function onTap,
       bool isBg) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 11, 0, 11),
@@ -43,40 +53,49 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
         children: [
           Expanded(
               flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  alignment: Alignment.center,
-                  child: customWidget.setText(name,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      maxLines: 10,
-                      fontSize: 12))),
-          Expanded(
-              flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
-                  alignment: Alignment.center,
-                  child: customWidget.setText(num,
-                  maxLines: 10,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
-          Expanded(
-              flex: 1,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 0, right: 0),
-                  alignment: Alignment.center,
-                  child: customWidget.setText(stockArrivalAlert,
-                  maxLines: 10,
-                      color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                      fontSize: 12))),
+              child: GestureDetector(
+                onTap: () => rightOnTap(),
+                child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    alignment: Alignment.center,
+                    child: customWidget.setText(name,
+                        color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                        maxLines: 10,
+                        fontSize: 12)),
+              )),
           Expanded(
               flex: 1,
               child: GestureDetector(
-                onTap: ()=>onTap(),
+                onTap: () => rightOnTap(),
+                child: Container(
+                    margin: const EdgeInsets.only(left: 10, right: 10),
+                    alignment: Alignment.center,
+                    child: customWidget.setText(num,
+                        maxLines: 10,
+                        color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                        fontSize: 12)),
+              )),
+          Expanded(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () => rightOnTap(),
+                child: Container(
+                    margin: const EdgeInsets.only(left: 0, right: 0),
+                    alignment: Alignment.center,
+                    child: customWidget.setText(stockArrivalAlert,
+                        maxLines: 10,
+                        color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
+                        fontSize: 12)),
+              )),
+          Expanded(
+              flex: 1,
+              child: GestureDetector(
+                onTap: () => onTap(),
                 child: Container(
                     margin: const EdgeInsets.only(left: 15, right: 10),
                     alignment: Alignment.center,
-                    child: customWidget.setText("详细",
-                    maxLines: 10,
+                    child: customWidget.setText("詳細",
+                        maxLines: 10,
                         color: isBg ? CustomColor.gray_6 : CustomColor.redE8,
                         fontSize: 12)),
               )),
@@ -106,14 +125,21 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
             height: double.infinity,
             child: Column(
               children: [
-                _row("材料名", "在庫数", "入荷アラ一ト", () {}, true),
+                _row("材料名", "在庫数", "入荷アラ一ト", (){},() {}, true),
                 SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(inLibraryManagementList.length, (index){
-                      final item = inLibraryManagementList[index];
-                      return _row(item["name"], '${item["num"]}kg', '${item["stockArrivalAlert"]}kg', ()=>Routes.goPage( "/InLibraryDetail"), false);
+                  child: Obx(()=>Column(
+                    children:
+                        List.generate(ingredientsStocks.length, (index) {
+                      final item = ingredientsStocks[index];
+                      return _row(
+                          item.ingredientName!,
+                          item.countUnitName!,
+                          item.recordCountUnitName!,
+                          () => Routes.goPage("MaterialAddition",param: {"isHaveDeletedBtn":true}),
+                          () => Routes.goPage("/InLibraryDetail"),
+                          false);
                     }),
-                  ),
+                  ),)
                 )
               ],
             ),
@@ -127,7 +153,7 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("材料追加",
-                  onPressed: ()=>Routes.goPage("MaterialAddition"),
+                      onPressed: () => Routes.goPage("MaterialAddition",param: {"isHaveDeletedBtn":false}),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),
