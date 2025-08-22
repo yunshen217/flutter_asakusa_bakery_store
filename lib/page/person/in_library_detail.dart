@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
-import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
+import 'package:flutter_asakusa_bakery_store/model/product_ingredient_stock_record_list_model.dart';
+import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
@@ -14,21 +16,26 @@ class InLibraryDetail extends StatefulWidget {
 }
 
 class _InLibraryDetailState extends State<InLibraryDetail> {
-  /// 在庫記録info
-  RxList inLibraryDetailList = [
-    {
-      "inboundAndOutboundClassification":"1",
-      "quantity":"1",
-      "unit":"1",
-      "time":"1"
-    },
-    {
-      "inboundAndOutboundClassification":"2",
-      "quantity":"1",
-      "unit":"1",
-      "time":"1"
-    }
-  ].obs;
+  /// id
+  final arguments = Get.arguments;
+  RxString id = "".obs;
+  RxList<ProductIngredientStockRecordListModel> inLibraryDetailList = <ProductIngredientStockRecordListModel>[].obs;
+  @override
+  void initState() {
+    super.initState();
+    id.value = arguments["id"]??"";
+    getProductIngredientStockRecordList();
+  }
+  getProductIngredientStockRecordList() async{
+    await backEndRepository.doGet("${Constant.base_url}merchant/ingredients/${id.value}/stocks/records",successRequest: (result) {
+      inLibraryDetailList.clear();
+      if(result["data"]!=null){
+        for (var data in result["data"]) {
+          inLibraryDetailList.add(ProductIngredientStockRecordListModel.fromJson(data));
+        }
+      }
+    },);
+  }
   Widget _row(String inboundAndOutboundClassification, String quantity, String unit, String time,
       bool isBg) {
     return Container(
@@ -102,12 +109,12 @@ class _InLibraryDetailState extends State<InLibraryDetail> {
               children: [
                 _row("入出庫区分", "数量", "单位", "時間", false),
                 SingleChildScrollView(
-                  child: Column(
+                  child: Obx(()=>Column(
                     children: List.generate(inLibraryDetailList.length, (index){
                       final item = inLibraryDetailList[index];
-                      return _row(item["inboundAndOutboundClassification"], item["quantity"], item["unit"], item["time"], false);
+                      return _row(item.ioTypeName!, item.count.toString(), item.unitName!, item.createTime!, false);
                     }),
-                  ),
+                  )),
                 )
               ],
             ),
@@ -121,7 +128,9 @@ class _InLibraryDetailState extends State<InLibraryDetail> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("追加",
-                  onPressed: ()=>Routes.goPage("InboundAndOutboundStorage"),
+                  onPressed: ()=>Get.toNamed("InboundAndOutboundStorage",arguments: {"id":id.value})!.then((_){
+                    getProductIngredientStockRecordList();
+                  }),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),

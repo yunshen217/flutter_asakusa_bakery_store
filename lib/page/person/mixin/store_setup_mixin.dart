@@ -56,11 +56,11 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   /// ホームページ
   TextEditingController homeController = TextEditingController();
 
-  /// 食事スペースはありますか？
-  RxString isThereDiningSpace = "イートインスペースあり".obs;
+  /// 食事スペースはありか？
+  RxString isThereDiningSpace = "イートインスペース".obs;
 
-  /// 食事スペースのデータはありますか？
-  List<String> isThereDiningSpaceData = ["なし", "あります"];
+  /// 食事スペースのデータはありか？
+  List<String> isThereDiningSpaceData = ["なし", "あり"];
 
   /// 最大予約可能日数
   RxString bookingDayMax = '最大予約可能日数'.obs;
@@ -130,9 +130,9 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
           streetController.text = detailModel.value!.streetAddress;
           addressController.text = detailModel.value!.building;
           phoneController.text = detailModel.value!.phoneNumber;
-          isThereDiningSpace.value = detailModel.value!.eatingArea == "0"
-              ? "イートインスペースあり"
-              : detailModel.value!.eatingArea;
+          isThereDiningSpace.value =detailModel.value!.eatingArea == ""?"": detailModel.value!.eatingArea == "0"
+              ? isThereDiningSpaceData[0]
+              : isThereDiningSpaceData[1];
           bookingDayMax.value = detailModel.value!.approvalDays == 0
               ? "最大予約可能日数"
               : detailModel.value!.approvalDays.toString();
@@ -262,10 +262,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "businessHoursEnd": endTime.value == "終了時間"?"":endTime.value,
       "fixedHoliday": fixedHoliday,
       "specialRestDay": "",
-      "eatingArea": isThereDiningSpace.value == "イートインスペースあり"?"":isThereDiningSpace.value,
+      "eatingArea": isThereDiningSpace.value == "イートインスペース"?"":(isThereDiningSpace.value=="なし"?"0":"1"),
       "postcode": postalCodeController.text,
       "prefecturesCode": prefecturesCode.value,
-      "municipalities": "",
+      "municipalities": cityController.text,
       "streetAddress": streetController.text,
       "building": addressController.text,
       "snsType1": sns1.value == "SNS1"?"":sns1.value,
@@ -289,9 +289,9 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "revAmountLimit": productAmountMaxController.text,
       "fileIdList": fileIdList,
       "specialRestDayList": specialRestDayList,
-      "pointRate":pointsRatioController.text // 比率
+      "pointRate":pointsRatioController.text
     };
-    print("params -------------- $params");
+    print("param ------------------ $params");
     await backEndRepository.doPut(
       Constant.detail,
       params: params,

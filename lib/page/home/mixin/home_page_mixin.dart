@@ -66,7 +66,6 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
 
   getOrderList() async {
     int num = orderStateIndex.value + 1;
-    print("orderStateIndex ----------------- ${num}");
     Map<String, dynamic> param = {
       "pageNum": pageNum.value,
       "pageSize": pageSize,
@@ -74,10 +73,8 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
       "orderDate": time.value,
       "isSend": tabIndex.value == 0 ? null : isSend.value
     };
-    print("map ------------------ $param");
     await backEndRepository.doPost(Constant.orderList, params: param,
         successRequest: (res) {
-      print("res ---------------- ${res["data"]}");
       OrderListModel orderList = OrderListModel.fromJson(res["data"]);
       if (orderList.records != null) {
         final newRecords =

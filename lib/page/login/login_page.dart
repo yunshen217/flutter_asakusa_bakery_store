@@ -137,21 +137,12 @@ class _LoginPageState extends State<LoginPage>
                                         return;
                                       }
                                     }
-                                     print('''
-{
-                                      "email": ${accountController!.text},
-                                      "password": ${pwController!.text},
-                                      "deviceToken": ${Global.token},
-                                    }
-''');
                                     backEndRepository
                                         .doPost(Constant.login, params: {
                                       "email": accountController!.text,
                                       "password": pwController!.text,
                                       "deviceToken": Global.token
                                     }, successRequest: (res) {
-                                     
-                                      print("登录成功返回的数据: $res");
                                       _formKey.currentState?.save();
                                       TextInput.finishAutofillContext();
                                       Global.putUserInfo(res['data']);

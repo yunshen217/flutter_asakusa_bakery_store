@@ -51,7 +51,7 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
   }
 
   getOrderList() async {
-    LoadingToast.show(context, "Loading...");
+    // LoadingToast.show(context, "Loading...");
     await backEndRepository.doPost(Constant.ordersPlans,
         params: {"startDate": timeStart.value, "endDate": timeEnd.value},
         successRequest: (res) {
@@ -60,7 +60,7 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
       orderPlansData.value = (res['data'] as List)
           .map((e) => OrderPlansModel.fromJson(e ?? {}))
           .toList();
-      LoadingToast.remove();
+      // LoadingToast.remove();
       if(orderPlansData.isNotEmpty){
         List<String> xAxis = [];
         List<String> yAxis = [];

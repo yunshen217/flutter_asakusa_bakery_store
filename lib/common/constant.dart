@@ -78,6 +78,10 @@ class Constant {
   static final plansCount = "${base_url}merchant/plans/count";
   static final itemList = "${base_url}merchant/items/list";
   static final ingredientsStocks = "${base_url}merchant/ingredients/stocks";
+  static final unitsMin = "${base_url}merchant/units/min";
+  static final ingredients = "${base_url}merchant/ingredients";
+  static final updatePassword = "${base_url}merchant/auth/password";
+  static final logout = "${base_url}merchant/auth/logout";
 
 
 

@@ -105,14 +105,14 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
         infoWidget.titleWidget("電話番号", false),
         ClearableTextField(
             controller: phoneController, hintText: '電話番号', readOnly: false),
-        infoWidget.titleWidget("イートインスペースあり", true),
+        infoWidget.titleWidget("イートインスペース", true),
         Obx(() => infoWidget.pickerSelected(isThereDiningSpace.value,
-                isThereDiningSpace.value == "イートインスペースあり", () {
+                isThereDiningSpace.value == "イートインスペース", () {
               customWidget.showCustomizationPicker(
                 context,
                 columnsData: [isThereDiningSpaceData],
                 initialIndex: [0],
-                title: '飲食工リアがあるかどうか',
+                title: 'イートインスペース有無',
                 confirm: (list) => isThereDiningSpace.value = list[0],
               );
             })),
@@ -309,7 +309,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
     return BaseScaffold(
       backgroundColor: CustomColor.white,
       appBar: customWidget.setAppBar(
-          title: "ホ-ムペ-ジ",
+          title: "ホームページ",
           backgroundColor: CustomColor.white,
           isLeftShow: false,
           leading: InkWell(

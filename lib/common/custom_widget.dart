@@ -403,6 +403,7 @@ class CustomWidget {
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
                       fontSize: 12))),
           Expanded(
+            flex: 1,
               child: Container(
                   margin: const EdgeInsets.only(left: 0, right: 0),
                   child: isTextEditing
@@ -413,8 +414,8 @@ class CustomWidget {
                                 onTap: decrement,
                                 child: Obx(
                                   () => Container(
-                                    margin: const EdgeInsets.only(right: 3),
-                                    padding: const EdgeInsets.all(2),
+                                    margin: const EdgeInsets.only(right: 2),
+                                    padding: const EdgeInsets.all(1),
                                     decoration: BoxDecoration(
                                       color:count.value.toString() ==
                                                 orderNumber?CustomColor.blackD: CustomColor.redE8,
@@ -429,7 +430,7 @@ class CustomWidget {
                                   ),
                                 )),
                             SizedBox(
-                              width: 40,
+                              width: 30,
                               child: customWidget.setTextField(
                                   controller, focusNode,
                                   height: 34,
@@ -446,8 +447,8 @@ class CustomWidget {
                             GestureDetector(
                               onTap: increment,
                               child: Container(
-                                margin: const EdgeInsets.only(left: 3),
-                                padding: const EdgeInsets.all(2),
+                                margin: const EdgeInsets.only(left: 2),
+                                padding: const EdgeInsets.all(1),
                                     decoration: BoxDecoration(
                                       color: CustomColor.redE8,
                                       borderRadius: BorderRadius.circular(5)
@@ -468,6 +469,7 @@ class CustomWidget {
               child: Container(
                   margin: const EdgeInsets.only(left: 15),
                   child: customWidget.setText(orderNumber,
+                  maxLines: 100,
                       textAlign: TextAlign.center,
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
                       fontSize: 12))),
@@ -481,6 +483,7 @@ class CustomWidget {
                           children: [
                             customWidget.setText(inventory,
                                 textAlign: TextAlign.center,
+                                maxLines: 100,
                                 color: isBg
                                     ? CustomColor.gray_6
                                     : CustomColor.redE84F43,
@@ -494,6 +497,7 @@ class CustomWidget {
                         )
                       : customWidget.setText(inventory,
                           textAlign: TextAlign.center,
+                          maxLines: 100,
                           color:
                               isBg ? CustomColor.gray_6 : CustomColor.black_3,
                           fontSize: 12))),

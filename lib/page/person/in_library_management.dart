@@ -4,7 +4,6 @@ import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/ingredients_stocks_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
-import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
@@ -31,6 +30,7 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
     await backEndRepository.doGet(
       Constant.ingredientsStocks,
       successRequest: (result) {
+        ingredientsStocks.clear();
         if (result["data"] != null) {
           ingredientsStocks.addAll(
             (result['data'] as List? ?? [])
@@ -135,8 +135,14 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
                           item.ingredientName!,
                           item.countUnitName!,
                           item.recordCountUnitName!,
-                          () => Routes.goPage("MaterialAddition",param: {"isHaveDeletedBtn":true}),
-                          () => Routes.goPage("/InLibraryDetail"),
+                          () {
+                            Get.toNamed("MaterialAddition",arguments: {"isHaveDeletedBtn":true,"id":item.minUnitId.toString(),"IngredientsStocksModel":item})!.then((_){
+                              getIngredientsStocks();
+                            });
+                          },
+                          () => Get.toNamed("/InLibraryDetail",arguments: {"id":item.id.toString()})!.then((_){
+                            getIngredientsStocks();
+                          }),
                           false);
                     }),
                   ),)
@@ -153,7 +159,9 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("材料追加",
-                      onPressed: () => Routes.goPage("MaterialAddition",param: {"isHaveDeletedBtn":false}),
+                      onPressed: () => Get.toNamed("MaterialAddition",arguments: {"isHaveDeletedBtn":false,"id":"","IngredientsStocksModel":null})!.then((_){
+                        getIngredientsStocks();
+                      }),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),

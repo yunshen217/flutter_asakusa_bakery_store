@@ -3,6 +3,7 @@ class IngredientsStocksModel {
 /*
 {
   "id": 0,
+  "merchantId":"",
   "ingredientName": "",
   "countUnitName": "",
   "recordCountUnitName": "",
@@ -14,6 +15,7 @@ class IngredientsStocksModel {
 */
 
   int? id;
+  String? merchantId;
   String? ingredientName;
   String? countUnitName;
   String? recordCountUnitName;
@@ -24,6 +26,7 @@ class IngredientsStocksModel {
 
   IngredientsStocksModel({
     this.id,
+    this.merchantId,
     this.ingredientName,
     this.countUnitName,
     this.recordCountUnitName,
@@ -34,6 +37,7 @@ class IngredientsStocksModel {
   });
   IngredientsStocksModel.fromJson(Map<String, dynamic> json) {
     id = int.tryParse(json['id']?.toString() ?? '')??0;
+    merchantId = json["merchantId"]?.toString()??"";
     ingredientName = json['ingredientName']?.toString()??"";
     countUnitName = json['countUnitName']?.toString()??"";
     recordCountUnitName = json['recordCountUnitName']?.toString()??"";
@@ -45,6 +49,7 @@ class IngredientsStocksModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['id'] = id;
+    data["merchantId"] = merchantId;
     data['ingredientName'] = ingredientName;
     data['countUnitName'] = countUnitName;
     data['recordCountUnitName'] = recordCountUnitName;

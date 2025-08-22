@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -92,7 +93,7 @@ class _PersonPageState extends State<PersonPage>
                           trailing: const Icon(Icons.chevron_right),
                           contentPadding:
                               const EdgeInsets.only(right: 15, left: 15),
-                          title: customWidget.setText("ホ-ムペ-ジ",
+                          title: customWidget.setText("ホームページ",
                               fontWeight: FontWeight.bold),
                           leading: customWidget.setAssetsImg(
                               "person_shoppage@3x.png",
@@ -179,8 +180,12 @@ class _PersonPageState extends State<PersonPage>
                             .setAssetsImg("person_loginout@3x.png", width: 24),
                         onTap: () {
                           customWidget.showCustomDialog(context,
-                              title: "", content: "ログアウトします", confirm: () {
-                            Routes.pushNamedAndRemoveUntil('/LoginPage');
+                              title: "", content: "ログアウトします", confirm: () async {
+                                await backEndRepository.doPost(Constant.logout, successRequest: (result) {
+                                  Global.clear();
+                                  Routes.pushNamedAndRemoveUntil('/LoginPage');
+                                },);
+                            
                           });
                         },
                       )

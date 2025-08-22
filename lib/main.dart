@@ -60,9 +60,9 @@ class MyApp extends StatelessWidget {
         //   '/LoginPage': (context) => const LoginPage(),
         //   // 其他页面路由
         // },
-        // initialRoute: '/LoginPage',
+        initialRoute:Global.userInfo!.refreshToken == null? '/LoginPage':"/MyHomePage",
         getPages: Routes.pages,
-        home: const MyHomePage()
+        // home: const MyHomePage()
         );
   }
 }

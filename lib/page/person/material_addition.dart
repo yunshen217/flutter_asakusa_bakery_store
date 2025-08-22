@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
+import 'package:flutter_asakusa_bakery_store/model/ingredients_stocks_model.dart';
+import 'package:flutter_asakusa_bakery_store/page/person/mixin/material_addition_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/persion/clear_able_text_field.dart';
 import 'package:get/get.dart';
@@ -14,44 +16,47 @@ class MaterialAddition extends StatefulWidget {
   State<MaterialAddition> createState() => _MaterialAdditionState();
 }
 
-class _MaterialAdditionState extends State<MaterialAddition> {
-  /// isHaveDeletedBtn
-  final arguments = Get.arguments;
-  // 材料名
-  TextEditingController nameController = TextEditingController();
-  // 入荷閩值
-  TextEditingController inboundQuantityThresholdController =
-      TextEditingController();
-  // アレルゲン区分
-  RxString allergenCategory = "数値を入カしてください".obs;
-  RxList allergenCategoryList = ["是", "否"].obs;
-
-  /// 最小单位
-  RxString minimumUnit = "数値を入カしてください".obs;
-  RxList minimumUnitList = ["是", "否"].obs;
-
-  /// 表示单位
-  RxString displayUnit = "数値を入カしてください".obs;
-  RxList displayUnitList = ["是", "否"].obs;
-  RxBool isHaveDeletedBtn = false.obs;
+class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditionMixin{
+  
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isHaveDeletedBtn.value = arguments["isHaveDeletedBtn"];
+    var idArg = arguments["id"];
+    if (idArg is String) {
+      id.value = idArg;
+    } else {
+      id.value = "";
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getUnitsMin();
+      if(isHaveDeletedBtn.value){
+        await getDisplayUnits();
+      }
+      var ingredientsStocksModelArg = arguments["IngredientsStocksModel"];
+      if (ingredientsStocksModelArg is IngredientsStocksModel) {
+        ingredientsStocksModel.value = ingredientsStocksModelArg;
+        setIngredientsStocksData();
+      } else {
+        ingredientsStocksModel.value = IngredientsStocksModel.fromJson({});
+      }
+    });
   }
+
   @override
   void dispose() {
     nameController.dispose();
+    inboundQuantityThresholdController.dispose();
     super.dispose();
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       backgroundColor: CustomColor.white,
       appBar: customWidget.setAppBar(
-        title: "材料追加",
+        title:isHaveDeletedBtn.value?"材料変更": "材料追加",
         backgroundColor: CustomColor.white,
         isLeftShow: false,
         leading: InkWell(
@@ -78,11 +83,11 @@ class _MaterialAdditionState extends State<MaterialAddition> {
                       allergenCategoryList.map((e) => e.toString()).toList()
                     ],
                     initialIndex: [0],
-                    title: '商品カテゴリを選択してください',
+                    title: 'アレルゲン区分',
                     confirm: (list) => allergenCategory.value = list[0],
                   );
                 })),
-            infoWidget.titleWidget("最小单位", false),
+            infoWidget.titleWidget("最小単位", false),
             Obx(() => infoWidget.pickerSelected(
                     minimumUnit.value, minimumUnit.value == "数値を入カしてください", () {
                   customWidget.showCustomizationPicker(
@@ -91,52 +96,67 @@ class _MaterialAdditionState extends State<MaterialAddition> {
                       minimumUnitList.map((e) => e.toString()).toList()
                     ],
                     initialIndex: [0],
-                    title: '商品カテゴリを選択してください',
-                    confirm: (list) => minimumUnit.value = list[0],
+                    title: '最小単位',
+                    confirm: (list) {
+                      minimumUnit.value = list[0];
+                      for (var element in unitsMinList) {
+                        if(minimumUnit.value == element.unit){
+                          id.value = element.id!;
+                        }
+                      }
+                      getDisplayUnits();
+                    },
                   );
                 })),
-            infoWidget.titleWidget("表示单位", false),
+            infoWidget.titleWidget("表示単位", false),
             Obx(() => infoWidget.pickerSelected(
                     displayUnit.value, displayUnit.value == "数値を入カしてください", () {
+                      if(minimumUnit.value == "数値を入カしてください"){
+                        customWidget.toastShowNotIcon("最小単位を先に入カしてください");
+                        return;
+                      }
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [
                       displayUnitList.map((e) => e.toString()).toList()
                     ],
                     initialIndex: [0],
-                    title: '商品カテゴリを選択してください',
+                    title: '表示単位',
                     confirm: (list) => displayUnit.value = list[0],
                   );
                 })),
-            infoWidget.titleWidget("入荷閩值", false),
+            infoWidget.titleWidget("入荷閾値", false),
             ClearableTextField(
                 controller: inboundQuantityThresholdController,
                 hintText: '数値を入カしてください',
                 readOnly: false),
-            Obx(()=>Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-               isHaveDeletedBtn.value? customWidget.setCupertinoButton("削除",
-                    height: 30,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 12,
-                    circular: 5,
-                    textColor: CustomColor.black_3,
-                    color: CustomColor.blackD,
-                    margin: const EdgeInsets.only(top: 10, right: 15),
-                    onPressed: () {}):Container(),
-                customWidget.setCupertinoButton("保存",
-                    height: 30,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 12,
-                    circular: 5,
-                    textColor: CustomColor.black_3,
-                    color: CustomColor.redE8,
-                    margin: const EdgeInsets.only(top: 10, right: 15),
-                    onPressed: () {}),
-              ],
-            ))
-            
+            Obx(() => Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    isHaveDeletedBtn.value
+                        ? customWidget.setCupertinoButton("削除",
+                            height: 30,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 12,
+                            circular: 5,
+                            textColor: CustomColor.black_3,
+                            color: CustomColor.blackD,
+                            margin: const EdgeInsets.only(top: 10, right: 15),
+                            onPressed: () => deleteProductIngredient())
+                        : Container(),
+                    customWidget.setCupertinoButton("保存",
+                        height: 30,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 12,
+                        circular: 5,
+                        textColor: CustomColor.black_3,
+                        color: CustomColor.redE8,
+                        margin: const EdgeInsets.only(top: 10, right: 15),
+                        onPressed: () {
+                      updateProductIngredient();
+                    }),
+                  ],
+                ))
           ],
         ),
       ),

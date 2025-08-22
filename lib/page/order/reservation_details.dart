@@ -249,7 +249,6 @@ class _ReservationDetailsState extends State<ReservationDetails>
                         }
                         if(plansCountList.isNotEmpty){
                           getPlansCount(context);
-                          print("plansCountList --------------- $plansCountList");
                         }
                       });
                     }),

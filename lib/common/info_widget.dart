@@ -100,10 +100,12 @@ class InfoWidget {
       '${Constant.base_url}common/upload/img',
       paths,
       (res) {
-        final id = res.data is Map ? res.data["data"] : res.data;
+        print("成功啦哈哈哈哈 ---------------- ");
+        final id = res is Map ? res["data"] : "";
         if (id is String) {
-          netUrls.add(id);
+          // netUrls.add(id);
           fileIds.add(id);
+          print("fileIds ------------------ $fileIds");
         }
       },
     );
