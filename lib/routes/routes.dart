@@ -32,7 +32,7 @@ class Routes {
     GetPage(name: '/ForgetPage', page: () => const ForgetPage()),
     // 注文の詳細
     GetPage(name: '/OrderDetail', page: () => const OrderDetail()),
-    // 予約の詳細
+    // 予約の詳細1
     GetPage(
         name: '/ReservationDetails', page: () => const ReservationDetails()),
     // 通知
