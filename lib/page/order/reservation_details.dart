@@ -26,8 +26,8 @@ class _ReservationDetailsState extends State<ReservationDetails>
     super.initState();
     time.value = arguments != null ? arguments["time"] : "";
     status.value = arguments != null ? arguments["status"] : "";
-    btnText.value = status.value == "予約一時中止"?"予約再開":"予約中止";
-    
+    btnText.value = status.value == "予約一時中止" ? "予約再開" : "予約中止";
+
     getPlansItems();
     getCommonSearchParam();
     isFirstLogin.value = true;
@@ -79,7 +79,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 头像
+                        // アイコン
                         Row(
                           children: [
                             customWidget.setAssetsImg("person_shop_icon@3x.png",
@@ -89,17 +89,21 @@ class _ReservationDetailsState extends State<ReservationDetails>
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Obx(()=>customWidget.setTextOverflow(status.value,
-                                    margin: const EdgeInsets.only(bottom: 5.0),
-                                    color: CustomColor.black_3,
-                                    fontWeight: FontWeight.bold),),
+                                Obx(
+                                  () => customWidget.setTextOverflow(
+                                      status.value,
+                                      margin:
+                                          const EdgeInsets.only(bottom: 5.0),
+                                      color: CustomColor.black_3,
+                                      fontWeight: FontWeight.bold),
+                                ),
                                 Obx(() => customWidget.setText(time.value,
                                     fontSize: 12.0, color: CustomColor.gray_6))
                               ],
                             )
                           ],
                         ),
-                        // 按钮
+                        // ボタン
                         Row(
                           children: [
                             // customWidget.setCupertinoButton("注文数書戾",
@@ -124,58 +128,64 @@ class _ReservationDetailsState extends State<ReservationDetails>
                             //           color: CustomColor.black_9),
                             //       onPressed: (){});
                             // }),
-                            Obx(()=>customWidget.setCupertinoButton(btnText.value,
-                                fontSize: 12,
-                                textColor: CustomColor.black_3,
-                                height: 30,
-                                circular: 8,
-                                fontWeight: FontWeight.normal,
-                                minimumSize: 68, onPressed: () {
-                              customWidget.showConfirmDialog(context,
-                                  title: "",
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(24, 0, 24, 10),
-                                  barrierDismissible: false,
-                                  useDefaultWidth: true,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  child: customWidget.setText("予約終了を確認しますか?",
-                                      maxLines: 100,
-                                      textAlign: TextAlign.center,
-                                      color: CustomColor.black_9),
-                                  onPressed: () {
-                                    Get.back();
-                                    getPlansReserveStatus();
-                                  });
-                            }),)
+                            Obx(
+                              () => customWidget.setCupertinoButton(
+                                  btnText.value,
+                                  fontSize: 12,
+                                  textColor: CustomColor.black_3,
+                                  height: 30,
+                                  circular: 8,
+                                  fontWeight: FontWeight.normal,
+                                  minimumSize: 68, onPressed: () {
+                                customWidget.showConfirmDialog(context,
+                                    title: "",
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        24, 0, 24, 10),
+                                    barrierDismissible: false,
+                                    useDefaultWidth: true,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    child: customWidget.setText("予約終了を確認しますか?",
+                                        maxLines: 100,
+                                        textAlign: TextAlign.center,
+                                        color: CustomColor.black_9),
+                                    onPressed: () {
+                                  Get.back();
+                                  getPlansReserveStatus();
+                                });
+                              }),
+                            )
                           ],
                         )
                       ],
                     ),
                     circular: 0,
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
                     margin: const EdgeInsets.all(0)),
-                customWidget.rowWithTextEditing("","商品名", "計画数", "注文数", "在庫数",
-                    true, false, TextEditingController(), FocusNode(),(){}),
+                customWidget.rowWithTextEditing("", "商品名", "計画数", "注文数", "在庫数",
+                    true, false, TextEditingController(), FocusNode(), () {}),
                 Expanded(
-                    child: Obx(()=>detailsData.isEmpty&&!isFirstLogin.value?customWidget.noData(): ListView.builder(
-                        itemCount: detailsData.length,
-                        itemBuilder: (context, index) {
-                          final item = detailsData[index];
-                          return customWidget.rowWithTextEditing(
-                            item.filePath!,
-                          item.itemName!,
-                          '${item.planCount}',
-                          '${item.orderCount}',
-                          '${item.stockCount}',
-                          false,
-                          true,
-                          controllerList[index],
-                          focusNodeList[index],
-                          () => setState(() {
-                            currentFocusNode = focusNodeList[index];
-                          })) ;
-                        }))),
+                    child: Obx(() => detailsData.isEmpty && !isFirstLogin.value
+                        ? customWidget.noData()
+                        : ListView.builder(
+                            itemCount: detailsData.length,
+                            itemBuilder: (context, index) {
+                              final item = detailsData[index];
+                              return customWidget.rowWithTextEditing(
+                                  item.filePath!,
+                                  item.itemName!,
+                                  '${item.planCount}',
+                                  '${item.orderCount}',
+                                  '${item.stockCount}',
+                                  false,
+                                  true,
+                                  controllerList[index],
+                                  focusNodeList[index],
+                                  () => setState(() {
+                                        currentFocusNode = focusNodeList[index];
+                                      }));
+                            }))),
                 const SizedBox(
                   height: 50,
                 )
@@ -209,7 +219,8 @@ class _ReservationDetailsState extends State<ReservationDetails>
                     ClearableTextField(
                         controller: searchController,
                         hintText: 'パスワードを入カしてください',
-                        margin: const EdgeInsets.only(left: 0,right: 0,bottom: 10),
+                        margin: const EdgeInsets.only(
+                            left: 0, right: 0, bottom: 10),
                         readOnly: false),
                   ],
                 ),
@@ -230,29 +241,32 @@ class _ReservationDetailsState extends State<ReservationDetails>
                     fontSize: 12,
                     textColor: CustomColor.black_3,
                     fontWeight: FontWeight.normal,
-                    circular: 5,
-                    onPressed: () {
-                      currentFocusNode.unfocus();
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        plansCountList.value = [];
-                        for (var i = 0; i < detailsData.length; i++) {
-                          if(controllerList[i].text != ""&&(detailsData[i].planCount.toString() != controllerList[i].text)){
-                            if(int.parse(controllerList[i].text)<detailsData[i].orderCount!){
-                              controllerList[i].text = detailsData[i].orderCount!.toString();
-                            }
-                            plansCountList.add({
-                              "id": detailsData[i].id,
-                              "orderDate": time.value,
-                              "planCount": controllerList[i].text
-                            });
-                          }
+                    circular: 5, onPressed: () {
+                  currentFocusNode.unfocus();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    plansCountList.value = [];
+                    for (var i = 0; i < detailsData.length; i++) {
+                      if (controllerList[i].text != "" &&
+                          (detailsData[i].planCount.toString() !=
+                              controllerList[i].text)) {
+                        if (int.parse(controllerList[i].text) <
+                            detailsData[i].orderCount!) {
+                          controllerList[i].text =
+                              detailsData[i].orderCount!.toString();
                         }
-                        if(plansCountList.isNotEmpty){
-                          getPlansCount(context);
-                          print("plansCountList --------------- $plansCountList");
-                        }
-                      });
-                    }),
+                        plansCountList.add({
+                          "id": detailsData[i].id,
+                          "orderDate": time.value,
+                          "planCount": controllerList[i].text
+                        });
+                      }
+                    }
+                    if (plansCountList.isNotEmpty) {
+                      getPlansCount(context);
+                      print("plansCountList --------------- $plansCountList");
+                    }
+                  });
+                }),
               ))
         ],
       ),

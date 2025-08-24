@@ -25,10 +25,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   /// 市
   TextEditingController cityController = TextEditingController();
 
-  /// 街道
+  /// がいろ
   TextEditingController streetController = TextEditingController();
 
-  /// 住所
+  /// じゅうたく
   TextEditingController addressController = TextEditingController();
 
   /// 電話番号
@@ -198,9 +198,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
             }
           }
           assetsImg.clear();
-          if(detailModel.value!.files.isNotEmpty){
+          if (detailModel.value!.files.isNotEmpty) {
             for (var data in detailModel.value!.files) {
-              assetsImg.add('${Constant.picture_url}${data.filePath}''${data.fileName}');
+              assetsImg.add(
+                  '${Constant.picture_url}${data.filePath}' '${data.fileName}');
               fileIdList.add(data.id);
             }
           }
@@ -226,16 +227,16 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
 
   updateDetailData() async {
     List fixedHoliday = [];
-    if(selected.isNotEmpty){
-      for (int i = 0;i<selected.length;i++) {
-        if(selected[i].value){
-          fixedHoliday.add("${i+1}");
+    if (selected.isNotEmpty) {
+      for (int i = 0; i < selected.length; i++) {
+        if (selected[i].value) {
+          fixedHoliday.add("${i + 1}");
         }
       }
     }
 
     List specialRestDayList = [];
-    if(selectedDates.isNotEmpty){
+    if (selectedDates.isNotEmpty) {
       for (var data in selectedDates) {
         specialRestDayList.add(DateFormat('yyyy-MM-dd').format(data));
       }
@@ -258,20 +259,22 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "remark": "",
       "loginIp": "",
       "loginDate": "",
-      "businessHoursBegin": startTime.value == "開始時間"?"":startTime.value,
-      "businessHoursEnd": endTime.value == "終了時間"?"":endTime.value,
+      "businessHoursBegin": startTime.value == "開始時間" ? "" : startTime.value,
+      "businessHoursEnd": endTime.value == "終了時間" ? "" : endTime.value,
       "fixedHoliday": fixedHoliday,
       "specialRestDay": "",
-      "eatingArea": isThereDiningSpace.value == "イートインスペースあり"?"":isThereDiningSpace.value,
+      "eatingArea": isThereDiningSpace.value == "イートインスペースあり"
+          ? ""
+          : isThereDiningSpace.value,
       "postcode": postalCodeController.text,
       "prefecturesCode": prefecturesCode.value,
       "municipalities": "",
       "streetAddress": streetController.text,
       "building": addressController.text,
-      "snsType1": sns1.value == "SNS1"?"":sns1.value,
-      "snsType2": sns2.value == "SNS2"?"":sns2.value,
-      "snsType3": sns3.value == "SNS3"?"":sns3.value,
-      "snsType4": sns4.value == "SNS4"?"":sns4.value,
+      "snsType1": sns1.value == "SNS1" ? "" : sns1.value,
+      "snsType2": sns2.value == "SNS2" ? "" : sns2.value,
+      "snsType3": sns3.value == "SNS3" ? "" : sns3.value,
+      "snsType4": sns4.value == "SNS4" ? "" : sns4.value,
       "snsLink1": linkController1.text,
       "snsLink2": linkController2.text,
       "snsLink3": linkController3.text,
@@ -279,9 +282,13 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "businessStatus": "",
       "storeHomepageLink": homeController.text,
       "deliveryFlag": "",
-      "deadLineDays": reservationsAreClosedDay.value == "予約締切日数"?"":reservationsAreClosedDay.value,
-      "approvalDays": bookingDayMax.value == "最大予約可能日数"?"":bookingDayMax.value,
-      "deadLineTime": appointmentTime.value == "予約締切時間"?"":appointmentTime.value,
+      "deadLineDays": reservationsAreClosedDay.value == "予約締切日数"
+          ? ""
+          : reservationsAreClosedDay.value,
+      "approvalDays":
+          bookingDayMax.value == "最大予約可能日数" ? "" : bookingDayMax.value,
+      "deadLineTime":
+          appointmentTime.value == "予約締切時間" ? "" : appointmentTime.value,
       "email": "",
       "customerOrderLimit": orderAmountMaxController.text,
       "customerDailyOrderLimit": dailyOrderAmountMaxController.text,
@@ -289,7 +296,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "revAmountLimit": productAmountMaxController.text,
       "fileIdList": fileIdList,
       "specialRestDayList": specialRestDayList,
-      "pointRate":pointsRatioController.text // 比率
+      "pointRate": pointsRatioController.text // 比率
     };
     print("params -------------- $params");
     await backEndRepository.doPut(
