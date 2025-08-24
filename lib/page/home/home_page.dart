@@ -10,7 +10,7 @@ import 'package:flutter_asakusa_bakery_store/view/home/home_order_card.dart';
 import 'package:flutter_asakusa_bakery_store/view/home/to_login_page.dart';
 import 'package:get/get.dart';
 
-/// 主页
+/// 受注ページ
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -63,8 +63,7 @@ class _HomePageState extends State<HomePage>
           isLeftShow: false,
           centerTitle: false,
           bottom: PreferredSize(
-              preferredSize:
-                  const Size.fromHeight(40), // 设置了一个50高度的区域，用于放置自定义的TabBar
+              preferredSize: const Size.fromHeight(40),
               child: Column(
                 children: [
                   Container(
@@ -239,8 +238,12 @@ class _HomePageState extends State<HomePage>
               Obx(() =>
                   (orderStateIndex.value == 0 || orderStateIndex.value == 1) ||
                           notLogin
-                      ? const SizedBox( height: 70,)
-                      : Container(height: 0,))
+                      ? const SizedBox(
+                          height: 70,
+                        )
+                      : Container(
+                          height: 0,
+                        ))
             ],
           ),
           Positioned(
