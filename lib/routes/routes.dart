@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_asakusa_bakery_store/main.dart';
 import 'package:flutter_asakusa_bakery_store/page/login/forget_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/order_detail.dart';
@@ -32,10 +30,11 @@ class Routes {
     GetPage(name: '/HomePage', page: () => const HomePage()),
     GetPage(name: '/PersonPage', page: () => const PersonPage()),
     GetPage(name: '/ForgetPage', page: () => const ForgetPage()),
-    // 注文の詳細
+    // 注文の詳細.
     GetPage(name: '/OrderDetail', page: () => const OrderDetail()),
     // 予約の詳細
-    GetPage(name: '/ReservationDetails', page: () => const ReservationDetails()),
+    GetPage(
+        name: '/ReservationDetails', page: () => const ReservationDetails()),
     // 通知
     GetPage(name: '/NoticePage', page: () => const NoticePage()),
     // 店舗設定
@@ -47,16 +46,19 @@ class Routes {
     // 商品詳細
     GetPage(name: '/ProductDetail', page: () => const ProductDetail()),
     // 在庫管理
-    GetPage(name: '/InLibraryManagement', page: () => const InLibraryManagement()),
+    GetPage(
+        name: '/InLibraryManagement', page: () => const InLibraryManagement()),
     // 材料の追加
     GetPage(name: '/MaterialAddition', page: () => const MaterialAddition()),
     // 倉庫の詳細
     GetPage(name: '/InLibraryDetail', page: () => const InLibraryDetail()),
     // 入出庫
-    GetPage(name: '/InboundAndOutboundStorage', page: () => const InboundAndOutboundStorage()),
+    GetPage(
+        name: '/InboundAndOutboundStorage',
+        page: () => const InboundAndOutboundStorage()),
     // バスフ-ドの変更
-    GetPage(name: '/ChangeOfBusService', page: () => const ChangeOfBusService()),
-    
+    GetPage(
+        name: '/ChangeOfBusService', page: () => const ChangeOfBusService()),
   ];
 
   // Get.to() を使用してページを移動する
@@ -65,12 +67,13 @@ class Routes {
   }
 
   // ページを移動し、結果を受け取る
-  static void goPageForResult(String pagePath, {Map<String, dynamic>? param, required Function then}) {
+  static void goPageForResult(String pagePath,
+      {Map<String, dynamic>? param, required Function then}) {
     Get.toNamed(pagePath, arguments: param)?.then((value) => then(value));
   }
 
   // ページを切り替えて現在のページを置き換える
-  static void goPageAndFinish( String pagePath, {Map<String, dynamic>? param}) {
+  static void goPageAndFinish(String pagePath, {Map<String, dynamic>? param}) {
     Get.offNamed(pagePath, arguments: param);
   }
 
@@ -80,7 +83,8 @@ class Routes {
   }
 
   // ジャンプして以前のすべてのページを削除する
-  static void pushNamedAndRemoveUntil( String fromPage, {Map<String, dynamic>? param, bool isRoute = true}) {
+  static void pushNamedAndRemoveUntil(String fromPage,
+      {Map<String, dynamic>? param, bool isRoute = true}) {
     Get.offAllNamed(fromPage, arguments: param);
   }
 }
