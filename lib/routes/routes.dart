@@ -30,7 +30,7 @@ class Routes {
     GetPage(name: '/HomePage', page: () => const HomePage()),
     GetPage(name: '/PersonPage', page: () => const PersonPage()),
     GetPage(name: '/ForgetPage', page: () => const ForgetPage()),
-    // 注文の詳細.
+    // 注文の詳細
     GetPage(name: '/OrderDetail', page: () => const OrderDetail()),
     // 予約の詳細
     GetPage(
