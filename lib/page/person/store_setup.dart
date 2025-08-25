@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/image_selector.dart';
 import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/mixin/store_setup_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -66,7 +67,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
           color: CustomColor.bg,
         ),
         infoWidget.titleWidget("店舗画像(3枚)", false),
-        infoWidget.selectImage(localAssets:image,context: context,maxLength: 3,fileIds:fileIdList,netUrls:assetsImg),
+        SelectImageWidget(localAssets:image,maxLength: 3,fileIds:fileIdList,netUrls:assetsImg),
         infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,

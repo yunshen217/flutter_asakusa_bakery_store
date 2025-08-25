@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/time_period_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -16,7 +17,8 @@ class TimeManagement extends StatefulWidget {
 }
 
 class _TimeManagementState extends State<TimeManagement> {
-  RxList<TimePeriodModelTimePeriodList?> timePeriodModel = <TimePeriodModelTimePeriodList>[].obs;
+  RxList<TimePeriodModelTimePeriodList?> timePeriodModel =
+      <TimePeriodModelTimePeriodList>[].obs;
   RxList<RxBool> timeDataSelect = <RxBool>[].obs;
   RxList<RxBool> timeDataSelectCopy = <RxBool>[].obs;
   RxBool isShowBottomBtn = false.obs;
@@ -29,29 +31,39 @@ class _TimeManagementState extends State<TimeManagement> {
 
   gettimePeriods() async {
     await backEndRepository.doGet(
-      "${Constant.base_url}merchant/time-periods",
+      "${Constant.base_url}merchant/time-periods?merchantId=${Global.merchantId}",
       successRequest: (result) {
-        TimePeriodModel timeList = TimePeriodModel.fromJson(result["data"] ?? "");
+        TimePeriodModel timeList =
+            TimePeriodModel.fromJson(result["data"] ?? "");
         timePeriodModel.value = timeList.timePeriodList!;
         if (timePeriodModel.isNotEmpty) {
           timeDataSelect.clear();
-          timeDataSelect.assignAll(List.generate(timePeriodModel.length, (_) => false.obs));
+          timeDataSelect.assignAll(
+              List.generate(timePeriodModel.length, (_) => false.obs));
           for (var i = 0; i < timePeriodModel.length; i++) {
             final item = timePeriodModel[i]!;
-            if(timeList.selectedTimePeriod!.contains(item.id!)){
+            if (timeList.selectedTimePeriod!.contains(item.id!)) {
               timeDataSelect[i].value = true;
             }
           }
-          timeDataSelectCopy.value = RxList.from(timeDataSelect.map((element) => RxBool(element.value)));
+          timeDataSelectCopy.value = RxList.from(
+              timeDataSelect.map((element) => RxBool(element.value)));
         }
       },
     );
   }
 
-  savetimePeriods() async{
-    await backEndRepository.doPost("${Constant.base_url}merchant/time-periods/$selectedTimePeriod", successRequest: (result) {
-      Get.back();
-    },);
+  savetimePeriods() async {
+    await backEndRepository.doPost(
+      "${Constant.base_url}merchant/time-periods",
+      params: {
+        "timePeriod": "$selectedTimePeriod",
+        "merchantId": Global.merchantId,
+      },
+      successRequest: (result) {
+        Get.back();
+      },
+    );
   }
 
   bool listsEqual(RxList<RxBool> listA, RxList<RxBool> listB) {
@@ -131,18 +143,19 @@ class _TimeManagementState extends State<TimeManagement> {
               children: [
                 _row("シーケンス番号", "時間帯", true, false, () {}),
                 Expanded(
-                    child: Obx(()=>ListView.builder(
+                    child: Obx(() => ListView.builder(
                         itemCount: timePeriodModel.length,
                         padding: const EdgeInsets.only(bottom: 100),
                         itemBuilder: (context, index) {
                           final item = timePeriodModel[index];
-                          return Obx(() => _row("${index + 1}", item!.label!, false,
-                                  timeDataSelect[index].value, () {
+                          return Obx(() => _row("${index + 1}", item!.label!,
+                                  false, timeDataSelect[index].value, () {
                                 timeDataSelect[index].value =
                                     !timeDataSelect[index].value;
-                                if (!listsEqual(timeDataSelect, timeDataSelectCopy)) {
+                                if (!listsEqual(
+                                    timeDataSelect, timeDataSelectCopy)) {
                                   isShowBottomBtn.value = true;
-                                }else{
+                                } else {
                                   isShowBottomBtn.value = false;
                                 }
                               }));
@@ -152,24 +165,27 @@ class _TimeManagementState extends State<TimeManagement> {
           ),
           Positioned(
               bottom: 0,
-              child:Obx(()=>!isShowBottomBtn.value?Container(): Container(
-                  width: Get.width,
-                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
-                  decoration: const BoxDecoration(
-                    color: CustomColor.white,
-                  ),
-                  child: customWidget.setOutLinedButton("更新",
-                      circular: 5,
-                      linewidth: 0.5,
-                      minimumSize: Size(Get.width-15, 34),
-                      lineColor: CustomColor.blackD,
-                      fontColor: CustomColor.black_3,
-                      onPressed: (){
+              child: Obx(() => !isShowBottomBtn.value
+                  ? Container()
+                  : Container(
+                      width: Get.width,
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 30),
+                      decoration: const BoxDecoration(
+                        color: CustomColor.white,
+                      ),
+                      child: customWidget.setOutLinedButton("更新",
+                          circular: 5,
+                          linewidth: 0.5,
+                          minimumSize: Size(Get.width - 15, 34),
+                          lineColor: CustomColor.blackD,
+                          fontColor: CustomColor.black_3, onPressed: () {
                         selectedTimePeriod.value = "";
                         String timePeriod = "";
                         for (var i = 0; i < timeDataSelect.length; i++) {
-                          if(timeDataSelect[i].value){
-                            timePeriod == ""?timePeriod+=timePeriodModel[i]!.id!:timePeriod+=",${timePeriodModel[i]!.id!}";
+                          if (timeDataSelect[i].value) {
+                            timePeriod == ""
+                                ? timePeriod += timePeriodModel[i]!.id!
+                                : timePeriod += ",${timePeriodModel[i]!.id!}";
                           }
                         }
                         selectedTimePeriod.value = timePeriod;

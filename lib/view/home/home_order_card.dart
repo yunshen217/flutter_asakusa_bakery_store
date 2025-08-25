@@ -100,7 +100,7 @@ class HomeOrderCard extends StatelessWidget {
                   if (orderStateIndex == 0 || orderStateIndex == 1)
                     customWidget.setCupertinoButton("注文取消",
                         height: 35,
-                        minimumSize: 80,
+                        width: 80,
                         fontWeight: FontWeight.normal,
                         fontSize: 15,
                         textColor: CustomColor.black_3,
@@ -156,7 +156,7 @@ class HomeOrderCard extends StatelessWidget {
                 if (orderStateIndex == 0) ...[
                   customWidget.setCupertinoButton("焼き上がリ",
                       height: 35,
-                      minimumSize: 95,
+                      width: 95,
                       fontWeight: FontWeight.normal,
                       fontSize: 15,
                       textColor: CustomColor.black_3,
@@ -165,7 +165,7 @@ class HomeOrderCard extends StatelessWidget {
                 if (orderStateIndex == 1 && isStorePickup == true) ...[
                   customWidget.setCupertinoButton("引渡",
                       height: 35,
-                      minimumSize: 80,
+                      width: 80,
                       fontWeight: FontWeight.normal,
                       fontSize: 15,
                       textColor: CustomColor.black_3,
@@ -200,7 +200,7 @@ class HomeOrderCard extends StatelessWidget {
                       // ),
                       customWidget.setCupertinoButton("出荷",
                           height: 35,
-                          minimumSize: 80,
+                          width: 80,
                           fontWeight: FontWeight.normal,
                           fontSize: 15,
                           textColor: CustomColor.black_3,

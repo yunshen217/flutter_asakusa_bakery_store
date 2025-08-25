@@ -19,16 +19,16 @@ import 'package:flutter_asakusa_bakery_store/page/order/order_page.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/person_page.dart';
 import 'package:flutter_asakusa_bakery_store/view/NavigationIconView.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 初始化推送
   pushMessages.initFCM();
-  // 初始化深度链接监听器，用于处理从外部应用跳转到此应用的深度链接
   pushMessages.initDeepLinkListener();
-  Global.init().then((e) =>
-      runApp(const MyApp())); //Global.init()返回`Future的异步方法，首屏加载前执行全局的初始化工作
+  await Global.init();
+  // await SpUtil.remove(Constant.USER_MODEL);
+  await Global.putMerchantId("1816640958868602882");
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark));
+   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -51,18 +51,12 @@ class MyApp extends StatelessWidget {
                 color: Colors.white, surfaceTintColor: Colors.transparent),
             scaffoldBackgroundColor: Colors.white),
         // onGenerateRoute: onGenerateRoute,
-        // initialRoute: Global.token.isEmpty ? "/LoginPage" : "/",
         navigatorObservers: [FlutterSmartDialog.observer],
         builder: FlutterSmartDialog.init(),
         debugShowCheckedModeBanner: false,
-        navigatorKey: NavigationService.navigatorKey, // 设置 navigatorKey
-        // routes: {
-        //   '/LoginPage': (context) => const LoginPage(),
-        //   // 其他页面路由
-        // },
+        navigatorKey: NavigationService.navigatorKey, 
         initialRoute:Global.userInfo!.refreshToken == null? '/LoginPage':"/MyHomePage",
         getPages: Routes.pages,
-        // home: const MyHomePage()
         );
   }
 }
@@ -75,13 +69,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ///底部bottom tab start
   int _selectedIndex = 0;
 
-  ///tab展示的界面
   final tabs = [const HomePage(), const OrderPage(), const PersonPage()];
 
-  /// tab 展示title
   final tabTitle = ['オーダー', "計画＆予約", "マイ店舗"];
   List<NavigationIconView> _navigationIconView = [];
   List<String> bottomSelectIcons = [

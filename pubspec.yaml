@@ -72,6 +72,8 @@ dependencies:
   photo_manager: ^3.6.4 # 图片选择
   wechat_assets_picker: ^9.5.1
   pull_to_refresh: ^2.0.0
+  # 压缩图片
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:

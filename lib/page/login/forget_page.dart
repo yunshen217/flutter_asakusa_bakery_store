@@ -60,7 +60,7 @@ class _ForgetPageState extends State<ForgetPage> {
               keyboardType: TextInputType.emailAddress,
               margin: const EdgeInsets.only(left: 15, right: 15, bottom: 10)),
           customWidget.setCupertinoButton("送信",
-              minimumSize: utils.getScreenSize.width,
+              width: Get.width,
               margin: const EdgeInsets.only(left: 15, right: 15, top: 30), onPressed: () {
             if (isAccountPass()) {
               backEndRepository.doPost(Constant.resetAccountPassword,

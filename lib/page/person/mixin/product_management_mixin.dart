@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/common_search_param_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/items_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
@@ -48,7 +49,7 @@ mixin ProductManagementMixin<T extends StatefulWidget> on State<T> {
     } else {
       status = "";
     }
-    Map<String, dynamic> param = {"kindIdList": kindIdList, "status": status};
+    Map<String, dynamic> param = {"kindIdList": kindIdList, "status": status,"merchantId":Global.merchantId};
 
     await backEndRepository.doPost(
       Constant.itemList,

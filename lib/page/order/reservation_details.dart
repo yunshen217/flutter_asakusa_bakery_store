@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/slide_up_panel.dart';
 import 'package:flutter_asakusa_bakery_store/page/order/mixin/reservation_details_mixin.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -130,7 +131,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                                 height: 30,
                                 circular: 8,
                                 fontWeight: FontWeight.normal,
-                                minimumSize: 68, onPressed: () {
+                                width: 68, onPressed: () {
                               customWidget.showConfirmDialog(context,
                                   title: "",
                                   contentPadding:
@@ -224,7 +225,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                 padding: const EdgeInsets.only(top: 10),
                 circular: 0,
                 customWidget.setCupertinoButton("更新",
-                    minimumSize: Get.width - 30,
+                    width: Get.width - 30,
                     height: 36,
                     margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
                     fontSize: 12,
@@ -243,7 +244,8 @@ class _ReservationDetailsState extends State<ReservationDetails>
                             plansCountList.add({
                               "id": detailsData[i].id,
                               "orderDate": time.value,
-                              "planCount": controllerList[i].text
+                              "planCount": controllerList[i].text,
+                              "merchantId":Global.merchantId,
                             });
                           }
                         }

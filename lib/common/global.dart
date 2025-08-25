@@ -13,9 +13,17 @@ class Global {
 
   static putToken(token) => SpUtil.putString(Constant.TOKEN, token)!;
 
+  static String get merchantId => SpUtil.getString(Constant.merchantId, defValue: "")!;
+
+  static putMerchantId(merchantId) => SpUtil.putString(Constant.merchantId, merchantId)!;
+
   //全体エンティティ   start
-  static UserModel? get userInfo => SpUtil.getObj(Constant.USER_MODEL, (v) => UserModel.fromJson(v),
-      defValue: UserModel(userName: "ログイン", userId: ""));
+  static UserModel? get userInfo {
+  final obj = SpUtil.getObject(Constant.USER_MODEL);
+  return obj is Map<String, dynamic>
+      ? UserModel.fromJson(obj)
+      : UserModel(userName: "ログイン", userId: "");
+}
 
   static Future<void> putUserInfo(dynamic user) async {
     try {

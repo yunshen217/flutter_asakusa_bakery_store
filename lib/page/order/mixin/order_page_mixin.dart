@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
-import 'package:flutter_asakusa_bakery_store/common/loading_toast.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/order_plans_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
@@ -53,7 +53,7 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
   getOrderList() async {
     // LoadingToast.show(context, "Loading...");
     await backEndRepository.doPost(Constant.ordersPlans,
-        params: {"startDate": timeStart.value, "endDate": timeEnd.value},
+        params: {"merchantId":Global.merchantId,"startDate": timeStart.value, "endDate": timeEnd.value},
         successRequest: (res) {
           
       orderPlansData.clear();
@@ -81,7 +81,7 @@ mixin OrderPageMixin<T extends StatefulWidget> on State<T> {
   }
 
   getDetailData() async{
-    await backEndRepository.doGet(Constant.detail,successRequest: (result) {
+    await backEndRepository.doGet('${Constant.detail}?merchantId=${Global.merchantId}',successRequest: (result) {
       DetailModel detailModel = DetailModel.fromJson(result["data"]??{});
 timeEnd.value =DateFormat('yyyy-MM-dd')
     .format(DateTime.now().add( Duration(days: detailModel.approvalDays)));

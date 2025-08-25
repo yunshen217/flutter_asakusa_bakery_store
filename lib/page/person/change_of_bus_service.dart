@@ -82,7 +82,7 @@ class _ChangeOfBusServiceState extends State<ChangeOfBusService> {
             Align(
               alignment: Alignment.center,
               child: customWidget.setCupertinoButton("保存",
-                  minimumSize: Get.width - 60,
+                  width: Get.width - 60,
                   height: 40,
                   circular: 50,
                   fontWeight: FontWeight.normal,

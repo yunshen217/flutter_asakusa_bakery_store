@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/product_detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/product_ingredient_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/time_period_model.dart';
@@ -124,7 +125,7 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
   RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
   gettimePeriods() async {
     await backEndRepository.doGet(
-      "${Constant.base_url}merchant/time-periods",
+      "${Constant.base_url}merchant/time-periods?merchantId=${Global.merchantId}",
       successRequest: (result) {
         timePeriodModel.value = TimePeriodModel.fromJson(result["data"] ?? "");
         if (timePeriodModel.value!.timePeriodList!.isNotEmpty) {
@@ -225,7 +226,7 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
 
   getProductIngredientList() async {
     await backEndRepository.doGet(
-      '${Constant.base_url}merchant/items/ingredients',
+      '${Constant.base_url}merchant/items/ingredients?merchantId=${Global.merchantId}',
       successRequest: (result) {
         productIngredientListModel.clear();
         controllerList.clear();
@@ -261,6 +262,10 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
     }
     List ingredientList = [];
     if (currentlyselectTheMaterial.isNotEmpty) {
+      // 確保 controllerList 的長度與 currentlyselectTheMaterial 的長度一致
+      if (controllerList.length != currentlyselectTheMaterial.length) {
+        return;
+      }
       for (var i = 0; i < currentlyselectTheMaterial.length; i++) {
         ingredientList.add({
           "id": currentlyselectTheMaterial[i]["id"] ?? "",
@@ -272,7 +277,7 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
 
     Map<String, dynamic> params = {
       "id": id == "" ? "" : productDetailModel.value!.id,
-      "merchantId": 0,
+      "merchantId": Global.merchantId,
       "itemNo": topTitleController[0].text,
       "itemName": topTitleController[1].text,
       "itemShortName": topTitleController[2].text,

@@ -36,7 +36,7 @@ class BaseScaffold extends StatefulWidget {
         assert(drawerDragStartBehavior != null),
         super(key: key);
 
-  ///系统Scaffold的属性
+
   final bool? extendBody;
   final bool? extendBodyBehindAppBar;
   final PreferredSizeWidget? appBar;
@@ -58,14 +58,14 @@ class BaseScaffold extends StatefulWidget {
   final bool? drawerEnableOpenDragGesture;
   final bool? endDrawerEnableOpenDragGesture;
 
-  ///增加的属性
-  ///点击返回按钮提示是否退出页面,快速点击俩次才会退出页面
+//   Increased attributes
+// Click the back button to indicate whether to exit the page, and quickly click twice to exit the page
   final bool? isTwiceBack;
 
-  ///是否可以返回
+  ///Whether it can be returned
   final bool? isCanBack;
 
-  ///监听返回事件
+  ///Listen for return events
   final ScaffoldParamVoidCallback? onBack;
 
   @override
@@ -73,7 +73,7 @@ class BaseScaffold extends StatefulWidget {
 }
 
 class _BaseScaffoldState extends State<BaseScaffold> {
-  DateTime? _lastPressedAt; //上次点击时间
+  DateTime? _lastPressedAt; //Last clicked time
 
   @override
   Widget build(BuildContext context) {
@@ -113,19 +113,19 @@ class _BaseScaffoldState extends State<BaseScaffold> {
         });
   }
 
-  ///控件返回按钮
+  ///Control back button
   Future<bool> dealWillPop() async {
     if (widget.onBack != null) {
       widget.onBack!();
     }
 
-    //处理弹窗问题
+    //Deal with pop-up issues
     if (SmartDialog.checkExist()) {
       SmartDialog.dismiss();
       return false;
     }
 
-    //如果不能返回，后面的逻辑就不走了
+    //If you can't go back, the logic behind it won't go
     if (widget.isCanBack!) {
       return false;
     }
@@ -133,11 +133,11 @@ class _BaseScaffoldState extends State<BaseScaffold> {
     if (widget.isTwiceBack!) {
       if (_lastPressedAt == null ||
           DateTime.now().difference(_lastPressedAt!) > Duration(seconds: 1)) {
-        //两次点击间隔超过1秒则重新计时
+        //If the interval between two clicks is more than 1 second, the time will be recounted
         _lastPressedAt = DateTime.now();
 
-        //弹窗提示
-        SmartDialog.showToast("再点一次退出");
+        //Pop-up prompt
+        SmartDialog.showToast("もう一度退出をクリックしてください");
         return false;
       }
       return true;

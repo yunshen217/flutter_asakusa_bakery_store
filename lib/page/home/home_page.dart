@@ -301,7 +301,7 @@ class _HomePageState extends State<HomePage>
                           ),
                           customWidget.setCupertinoButton(
                               orderStateIndex.value == 0 ? "一括処理" : "受け取り/発送済み",
-                              minimumSize: 120,
+                              width: 120,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
                               height: 35,

@@ -7,7 +7,6 @@ import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/model/base_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/base_res.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter/material.dart';
 
 import '../common/Global.dart';
 import '../common/custom_widget.dart';
@@ -35,8 +34,8 @@ class BaseInterceptors extends InterceptorsWrapper {
   };
 
   final prefixExcludedPaths = [
-    '${Constant.orderDetail}/', // 动态路径前缀，如 "orderDetail/"
-    Constant.getFirstAvailableDay, // 或其他需要部分匹配的路径
+    '${Constant.orderDetail}/', // 動的パスプレフィックス、例えば「orderDetail/」
+    Constant.getFirstAvailableDay, // または他の部分一致が必要なパス
   ];
 
   void _dismissLoadingIfNeeded(String path) {
@@ -54,7 +53,7 @@ class BaseInterceptors extends InterceptorsWrapper {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     if (Global.token.isEmpty) {
-      SmartDialog.dismiss(); // 防止 loading 卡住
+      SmartDialog.dismiss(); // ロードが詰まるのを防ぐ
     }
 
     if (_refreshCompleter != null) {
@@ -88,7 +87,7 @@ class BaseInterceptors extends InterceptorsWrapper {
   Completer<bool>? _refreshCompleter;
 
   Future<bool> refreshToken() async {
-    // 如果已经在刷新中，直接等待它完成
+    // もしすでに更新中であれば、それが完了するまでそのまま待ってください。
     if (_refreshCompleter != null) {
       return _refreshCompleter!.future;
     }
@@ -129,7 +128,7 @@ class BaseInterceptors extends InterceptorsWrapper {
       _refreshCompleter?.complete(false);
       return false;
     } finally {
-      _refreshCompleter = null; // 解锁
+      _refreshCompleter = null; // ロックを解除する
     }
   }
 
@@ -138,28 +137,28 @@ class BaseInterceptors extends InterceptorsWrapper {
     _dismissLoadingIfNeeded(err.requestOptions.path);
     if (err is SocketException) {
       //HttpException
-      print("检查网络权限====>" + err.response?.data);
+      print("ネットワーク権限を確認する====>" + err.response?.data);
       print(err.response?.requestOptions.path);
     } else if (err.error is TimeoutException) {
       print(err.response?.requestOptions.path);
-      print("网络连接超时异常--------------->end");
+      print("ネットワーク接続タイムアウトエラー--------------->end");
     } else if (err.response?.statusCode == 500) {
-      print("服务器异常--------->500");
+      print("サーバーエラー--------->500");
       print(err.response?.requestOptions.path);
-      print("服务器异常-------->500------->end");
+      print("サーバーエラー-------->500------->end");
     } else if (err.response?.statusCode == 404) {
-      print("接口异常-------->404");
+      print("インターフェース異常-------->404");
       print(err.response?.requestOptions.path);
       customWidget.toastShow(Constant.connectOut);
-      print("接口异常-------->404------->end");
+      print("インターフェース異常-------->404------->end");
     } else if (err.response?.statusCode == 502) {
-      print("服务器异常-------->502------->start");
+      print("サーバーエラー-------->502------->start");
       print(err.response?.requestOptions.path);
-      print("服务器异常-------->502------->end");
+      print("サーバーエラー-------->502------->end");
     } else if (err.response?.statusCode == 401) {
-      print("权限不够-------->401------->start");
+      print("権限が不足しています-------->401------->start");
       print(err.response?.requestOptions.path);
-      print("权限不够-------->401------->end");
+      print("権限が不足しています-------->401------->end");
     }
     print('Url: ${err.response?.requestOptions.uri}');
     print('Headers: ${err.response?.requestOptions.headers}');
@@ -168,7 +167,7 @@ class BaseInterceptors extends InterceptorsWrapper {
 
   BaseModel? parseBaseModel(dynamic raw) {
     try {
-      // 如果是字符串，就先解码
+      // もし文字列なら、まずデコードします。
       if (raw is String) {
         raw = json.decode(raw);
       }
@@ -179,8 +178,8 @@ class BaseInterceptors extends InterceptorsWrapper {
         print("⚠️ Unexpected JSON format: $raw");
       }
     } catch (e, stack) {
-      print("❌ JSON解析异常: $e");
-      // 如果需要也可以上报错误
+      print("❌ JSON解析エラー: $e");
+      // 必要であれば、エラーを報告することもできます。
     }
     return null;
   }
@@ -207,7 +206,7 @@ class BaseInterceptors extends InterceptorsWrapper {
         customWidget.toastShow(info?.message, notifyType: NotifyType.error);
         // Routes.goPage(Get.context!, "/LoginPage");
         // Global.clear();
-      } else if (info?.code == 46001) {//账号在其他设备上被登录
+      } else if (info?.code == 46001) {//アカウントが他のデバイスでログインされています
         customWidget.toastShow(info?.message, notifyType: NotifyType.error);
         Global.clear();
         redirectToLogin();
@@ -238,16 +237,16 @@ class BaseInterceptors extends InterceptorsWrapper {
           requestOptions.headers["client-id"] = Global.userInfo!.clientId;
           try {
             final response = await dio.fetch(requestOptions);
-            print("refreshToken成功，更新header重新请求");
+            print("refreshToken成功，更新header再リクエスト");
             print("header${requestOptions.headers}");
             return handler.resolve(response);
           } catch (e) {
-            print("refresh成功后再请求时error");
+            print("refresh成功した後に再度リクエストしますerror");
             return handler.reject(e as DioException);
           }
         } else {
           //redirect login
-          print("refreshToken失败，跳转login");
+          print("refreshToken失敗、ジャンプするlogin");
           redirectToLogin();
         }
       } else {

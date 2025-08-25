@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
-import 'package:flutter_asakusa_bakery_store/common/japanese_text_delegate.dart';
-import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 /// 詳細コンポーネント（例えば、店舗設定や商品詳細ページで使用される入力ボックス、ドロップダウン選択、画像選択）
 final infoWidget = InfoWidget();
@@ -59,146 +55,6 @@ class InfoWidget {
           ],
         ));
   }
-
-  Widget selectImage({
-  required RxList<AssetEntity> localAssets,
-  required RxList<String> netUrls,
-  required RxList<String> fileIds,
-  required int maxLength,
-  required BuildContext context,
-}) {
-  /* ===== Internal status ===== */
-  final RxList<dynamic> images = <dynamic>[].obs; // String(url) / AssetEntity
-  final RxList<String> ids   = <String>[].obs;   // Corresponding to images
-
-  /* ===== Synchronize external data ===== */
-  void syncLists() {
-    images.clear();
-    ids.clear();
-    for (int i = 0; i < netUrls.length; i++) {
-      images.add(netUrls[i]);
-      ids.add(fileIds[i]);
-    }
-    images.addAll(localAssets);
-    ids.addAll(List.filled(localAssets.length, ''));
-  }
-
-  /* ===== Sync for the first time to listen for external changes ===== */
-  syncLists();
-  everAll([netUrls, localAssets, fileIds], (_) => syncLists());
-
-  /* ===== upload ===== */
-  Future<void> upload(List<AssetEntity> assets) async {
-    final paths = <String>[];
-    for (final a in assets) {
-      final f = await a.file;
-      if (f != null) paths.add(f.path);
-    }
-    if (paths.isEmpty) return;
-
-    await backEndRepository.upFile(
-      '${Constant.base_url}common/upload/img',
-      paths,
-      (res) {
-        print("成功啦哈哈哈哈 ---------------- ");
-        final id = res is Map ? res["data"] : "";
-        if (id is String) {
-          // netUrls.add(id);
-          fileIds.add(id);
-          print("fileIds ------------------ $fileIds");
-        }
-      },
-    );
-  }
-
-  Future<void> pick() async {
-    final left = maxLength - images.length;
-    if (left <= 0) return;
-
-    final result = await AssetPicker.pickAssets(
-      context,
-      pickerConfig: AssetPickerConfig(
-        maxAssets: left,
-        requestType: RequestType.image,
-        textDelegate: JapaneseTextDelegate(),
-      ),
-    );
-    if (result != null) {
-      localAssets.addAll(result);
-      await upload(result);
-    }
-  }
-
-  /* ===== UI ===== */
-  return Obx(() {
-    final count = images.length;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15),
-      child: Wrap(
-        spacing: 10,   
-        runSpacing: 8, 
-        children: [
-          ...List.generate(count, (i) {
-            final item = images[i];
-            return SizedBox(
-              width: 120,
-              height: 120,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  item is String
-                      ? Container(padding: const EdgeInsets.only(top: 10,right: 10),child: ClipRRect(borderRadius: BorderRadius.circular(10),child: Image.network(item, fit: BoxFit.cover)))
-                      : Container(padding: const EdgeInsets.only(top: 10,right: 10),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: AssetEntityImage(item as AssetEntity,
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (item is String) {
-                          final idx = netUrls.indexOf(item);
-                          netUrls.removeAt(idx);
-                          fileIds.removeAt(idx);
-                        } else {
-                          localAssets.remove(item);
-                        }
-                      },
-                      child: Image.asset('assets/icon_clear.png',
-                          width: 20),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-          if (count < maxLength)
-            SizedBox(
-              width: 120,
-              height: 120,
-              child: GestureDetector(
-                onTap: pick,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10,right: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 0.5, color: Colors.black26),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Image.asset('assets/icon_add.png', width: 32),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  });
-}
-
   Widget bottomBtn(String leftTitle, String rightTitle, bool isShowLeft,
       Function leftOnTap, Function rightOnTap) {
     return Positioned(
@@ -221,7 +77,7 @@ class InfoWidget {
               !isShowLeft
                   ? Container()
                   : customWidget.setCupertinoButton(leftTitle,
-                      minimumSize: (Get.width - 50) / 2,
+                      width: (Get.width - 50) / 2,
                       height: 30,
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
@@ -230,7 +86,7 @@ class InfoWidget {
                       color: CustomColor.black_9,
                       onPressed: leftOnTap),
               customWidget.setCupertinoButton(rightTitle,
-                  minimumSize: (Get.width - 50) / 2,
+                  width: (Get.width - 50) / 2,
                   height: 30,
                   fontWeight: FontWeight.normal,
                   fontSize: 12,

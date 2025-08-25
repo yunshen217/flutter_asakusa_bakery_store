@@ -16,7 +16,7 @@ typedef ErrorResponse = void Function(Object? error, StackTrace stackTrace, Stri
 
 final backEndRepository = BackEndRepository();
 
-///后台接口以及地址
+///バックエンドインターフェースとアドレス
 class BackEndRepository {
   BackEndRepository._();
 
@@ -59,12 +59,15 @@ class BackEndRepository {
     required Response? successRequest,
     ErrorResponse? errorRequest,
     Map<String, dynamic>? params,
+    Map<String, dynamic>? headers,
   }) async {
     print('url = $url');
-print('params = $params');
+    print('params = $params');
     try {
       Options requestOption;
-      if (url == Constant.getCreditCardToken) {
+      if (headers != null) {
+        requestOption = Options(headers: headers);
+      } else if (url == Constant.getCreditCardToken) {
         requestOption = getAuthOptionsForCreditCard();
       } else {
         requestOption = getAuthOptions();
@@ -73,30 +76,29 @@ print('params = $params');
       final response =
           await _dio.post(url, data: params ?? {}, options: requestOption);
 
-      // 打印完整的响应内容
-      print("✅ 请求成功：${response.statusCode} - ${response.data}");
+      print("✅ リクエストが成功しました：${response.statusCode} - ${response.data}");
 
-      successRequest!(response.data); // 不需要 jsonDecode，如果返回已是 Map
+      successRequest!(response.data); 
     } catch (error, stackTrace) {
-      print("❌ 请求异常: $error");
-      print("📍 堆栈信息: $stackTrace");
+      print("❌ Request an exception: $error");
+      print("📍 Stack information: $stackTrace");
 
       String? errorDetail;
       if (error is DioException) {
         if (error.response?.data != null) {
           final dynamic data = error.response!.data;
 
-          // 2. 处理不同类型的响应数据
+          // 2. Handle different types of response data
           if (data is Map<String, dynamic>) {
-            // 情况1：Dio 已自动解析为 Map
-            errorDetail = data['message'] as String?; // 替换你的字段名
+            // Scenario 1: Dio has automatically resolved to Map
+            errorDetail = data['message'] as String?; // Replace your field name
           } else if (data is String) {
-            // 情况2：响应是字符串，尝试手动解析
+            //Case 2: The response is a string, try to parse manually
             try {
               final parsed = jsonDecode(data) as Map<String, dynamic>;
               errorDetail = parsed['message'] as String?;
             } catch (e) {
-              errorDetail = "原始错误信息: $data";
+              errorDetail = "Original error message: $data";
             }
           }
         }
@@ -111,7 +113,6 @@ print('params = $params');
       String url, List<dynamic> filePaths, Response successRequest,
       {ErrorResponse? errorRequest, dynamic params}) async {
     //print(filePaths.map((dynamic path) async => await MultipartFile.fromFile(path)).toList());
-
     var files = [];
     for (var element in filePaths) {
       var form = await MultipartFile.fromFile(element);
@@ -121,9 +122,9 @@ print('params = $params');
     await _dio
         .post(url, data: formData, options: getAuthOptions())
         .then((value) {
-      successRequest(value);
+      successRequest(jsonDecode(value.toString()));
     }).onError((error, stackTrace) {
-      customWidget.toastShow("数据上传失败", notifyType: NotifyType.error);
+      customWidget.toastShow("Data upload failed", notifyType: NotifyType.error);
       print(error);
     });
   }
@@ -131,11 +132,12 @@ print('params = $params');
   Future<void> doGet(String url,
       {Response? successRequest,
       ErrorResponse? errorRequest,
+      bool isChangeHeader = false,
       Map<String, dynamic>? params}) async {
         print("doGet-url =============== $url");
         print("doGet-params =============== $params");
     await _dio
-        .get(url, queryParameters: params, options: getAuthOptions())
+        .get(url, queryParameters: params, options:isChangeHeader?getAuthOptionsWithMerchantId(): getAuthOptions())
         .then((value) {
       successRequest!(jsonDecode(value.toString()));
     }).onError((error, stackTrace) {
@@ -186,6 +188,22 @@ Options getAuthOptions() {
     "Authorization": 'Bearer ${Global.userInfo?.accessToken ?? ""}',
     "client-id": Global.userInfo?.clientId ?? "",
     "Content-Type": "application/json;charset=UTF-8"
+  });
+}
+
+Options getAuthOptionsWithMerchantId() {
+  print('''
+{
+    "Authorization": 'Bearer ${Global.userInfo?.accessToken ?? ""}',
+    "client-id": Global.userInfo?.clientId ?? "",
+    "Content-Type": "application/json;charset=UTF-8",
+    "merchantId":"1816640958868602882"
+  }''');
+  return Options(headers: {
+    "Authorization": 'Bearer ${Global.userInfo?.accessToken ?? ""}',
+    "client-id": Global.userInfo?.clientId ?? "",
+    "Content-Type": "application/json;charset=UTF-8",
+    "merchantId":"1816640958868602882"
   });
 }
 

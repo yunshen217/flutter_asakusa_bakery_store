@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage>
                                                   accountController?.text.trim()
                                             })),
                                 customWidget.setCupertinoButton("ログイン",
-                                    minimumSize: Get.width - 100,
+                                    width: Get.width - 100,
                                     margin: const EdgeInsets.only(top: 15),
                                     onPressed: () async {
                                   if (isLogin()) {

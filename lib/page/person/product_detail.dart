@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/image_selector.dart';
 import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/product_detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/mixin/product_detail_info_mixin.dart';
@@ -123,7 +124,7 @@ class _ProductDetailState extends State<ProductDetail>
                     ),
                   ]),
                   child: customWidget.setCupertinoButton("保存",
-                      minimumSize: Get.width - 30,
+                      width: Get.width - 30,
                       height: 30,
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
@@ -160,9 +161,8 @@ class _ProductDetailState extends State<ProductDetail>
         children: [
           textEditingList(topTitle, topTitleController),
           infoWidget.titleWidget("商品画像(2枚)", false),
-          infoWidget.selectImage(
+          SelectImageWidget(
               localAssets: image,
-              context: context,
               maxLength: 3,
               fileIds: fileIdList,
               netUrls: assetsImg),

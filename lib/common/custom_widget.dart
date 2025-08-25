@@ -239,7 +239,7 @@ class CustomWidget {
   }
 
   setCupertinoButton(text,
-      {double? minimumSize = 100.0,
+      {double? width= 100.0,
       margin = EdgeInsets.zero,
       padding = EdgeInsets.zero,
       double height = 45.0,
@@ -252,6 +252,7 @@ class CustomWidget {
     return Container(
         margin: margin,
         height: height,
+        width: width,
         child: CupertinoButton(
             onPressed: onPressed,
             child: setText(text,
@@ -259,7 +260,7 @@ class CustomWidget {
             padding: padding,
             disabledColor: CustomColor.grayC5,
             borderRadius: BorderRadius.circular(circular),
-            minSize: minimumSize,
+            minSize: 0,
             color: color));
   }
 
@@ -285,7 +286,13 @@ class CustomWidget {
     return Container(
         padding: padding,
         margin: margin,
-        child: Image.network(imgPath, width: width, height: height, fit: fit));
+        child: Image.network(imgPath, width: width, height: height, fit: fit,loadingBuilder: (_, child, progress) =>
+      progress == null ? child : const CircularProgressIndicator(),
+  errorBuilder: (_, __, ___) => Container(
+    width: width,
+    height: height,
+    child: const Icon(Icons.broken_image),
+  ),));
   }
 
   Widget noData() {
@@ -355,7 +362,7 @@ class CustomWidget {
       String name,
       String plannedQuantity,
       String orderNumber,
-      String inventory,
+      String inventoryText,
       bool isBg,
       bool isTextEditing,
       TextEditingController controller,
@@ -364,15 +371,18 @@ class CustomWidget {
     controller.text = plannedQuantity;
     RxInt count =
         int.parse(plannedQuantity == '計画数' ? "0" : plannedQuantity).obs;
+    RxString inventory = inventoryText.obs;
     void increment() {
       count.value += 1;
       controller.text = count.value.toString();
+      inventory.value = count.value.toString();
     }
 
     void decrement() {
       if (count.value > int.parse(orderNumber)) {
         count.value -= 1;
         controller.text = count.value.toString();
+        inventory.value = count.value.toString();
       }
     }
 
@@ -441,6 +451,9 @@ class CustomWidget {
                                   textAlign: TextAlign.center,
                                   fillColor: Colors.transparent,
                                   onTap: onTap,
+                                  onChanged: (item){
+                                    inventory.value = item;
+                                  },
                                   borderSide: const BorderSide(
                                       color: CustomColor.blackD, width: 1)),
                             ),
@@ -477,11 +490,11 @@ class CustomWidget {
               flex: 1,
               child: Container(
                   margin: const EdgeInsets.only(left: 15, right: 15),
-                  child: !isBg && int.parse(inventory) == 0
+                  child: Obx(()=>!isBg && int.parse(inventory.value==""?"0":inventory.value) == 0
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            customWidget.setText(inventory,
+                            customWidget.setText(inventory.value,
                                 textAlign: TextAlign.center,
                                 maxLines: 100,
                                 color: isBg
@@ -495,12 +508,12 @@ class CustomWidget {
                                 margin: const EdgeInsets.only(left: 1))
                           ],
                         )
-                      : customWidget.setText(inventory,
+                      : customWidget.setText(inventory.value,
                           textAlign: TextAlign.center,
                           maxLines: 100,
                           color:
                               isBg ? CustomColor.gray_6 : CustomColor.black_3,
-                          fontSize: 12))),
+                          fontSize: 12)))),
         ],
       ),
     );
@@ -1015,7 +1028,7 @@ class CustomWidget {
                   : setCupertinoButton(
                       submitText,
                       height: 40,
-                      minimumSize: 90,
+                      width: 90,
                       textColor: CustomColor.black_3,
                       color: CustomColor.blackD,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -1026,7 +1039,7 @@ class CustomWidget {
               setCupertinoButton(
                 submitText,
                 height: 40,
-                minimumSize: 90,
+                width: 90,
                 textColor: CustomColor.black_3,
                 color: CustomColor.redE8,
                 padding: EdgeInsets.symmetric(horizontal: 10),

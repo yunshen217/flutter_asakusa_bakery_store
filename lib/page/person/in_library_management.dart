@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/ingredients_stocks_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
@@ -28,7 +29,7 @@ class _InLibraryManagementState extends State<InLibraryManagement> {
 
   getIngredientsStocks() async {
     await backEndRepository.doGet(
-      Constant.ingredientsStocks,
+      "${Constant.ingredientsStocks}?merchantId=${Global.merchantId}",
       successRequest: (result) {
         ingredientsStocks.clear();
         if (result["data"] != null) {

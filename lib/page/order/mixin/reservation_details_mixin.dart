@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/loading_toast.dart';
 import 'package:flutter_asakusa_bakery_store/model/common_search_param_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/plans_items_model.dart';
@@ -41,6 +42,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
 
   getPlansItems() async {
     Map<String, dynamic> params = {
+      "merchantId":Global.merchantId,
       "orderDate": time.value,
       "itemName": itemName.value,
       "kindIdList": kindIdList
@@ -72,7 +74,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
   }
 
   getPlansReserveStatus() async {
-    Map<String, dynamic> params = {"rsvDate": time.value};
+    Map<String, dynamic> params = {"merchantId":Global.merchantId,"rsvDate": time.value};
     await backEndRepository.doPost(
       Constant.plansReserveStatus,
       params: params,
@@ -105,6 +107,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
       paramList: plansCountList,
       successRequest: (result) {
         LoadingToast.remove();
+        getPlansItems();
       },
     );
   }

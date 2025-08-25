@@ -35,7 +35,7 @@ class _PersonPageState extends State<PersonPage>
 
   getMessage() async {
     await backEndRepository.doGet(
-      "${Constant.base_url}merchant/messages/unread-countGroup/2,5",
+      "${Constant.base_url}merchant/messages/unread-countGroup?type=2,5&merchantId=${Global.merchantId}",
       successRequest: (result) {
         int total = 0;
         for (var data in result["data"]) {

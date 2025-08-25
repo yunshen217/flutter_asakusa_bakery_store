@@ -109,7 +109,7 @@ class _ProductManagementState extends State<ProductManagement>
                     margin: const EdgeInsets.only(left: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center, // ✅ 垂直居中
+                      mainAxisAlignment: MainAxisAlignment.center, 
                       children: [
                         customWidget.setTextOverflow(item.itemName!,
                             fontSize: 13,
@@ -193,8 +193,10 @@ class _ProductManagementState extends State<ProductManagement>
                     color: CustomColor.white,
                   ),
                   child: customWidget.setOutLinedButton("追加",
-                      onPressed: () => Routes.goPage("ProductDetail",
-                          param: {"isHavePurge": false, "id": ""}),
+                      onPressed: () => Get.toNamed("ProductDetail",
+                          arguments: {"isHavePurge": false, "id": ""})!.then((_){
+                            getItemsList();
+                          }),
                       circular: 5,
                       linewidth: 0.5,
                       minimumSize: Size(Get.width - 15, 34),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/post_code_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
@@ -117,7 +118,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
 
   getDetailData() async {
     await backEndRepository.doGet(
-      Constant.detail,
+      '${Constant.detail}?merchantId=${Global.merchantId}',
       successRequest: (result) {
         if (result["data"] != null) {
           detailModel.value = DetailModel.fromJson(result["data"] ?? {});
@@ -126,6 +127,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
               detailModel.value!.merchantDescription;
           postalCodeController.text = detailModel.value!.postcode;
           provinceController.text = detailModel.value!.prefecturesCodeName;
+          prefecturesCode.value = detailModel.value!.prefectures;
           cityController.text = detailModel.value!.municipalities;
           streetController.text = detailModel.value!.streetAddress;
           addressController.text = detailModel.value!.building;
@@ -169,16 +171,16 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
               : detailModel.value!.pointRate.toString();
           sns1.value = detailModel.value!.snsType1 == ""
               ? "SNS1"
-              : detailModel.value!.snsType1;
+              : snsData[int.parse(detailModel.value!.snsType1)-1];
           sns2.value = detailModel.value!.snsType2 == ""
               ? "SNS2"
-              : detailModel.value!.snsType2;
+              : snsData[int.parse(detailModel.value!.snsType2)-1];;
           sns3.value = detailModel.value!.snsType3 == ""
               ? "SNS3"
-              : detailModel.value!.snsType3;
+              : snsData[int.parse(detailModel.value!.snsType3)-1];;
           sns4.value = detailModel.value!.snsType4 == ""
               ? "SNS4"
-              : detailModel.value!.snsType4;
+              : snsData[int.parse(detailModel.value!.snsType4)-1];;
           linkController1.text = detailModel.value!.snsLink1;
           linkController2.text = detailModel.value!.snsLink2;
           linkController3.text = detailModel.value!.snsLink3;
@@ -268,10 +270,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "municipalities": cityController.text,
       "streetAddress": streetController.text,
       "building": addressController.text,
-      "snsType1": sns1.value == "SNS1"?"":sns1.value,
-      "snsType2": sns2.value == "SNS2"?"":sns2.value,
-      "snsType3": sns3.value == "SNS3"?"":sns3.value,
-      "snsType4": sns4.value == "SNS4"?"":sns4.value,
+      "snsType1": sns1.value == "SNS1"?"":(snsData.indexOf(sns1.value)+1).toString(),
+      "snsType2": sns2.value == "SNS2"?"":(snsData.indexOf(sns2.value)+1).toString(),
+      "snsType3": sns3.value == "SNS3"?"":(snsData.indexOf(sns3.value)+1).toString(),
+      "snsType4": sns4.value == "SNS4"?"":(snsData.indexOf(sns4.value)+1).toString(),
       "snsLink1": linkController1.text,
       "snsLink2": linkController2.text,
       "snsLink3": linkController3.text,

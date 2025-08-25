@@ -18,6 +18,7 @@ class Constant {
 
   static const String TOKEN = 'token';
   static const String USER_MODEL = 'userModel';
+  static const String  merchantId= 'merchantId';
 
   static const String FLAG = "FLAG";
   static const String TITLE = "TITLE";
@@ -51,13 +52,13 @@ class Constant {
 
   // static var picture_url = "https://asakusabakery.s3.ap-northeast-1.amazonaws.com";
 
-  /// 测试环境
+  /// テスト環境
   // static var base_url = "https://test.asakusa-bakery.com/api/";
   // static var web_url = "https://test.asakusa-bakery.com/api/";
   // static var picture_url =
   //    "https://asakusa-bakery-file.s3.ap-northeast-1.amazonaws.com";
 
-  // 测试环境后期
+  // テスト環境の後期
   static var base_url = "https://test.asakusa-bakery.com/prod-api/";
   static var web_url = "https://test.asakusa-bakery.com/prod-api/";
   static var picture_url =

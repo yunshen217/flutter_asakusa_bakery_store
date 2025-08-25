@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/message_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
@@ -30,7 +31,7 @@ class _NoticePageState extends State<NoticePage>
   }
 
   getMessage() async{
-    await backEndRepository.doGet('${Constant.base_url}merchant/messages/${type.value}',successRequest: (result) {
+    await backEndRepository.doGet('${Constant.base_url}merchant/messages?type=${type.value}&merchantId=${Global.merchantId}',successRequest: (result) {
       if(result["data"]!=null){
         messageList.clear();
         messageList.addAll(
@@ -41,7 +42,7 @@ class _NoticePageState extends State<NoticePage>
   }
 
   getUnreadUpdate() async{
-    await backEndRepository.doPut("${Constant.base_url}merchant/messages/unread-update",successRequest: (result) {
+    await backEndRepository.doPut("${Constant.base_url}merchant/messages/unread-update",params: {"merchantId":Global.merchantId,},successRequest: (result) {
     },);
   }
 

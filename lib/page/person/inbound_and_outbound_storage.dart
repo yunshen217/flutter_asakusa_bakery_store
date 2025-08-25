@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/common/info_widget.dart';
 import 'package:flutter_asakusa_bakery_store/model/get_io_types_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/units_min_model.dart';
@@ -71,7 +72,8 @@ class _InboundAndOutboundStorageState extends State<InboundAndOutboundStorage> {
       "ingredientId": id.value,
       "ioTypeCd": ioTypeCd,
       "count": numController.text,
-      "unit": unit
+      "unit": unit,
+      "merchantId":Global.merchantId
     };
     await backEndRepository.doPost("${Constant.base_url}merchant/ingredients/stocks/records",params: params, successRequest: (result) {
       Get.back();
@@ -136,7 +138,7 @@ class _InboundAndOutboundStorageState extends State<InboundAndOutboundStorage> {
           Align(
               alignment: Alignment.centerRight,
               child: customWidget.setCupertinoButton("保存",
-                        minimumSize: (Get.width - 30) / 3,
+                        width: (Get.width - 30) / 3,
                         height: 30,
                         fontWeight: FontWeight.normal,
                         fontSize: 12,

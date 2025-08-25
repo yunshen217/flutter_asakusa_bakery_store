@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
+import 'package:flutter_asakusa_bakery_store/common/global.dart';
 import 'package:flutter_asakusa_bakery_store/model/order_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:get/get.dart';
@@ -67,6 +68,7 @@ mixin HomePageMixin<T extends StatefulWidget> on State<T> {
   getOrderList() async {
     int num = orderStateIndex.value + 1;
     Map<String, dynamic> param = {
+      "merchantId":Global.merchantId,
       "pageNum": pageNum.value,
       "pageSize": pageSize,
       "type": '$num',
