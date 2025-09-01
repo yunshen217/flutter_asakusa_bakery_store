@@ -77,6 +77,8 @@ mixin MaterialAdditionMixin<T extends StatefulWidget> on State<T>{
       "${Constant.base_url}merchant/units/display/${id.value}",
       successRequest: (result) {
         if (result["data"] != null) {
+          displayList.clear();
+          displayUnitList.clear();
           displayList.assignAll(
             (result['data'] as List? ?? [])
                 .map((e) => UnitsMinModel.fromJson(e ?? {}))

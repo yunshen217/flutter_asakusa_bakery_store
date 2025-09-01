@@ -128,6 +128,7 @@ class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditi
             infoWidget.titleWidget("入荷閾値", false),
             ClearableTextField(
                 controller: inboundQuantityThresholdController,
+                isNum: true,
                 hintText: '数値を入カしてください',
                 readOnly: false),
             Obx(() => Row(

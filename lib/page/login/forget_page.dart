@@ -40,7 +40,7 @@ class _ForgetPageState extends State<ForgetPage> {
     return BaseScaffold(
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
-          title: "パスフ-ドを忘れた場合",
+          title: "パスフードを忘れた場合",
           backgroundColor: CustomColor.white,
           isLeftShow: false,
           leading: InkWell(

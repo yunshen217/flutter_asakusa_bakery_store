@@ -1,9 +1,11 @@
 //カスタムラッピングクラス
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_pickers/pickers.dart';
 import 'package:flutter_pickers/style/picker_style.dart';
 import 'package:flutter_pickers/time_picker/model/date_mode.dart';
@@ -367,7 +369,8 @@ class CustomWidget {
       bool isTextEditing,
       TextEditingController controller,
       FocusNode focusNode,
-      Function onTap) {
+      Function onTap,
+      {Function(String)? onChanged}) {
     controller.text = plannedQuantity;
     RxInt count =
         int.parse(plannedQuantity == '計画数' ? "0" : plannedQuantity).obs;
@@ -376,6 +379,7 @@ class CustomWidget {
       count.value += 1;
       controller.text = count.value.toString();
       inventory.value = count.value.toString();
+      onChanged?.call(count.value.toString());
     }
 
     void decrement() {
@@ -383,9 +387,9 @@ class CustomWidget {
         count.value -= 1;
         controller.text = count.value.toString();
         inventory.value = count.value.toString();
+        onChanged?.call(count.value.toString());
       }
     }
-
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 11, 0, 11),
       decoration: BoxDecoration(
@@ -399,7 +403,20 @@ class CustomWidget {
                   margin: const EdgeInsets.only(left: 15),
                   child:isTextEditing?ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child:img == ""?Container(height: 70,): customWidget.setNetworkImg(img,height: 70,),
+                    child:img == ""?Container(height: 70,): CachedNetworkImage(
+                    imageUrl: '${Constant.picture_url}$img',
+                    placeholder: (context, url) =>
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child:  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(CustomColor.redE8),),
+                        ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.image,color: CustomColor.blackD,),
+                    fit: BoxFit.cover,
+                    width: 60,
+                    height: 60,
+                  ),
                   ): customWidget.setText("",
                       maxLines: 1000,
                       color: isBg ? CustomColor.gray_6 : CustomColor.black_3,
@@ -448,11 +465,13 @@ class CustomWidget {
                                   left: 5,
                                   right: 5,
                                   margin: const EdgeInsets.only(top: 10),
+                                  keyboardType:TextInputType.number,
                                   textAlign: TextAlign.center,
                                   fillColor: Colors.transparent,
                                   onTap: onTap,
                                   onChanged: (item){
                                     inventory.value = item;
+                                    onChanged?.call(item);
                                   },
                                   borderSide: const BorderSide(
                                       color: CustomColor.blackD, width: 1)),
@@ -538,7 +557,7 @@ class CustomWidget {
       enabled = true,
       readOnly = false,
       counter = true,
-      onChanged,
+      Function(String)? onChanged,
       onTap,
       obscureText = false,
       Widget? suffixIcon,
@@ -556,7 +575,7 @@ class CustomWidget {
           obscureText: obscureText,
           controller: controller,
           focusNode: focusNode,
-          maxLength: maxLength ?? 16,
+          maxLength: maxLength ?? 255,
           maxLines: maxLines,
           enabled: enabled,
           readOnly: readOnly,

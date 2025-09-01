@@ -74,6 +74,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   # 压缩图片
   flutter_image_compress: ^2.4.0
+  cached_network_image: ^3.3.0
 
 dev_dependencies:
   flutter_test:

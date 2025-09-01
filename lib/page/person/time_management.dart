@@ -40,11 +40,14 @@ class _TimeManagementState extends State<TimeManagement> {
           timeDataSelect.clear();
           timeDataSelect.assignAll(
               List.generate(timePeriodModel.length, (_) => false.obs));
+          final selectedSet = timeList.selectedTimePeriod!
+              .split(',')
+              .map((e) => int.parse(e.trim()))
+              .toSet();
+
           for (var i = 0; i < timePeriodModel.length; i++) {
-            final item = timePeriodModel[i]!;
-            if (timeList.selectedTimePeriod!.contains(item.id!)) {
-              timeDataSelect[i].value = true;
-            }
+            final idInt = int.parse(timePeriodModel[i]!.id!);
+            timeDataSelect[i].value = selectedSet.contains(idInt);
           }
           timeDataSelectCopy.value = RxList.from(
               timeDataSelect.map((element) => RxBool(element.value)));

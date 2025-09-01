@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
+import 'package:flutter_asakusa_bakery_store/model/common_search_param_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/product_detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/product_ingredient_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/time_period_model.dart';
@@ -34,27 +35,13 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
   RxList<AssetEntity> image = <AssetEntity>[].obs;
 
   RxString productCategorySelected = "商品カテゴリ".obs;
-  RxList productCategory = [
-    "八ン",
-    "食バン",
-    "アイスバン",
-    "プレッツエル",
-    "ベ-グル",
-    "ク一キ",
-    "クッキ-",
-    "スコ-ン",
-    "スウ(酥)",
-    "月餅",
-    "その他",
-    "新商品",
-    "季限定"
-  ].obs;
+  RxList<String> productCategory = <String>[].obs;
   final timePeriodModel = Rxn<TimePeriodModel>();
   RxString freshlyBakedTimeZoneSelected = "商品焼きたて時間带を選択してください".obs;
   RxList freshlyBakedTimeZone = ["12:00~13:00", "13:00~14:00"].obs;
 
   RxString statusSelected = "ステ一タス".obs;
-  RxList status = ["贩壳中", "开発中", "服壳中止"].obs;
+  RxList status = ["販売中", "開発中", "販売中止"].obs;
 
   TextEditingController productDescriptionController = TextEditingController();
   FocusNode productDescriptionFocusNode = FocusNode();
@@ -123,6 +110,7 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
   /// 入力ボックスコントローラー一覧
   RxList<TextEditingController> controllerList = <TextEditingController>[].obs;
   RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
+  RxList<CommonSearchParamModelItemKindList?> commonSearchParam = <CommonSearchParamModelItemKindList?>[].obs;
   gettimePeriods() async {
     await backEndRepository.doGet(
       "${Constant.base_url}merchant/time-periods?merchantId=${Global.merchantId}",
@@ -132,6 +120,23 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
           freshlyBakedTimeZone.clear();
           for (var data in timePeriodModel.value!.timePeriodList!) {
             freshlyBakedTimeZone.add(data!.label!);
+          }
+        }
+      },
+    );
+  }
+
+  getCommonSearchParam() async {
+    await backEndRepository.doGet(
+      Constant.commonSearchParam,
+      successRequest: (result) {
+        if (result["data"] != null) {
+          commonSearchParam.value =
+              CommonSearchParamModel.fromJson(result["data"]).itemKindList!;
+          if(commonSearchParam.isNotEmpty){
+            for (var data in commonSearchParam) {
+              productCategory.add(data!.kindName!);
+            }
           }
         }
       },
@@ -160,8 +165,8 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
               productDetailModel.value!.description!;
           rawMaterialsController.text = productDetailModel.value!.ingredients!;
           statusSelected.value = productDetailModel.value!.status == "1"
-              ? "开発中"
-              : (productDetailModel.value!.status == "2" ? "贩壳中" : "贩卖停止");
+              ? "開発中"
+              : (productDetailModel.value!.status == "2" ? "販売中" : "販売中止");
           bottomTitleController[0].text =
               productDetailModel.value!.price.toString();
           bottomTitleController[1].text =
@@ -184,10 +189,14 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
               allergyInfoIsSelected[int.parse(item) - 1].value = true;
             }
           }
-          if (productDetailModel.value!.itemKindId! != 0) {
-            productCategorySelected.value =
-                productCategory[productDetailModel.value!.itemKindId! - 1];
-          }
+          if(commonSearchParam.isNotEmpty){
+              for (var data in commonSearchParam) {
+                if('${productDetailModel.value!.itemKindId!}' == '${data!.id!}'){
+                  productCategorySelected.value = data.kindName!;
+                  print("productCategorySelected ---------- ${productCategorySelected.value}");
+                }
+              }
+            }
           if (productDetailModel.value!.timePeriodId! != 0) {
             for (var data in timePeriodModel.value!.timePeriodList!) {
               if (data!.id ==
@@ -208,15 +217,12 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
               focusNodeList.add(FocusNode());
               String minUnitId = "";
               for (var data in productIngredientListModel) {
-                if(data.id == item.id.toString()){
+                if (data.id == item.id.toString()) {
                   minUnitId = data.minUnitId!;
                 }
               }
-              currentlyselectTheMaterial.add({
-                "id": item.id,
-                "count": item.count,
-                "minUnitId": minUnitId
-              });
+              currentlyselectTheMaterial.add(
+                  {"id": item.id, "count": item.count, "minUnitId": minUnitId});
             }
           }
         }
@@ -275,21 +281,32 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
       }
     }
 
+    String timeKindId = "";
+    if(productCategorySelected.value == "商品カテゴリ"){
+      timeKindId = "";
+    }else{
+      if(commonSearchParam.isNotEmpty){
+        for (var data in commonSearchParam) {
+          if(data!.kindName == productCategorySelected.value){
+            timeKindId = data.id.toString();
+          }
+        }
+      }
+    }
+
     Map<String, dynamic> params = {
       "id": id == "" ? "" : productDetailModel.value!.id,
       "merchantId": Global.merchantId,
       "itemNo": topTitleController[0].text,
       "itemName": topTitleController[1].text,
       "itemShortName": topTitleController[2].text,
-      "itemKindId": productCategorySelected.value == "商品カテゴリ"
-          ? ""
-          : productCategory.indexOf(productCategorySelected.value) + 1,
+      "itemKindId": timeKindId,
       "description": productDescriptionController.text,
       "ingredients": rawMaterialsController.text,
       "allergen": allergen,
-      "status": statusSelected.value == "开発中"
+      "status": statusSelected.value == "開発中"
           ? "1"
-          : (statusSelected.value == "贩壳中" ? "2" : "3"),
+          : (statusSelected.value == "販売中" ? "2" : "3"),
       "price": bottomTitleController[0].text,
       "vertical": bottomTitleController[4].text,
       "horizontal": bottomTitleController[3].text,
@@ -302,6 +319,7 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
       "fileIdList": fileIdList,
       "ingredientList": ingredientList
     };
+    print("params ----------------------- $params");
     if (id == "") {
       await backEndRepository.doPost(
         "${Constant.base_url}merchant/items/save",

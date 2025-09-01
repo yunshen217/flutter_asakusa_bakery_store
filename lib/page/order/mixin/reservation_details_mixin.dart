@@ -23,6 +23,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
 
   /// 詳細データリスト
   RxList<PlansItemsModel> detailsData = <PlansItemsModel>[].obs;
+  RxList<PlansItemsModel> detailsDataCopy = <PlansItemsModel>[].obs;
 
   RxList<TextEditingController> controllerList = <TextEditingController>[].obs;
   RxList<FocusNode> focusNodeList = <FocusNode>[].obs;
@@ -53,12 +54,16 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
       params: params,
       successRequest: (result) {
         detailsData.clear();
+        detailsDataCopy.clear();
         controllerList.clear();
         focusNodeList.clear();
         LoadingToast.remove();
         if (result["data"] != null) {
           debugPrint("result['data']: ${result['data']}");
           detailsData.addAll(result["data"]
+              .map((data) => PlansItemsModel.fromJson(data ?? {}))
+              .cast<PlansItemsModel>());
+          detailsDataCopy.addAll(result["data"]
               .map((data) => PlansItemsModel.fromJson(data ?? {}))
               .cast<PlansItemsModel>());
           controllerList.assignAll(

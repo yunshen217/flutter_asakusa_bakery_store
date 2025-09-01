@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/global.dart';
+import 'package:flutter_asakusa_bakery_store/model/common_sns_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/detail_model.dart';
 import 'package:flutter_asakusa_bakery_store/model/post_code_model.dart';
 import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
+import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -63,14 +65,15 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   /// 食事スペースのデータはありか？
   List<String> isThereDiningSpaceData = ["なし", "あり"];
 
-  /// 最大予約可能日数
-  RxString bookingDayMax = '最大予約可能日数'.obs;
+  /// 本日から予約可能日数TO
+  RxString bookingDayMax = '本日から予約可能日数TO'.obs;
 
   /// 日数
   RxList days = [].obs;
+  RxList daysNotHave0 = [].obs;
 
-  /// 予約締切日数
-  RxString reservationsAreClosedDay = '予約締切日数'.obs;
+  /// 本日から予約可能日数FROM
+  RxString reservationsAreClosedDay = '本日から予約可能日数FROM'.obs;
 
   /// 予約締切時間
   RxString appointmentTime = '予約締切時間'.obs;
@@ -96,9 +99,9 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   /// 特別休暇
   RxString specialHolidays = '選択してください'.obs;
   final RxString date = ''.obs;
-
+  RxList<CommonSnsModel> commonSns = <CommonSnsModel>[].obs;
   /// SNS
-  List snsData = ["Instagram", "X", "LINE", "Facebook"];
+  RxList snsData = [].obs;
   RxString sns1 = "SNS1".obs;
   RxString sns2 = "SNS2".obs;
   RxString sns3 = "SNS3".obs;
@@ -115,6 +118,23 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   RxString prefecturesCode = "".obs;
 
   RxList<String> assetsImg = <String>[].obs;
+
+  getCommonSns() async{
+    await backEndRepository.doGet(Constant.sns,successRequest: (result) {
+      commonSns.clear();
+      snsData.clear();
+      if(result["data"]!=null){
+        for (var data in result["data"]) {
+          commonSns.add(CommonSnsModel.fromJson(data));
+        }
+      }
+      if(commonSns.isNotEmpty){
+        for (var data in commonSns) {
+          snsData.add(data.value);
+        }
+      }
+    },);
+  }
 
   getDetailData() async {
     await backEndRepository.doGet(
@@ -136,10 +156,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
               ? isThereDiningSpaceData[0]
               : isThereDiningSpaceData[1];
           bookingDayMax.value = detailModel.value!.approvalDays == 0
-              ? "最大予約可能日数"
+              ? "本日から予約可能日数TO"
               : detailModel.value!.approvalDays.toString();
           reservationsAreClosedDay.value = detailModel.value!.deadLineDays == 0
-              ? "予約締切日数"
+              ? "本日から予約可能日数FROM"
               : detailModel.value!.deadLineDays.toString();
           appointmentTime.value = detailModel.value!.deadLineTime == ""
               ? "予約締切時間"
@@ -171,16 +191,16 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
               : detailModel.value!.pointRate.toString();
           sns1.value = detailModel.value!.snsType1 == ""
               ? "SNS1"
-              : snsData[int.parse(detailModel.value!.snsType1)-1];
+              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType1).value ?? 'SNS1';
           sns2.value = detailModel.value!.snsType2 == ""
               ? "SNS2"
-              : snsData[int.parse(detailModel.value!.snsType2)-1];;
+              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType2).value ?? 'SNS2';
           sns3.value = detailModel.value!.snsType3 == ""
               ? "SNS3"
-              : snsData[int.parse(detailModel.value!.snsType3)-1];;
+              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType3).value ?? 'SNS3';
           sns4.value = detailModel.value!.snsType4 == ""
               ? "SNS4"
-              : snsData[int.parse(detailModel.value!.snsType4)-1];;
+              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType4).value ?? 'SNS4';
           linkController1.text = detailModel.value!.snsLink1;
           linkController2.text = detailModel.value!.snsLink2;
           linkController3.text = detailModel.value!.snsLink3;
@@ -270,10 +290,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "municipalities": cityController.text,
       "streetAddress": streetController.text,
       "building": addressController.text,
-      "snsType1": sns1.value == "SNS1"?"":(snsData.indexOf(sns1.value)+1).toString(),
-      "snsType2": sns2.value == "SNS2"?"":(snsData.indexOf(sns2.value)+1).toString(),
-      "snsType3": sns3.value == "SNS3"?"":(snsData.indexOf(sns3.value)+1).toString(),
-      "snsType4": sns4.value == "SNS4"?"":(snsData.indexOf(sns4.value)+1).toString(),
+      "snsType1": sns1.value == "SNS1"?"":commonSns.firstWhere((e) => '${e.value}' == sns1.value).code ?? '',
+      "snsType2": sns2.value == "SNS2"?"":commonSns.firstWhere((e) => '${e.value}' == sns2.value).code ?? '',
+      "snsType3": sns3.value == "SNS3"?"":commonSns.firstWhere((e) => '${e.value}' == sns3.value).code ?? '',
+      "snsType4": sns4.value == "SNS4"?"":commonSns.firstWhere((e) => '${e.value}' == sns4.value).code ?? '',
       "snsLink1": linkController1.text,
       "snsLink2": linkController2.text,
       "snsLink3": linkController3.text,
@@ -281,8 +301,8 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "businessStatus": "",
       "storeHomepageLink": homeController.text,
       "deliveryFlag": "",
-      "deadLineDays": reservationsAreClosedDay.value == "予約締切日数"?"":reservationsAreClosedDay.value,
-      "approvalDays": bookingDayMax.value == "最大予約可能日数"?"":bookingDayMax.value,
+      "deadLineDays": reservationsAreClosedDay.value == "本日から予約可能日数FROM"?"":reservationsAreClosedDay.value,
+      "approvalDays": bookingDayMax.value == "本日から予約可能日数TO"?"":bookingDayMax.value,
       "deadLineTime": appointmentTime.value == "予約締切時間"?"":appointmentTime.value,
       "email": "",
       "customerOrderLimit": orderAmountMaxController.text,
@@ -293,12 +313,12 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "specialRestDayList": specialRestDayList,
       "pointRate":pointsRatioController.text
     };
-    print("param ------------------ $params");
+    print("params ------------------------ $params");
     await backEndRepository.doPut(
       Constant.detail,
       params: params,
       successRequest: (result) {
-        customWidget.toastShowNotIcon("情報を補完してください");
+        customWidget.toastShowNotIcon("正常に保存しました。");
       },
     );
   }

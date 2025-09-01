@@ -113,7 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onBack: () => exit(0));
   }
 
-  ///底部菜单栏
   _bottomNavigationBar() => BottomNavigationBar(
       backgroundColor: Colors.white,
       currentIndex: _selectedIndex,

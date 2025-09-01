@@ -24,8 +24,10 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getCommonSns();
     // 天数に0〜30のデータを追加する
     days.assignAll(List.generate(31, (i) => "$i"));
+    daysNotHave0.assignAll(List.generate(31, (i) => "${i+1}"));
     timeHour.assignAll(
       List.generate(24, (i) => i.toString().padLeft(2, '0')),
     );
@@ -91,6 +93,7 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
             controller: postalCodeController,
             hintText: '郵便番号を入カしてください',
             readOnly: false,
+            isNum: true,
             onTab: ()=>getPostCode(),),
         infoWidget.titleWidget("店舗住所", true),
         ClearableTextField(
@@ -117,20 +120,20 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
                 confirm: (list) => isThereDiningSpace.value = list[0],
               );
             })),
-        infoWidget.titleWidget("最大予約可能日数", true),
+        infoWidget.titleWidget("本日から予約可能日数TO", true),
         Obx(() => infoWidget.pickerSelected(
-                bookingDayMax.value, bookingDayMax.value == "最大予約可能日数", () {
+                bookingDayMax.value, bookingDayMax.value == "本日から予約可能日数TO", () {
               customWidget.showCustomizationPicker(
                 context,
-                columnsData: [days.map((e) => e.toString()).toList()],
+                columnsData: [daysNotHave0.map((e) => e.toString()).toList()],
                 initialIndex: [0],
                 title: '日数を選択してください',
                 confirm: (list) => bookingDayMax.value = list[0],
               );
             })),
-        infoWidget.titleWidget("予約締切日数", true),
+        infoWidget.titleWidget("本日から予約可能日数FROM", true),
         Obx(() => infoWidget.pickerSelected(reservationsAreClosedDay.value,
-                reservationsAreClosedDay.value == "予約締切日数", () {
+                reservationsAreClosedDay.value == "本日から予約可能日数FROM", () {
               customWidget.showCustomizationPicker(
                 context,
                 columnsData: [days.map((e) => e.toString()).toList()],
@@ -218,26 +221,31 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
         ClearableTextField(
             controller: orderAmountMaxController,
             hintText: '顧客每回注文金額上限を入力してください',
+            isNum: true,
             readOnly: false),
         infoWidget.titleWidget("顧客每日注文金額上限", false),
         ClearableTextField(
             controller: dailyOrderAmountMaxController,
             hintText: '顧客每日注文金額上限を入力してください',
+            isNum: true,
             readOnly: false),
         infoWidget.titleWidget("店舗每日予約商品数上限", false),
         ClearableTextField(
             controller: productNumberMaxController,
             hintText: '店舗每日予約商品数上限を入カしてください',
+            isNum: true,
             readOnly: false),
         infoWidget.titleWidget("店舗每日予約金額上限", false),
         ClearableTextField(
             controller: productAmountMaxController,
             hintText: '店舗每日予約金额上限を入カしてく尤さい',
+            isNum: true,
             readOnly: false),
         infoWidget.titleWidget("ポイント比率", false),
         ClearableTextField(
             controller: pointsRatioController,
             hintText: 'ポイント比率を入カしてィださい',
+            isNum: true,
             readOnly: false),
         infoWidget.titleWidget("SNS1", false),
         Obx(() =>
@@ -327,7 +335,13 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
               child: mainPageShow(),
             ),
           ),
-          infoWidget.bottomBtn("キャン乜ル", "保存", true, () =>Get.back(), () =>updateDetailData())
+          infoWidget.bottomBtn("キャン乜ル", "保存", true, () =>Get.back(), (){
+            if(int.parse(reservationsAreClosedDay.value == "本日から予約可能日数FROM"?"":reservationsAreClosedDay.value)>int.parse(bookingDayMax.value=="本日から予約可能日数TO"?"":bookingDayMax.value)){
+              customWidget.toastShowNotIcon("予約可能日数FROMは予約可能日数TOより小さくなるように入力してください");
+              return;
+            }
+            updateDetailData();
+          })
         ],
       ),
     );
@@ -341,8 +355,6 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
     customWidget.showCustomNoTitleDialog(
       context,
       confirm: () {
-        print(
-            "选中的日期：${selectedDates.map((e) => e.toString().substring(0, 10)).join(', ')}");
         selectedDates.isNotEmpty
             ? specialHolidays.value = "選択済み"
             : specialHolidays.value = "選択してください";

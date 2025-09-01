@@ -277,20 +277,20 @@ class _OrderPageState extends State<OrderPage>
           xAxis: {
             type: 'category',
             data: ${chartsData["xAxis"].map((e) => '"$e"').toList()},
-            axisLine: { lineStyle: { color: '#999999' } },   // 只留一条直线
-            axisTick: { show: false },                   // 去掉刻度
-            splitLine: { show: false },                  // 去掉垂直分割线
+            axisLine: { lineStyle: { color: '#999999' } },  
+            axisTick: { show: false },                   
+            splitLine: { show: false },                 
             axisLabel: { interval: 0, rotate: 0 }
           },
           yAxis: {
             type: 'value',
-            axisLabel: { show: false },   // 隐藏纵坐标数字
-            splitLine: { show: true }     // 保留横线
+            axisLabel: { show: false },   
+            splitLine: { show: true }   
           },
           dataZoom: [{
-            type: 'inside',   // ← 关键：内置滑动，不显示滚动条
+            type: 'inside',  
             xAxisIndex: 0,
-            startValue: 0,    // 初始显示 0~4（共 5 根）
+            startValue: 0,  
             endValue: 4
           }],
           series: [{
@@ -313,8 +313,6 @@ class _OrderPageState extends State<OrderPage>
         extraScript: '''
             chart.on('click', function(params) {
               if(params.componentType === 'series') {
-                // var xAxisValue = params.name;
-                // Messager.postMessage(xAxisValue);
                 Messager.postMessage(params.dataIndex.toString());
               }
             });
@@ -343,26 +341,26 @@ class _OrderPageState extends State<OrderPage>
           xAxis: {
             type: 'category',
             data: ${chartsData["xAxis"].map((e) => '"$e"').toList()},
-        axisLine: { lineStyle: { color: '#999999' } },   // 只留一条直线
-        axisTick: { show: false },                   // 去掉刻度
-        splitLine: { show: false },                  // 去掉垂直分割线
+        axisLine: { lineStyle: { color: '#999999' } }, 
+        axisTick: { show: false },                 
+        splitLine: { show: false },                
         axisLabel: { interval: 0, rotate: 0 }
                   },
                   yAxis: {
         type: 'value',
-        axisLabel: { show: false },   // 隐藏纵坐标数字
-        splitLine: { show: true }     // 保留横线
+        axisLabel: { show: false },  
+        splitLine: { show: true }    
                   },
                   dataZoom: [{
-        type: 'inside',   // ← 关键：内置滑动，不显示滚动条
+        type: 'inside', 
         xAxisIndex: 0,
-        startValue: 0,    // 初始显示 0~4（共 5 根）
+        startValue: 0,   
         endValue: 4
                   }],
                   series: [{
         name: '订单',
         type: 'line',
-        data: ${chartsData["barYAxis"].map((e) => num.parse(e)).toList()}, // y轴要数字
+        data: ${chartsData["barYAxis"].map((e) => num.parse(e)).toList()}, 
         itemStyle: { color: '#FFDAA1' },
         barWidth: 26,
         emphasis: { itemStyle: { color: '#FFA244' } },

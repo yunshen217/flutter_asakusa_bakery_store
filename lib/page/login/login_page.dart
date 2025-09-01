@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage>
     // accountController!.text="1246158996@qq.com";
     // pwController!.text="Aa112233";
     accountController!.text="weidong.sun@eagletech-global.com";
-    pwController!.text="AX98Yn5tHBgyBcW";
+    pwController!.text="123456ab";
   }
 
   @override
@@ -121,12 +121,10 @@ class _LoginPageState extends State<LoginPage>
                                   if (isLogin()) {
                                     if (Global.token.isEmpty) {
                                       try {
-                                        // 添加async/await等待设备令牌获取完成
                                         await pushMessages.getDeviceToken();
-                                        // 添加上下文有效性检查
                                         if (!context.mounted) return;
                                       } catch (e) {
-                                        print("获取设备令牌失败: $e");
+                                        print("Failed to obtain device token: $e");
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(

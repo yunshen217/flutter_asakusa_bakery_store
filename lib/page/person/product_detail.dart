@@ -34,6 +34,7 @@ class _ProductDetailState extends State<ProductDetail>
         List.generate(bottomTitle.length, (_) => TextEditingController()).obs;
     allergyInfoIsSelected
         .assignAll(List.generate(allergyInfo.length, (_) => false.obs));
+    getCommonSearchParam() ;
     gettimePeriods();
     getProductIngredientList();
     if (id != "") {
@@ -131,6 +132,26 @@ class _ProductDetailState extends State<ProductDetail>
                       circular: 5,
                       textColor: CustomColor.black_3,
                       color: CustomColor.redE8, onPressed: () {
+                        if(bottomTitleController[0].text.trim() == ""){
+                          customWidget.toastShowNotIcon("単価(税込)を入力してください");
+                          return;
+                        }
+                        if(bottomTitleController[3].text.trim() == ""){
+                          customWidget.toastShowNotIcon("幅を入力してください");
+                          return;
+                        }
+                        if(bottomTitleController[4].text.trim() == ""){
+                          customWidget.toastShowNotIcon("奥行きを入力してください");
+                          return;
+                        }
+                        if(bottomTitleController[5].text.trim() == ""){
+                          customWidget.toastShowNotIcon("高さを入力してください");
+                          return;
+                        }
+                        if(bottomTitleController[6].text.trim() == ""){
+                          customWidget.toastShowNotIcon("デフォルト計画数を入力してください");
+                          return;
+                        }
                     updateProduct();
                   }),
                 ))
@@ -138,7 +159,7 @@ class _ProductDetailState extends State<ProductDetail>
         ));
   }
 
-  Widget textEditingList(List name, RxList<TextEditingController> controller) {
+  Widget textEditingList(List name, RxList<TextEditingController> controller,bool isNum) {
     return Column(
       children: List.generate(name.length, (index) {
         return Column(
@@ -147,6 +168,7 @@ class _ProductDetailState extends State<ProductDetail>
             ClearableTextField(
                 controller: controller[index],
                 hintText: name[index],
+                isNum: isNum,
                 readOnly: false),
           ],
         );
@@ -159,7 +181,7 @@ class _ProductDetailState extends State<ProductDetail>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          textEditingList(topTitle, topTitleController),
+          textEditingList(topTitle, topTitleController,false),
           infoWidget.titleWidget("商品画像(2枚)", false),
           SelectImageWidget(
               localAssets: image,
@@ -278,7 +300,7 @@ class _ProductDetailState extends State<ProductDetail>
                   confirm: (list) => statusSelected.value = list[0],
                 );
               })),
-          textEditingList(bottomTitle, bottomTitleController),
+          textEditingList(bottomTitle, bottomTitleController,true),
           const SizedBox(
             height: 80,
           )

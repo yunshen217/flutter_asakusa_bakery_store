@@ -83,6 +83,7 @@ class Constant {
   static final ingredients = "${base_url}merchant/ingredients";
   static final updatePassword = "${base_url}merchant/auth/password";
   static final logout = "${base_url}merchant/auth/logout";
+  static final sns = "${base_url}common/sns";
 
 
 

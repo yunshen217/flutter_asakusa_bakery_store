@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-
 
 class SelectImageWidget extends StatelessWidget {
   final RxList<AssetEntity> localAssets;
@@ -30,25 +30,25 @@ class SelectImageWidget extends StatelessWidget {
 
   /// Compress and upload, returning the server fileId
   Future<String?> _uploadSingle(AssetEntity asset) async {
-  final file = await compressAndSave(asset);
-  if (file == null) return null;
+    final file = await compressAndSave(asset);
+    if (file == null) return null;
 
-  final completer = Completer<String?>();
-  backEndRepository.upFile(
-    '${Constant.base_url}common/upload/img',
-    [file.path],
-    (res) {
-      final id = res["data"]??"";
-      if (id is String) {
-        fileIds.add(id);
-        completer.complete(id);
-      } else {
-        completer.complete(null);
-      }
-    },
-  );
-  return completer.future;
-}
+    final completer = Completer<String?>();
+    backEndRepository.upFile(
+      '${Constant.base_url}common/upload/img',
+      [file.path],
+      (res) {
+        final id = res["data"] ?? "";
+        if (id is String) {
+          fileIds.add(id);
+          completer.complete(id);
+        } else {
+          completer.complete(null);
+        }
+      },
+    );
+    return completer.future;
+  }
 
   /// Select and upload in bulk
   Future<void> _pickAndUpload(BuildContext context) async {
@@ -109,8 +109,7 @@ class SelectImageWidget extends StatelessWidget {
             }),
 
             /* Add button */
-            if (total < maxLength)
-              _addBtn(context),
+            if (total < maxLength) _addBtn(context),
           ],
         ),
       );
@@ -131,9 +130,16 @@ class SelectImageWidget extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: url != null
-                ? Image.network(url, fit: BoxFit.cover,loadingBuilder: (_, child, progress) =>
-      progress == null ? child : const CircularProgressIndicator(),
-  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),)
+                ? CachedNetworkImage(
+                    imageUrl: url.trim(),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(CustomColor.redE8),),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.image,color: CustomColor.blackD,),
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                  )
                 : AssetEntityImage(asset!, fit: BoxFit.cover),
           ),
           Positioned(
@@ -156,7 +162,7 @@ class SelectImageWidget extends StatelessWidget {
         width: 100,
         height: 100,
         decoration: BoxDecoration(
-          border: Border.all(color: CustomColor.blackD),
+          border: Border.all(color: CustomColor.blackD.withOpacity(0.5)),
           borderRadius: BorderRadius.circular(8),
         ),
         alignment: Alignment.center,

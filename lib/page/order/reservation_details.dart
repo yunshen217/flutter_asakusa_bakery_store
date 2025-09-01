@@ -28,10 +28,15 @@ class _ReservationDetailsState extends State<ReservationDetails>
     time.value = arguments != null ? arguments["time"] : "";
     status.value = arguments != null ? arguments["status"] : "";
     btnText.value = status.value == "予約一時中止"?"予約再開":"予約中止";
-    
+
     getPlansItems();
     getCommonSearchParam();
     isFirstLogin.value = true;
+  }
+
+  void _updatePlanCount(int index, String newPlanCount) {
+    detailsData[index].planCount = int.parse(newPlanCount);
+    detailsData[index].stockCount = int.parse(newPlanCount);
   }
 
   @override
@@ -80,7 +85,6 @@ class _ReservationDetailsState extends State<ReservationDetails>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 头像
                         Row(
                           children: [
                             customWidget.setAssetsImg("person_shop_icon@3x.png",
@@ -100,7 +104,6 @@ class _ReservationDetailsState extends State<ReservationDetails>
                             )
                           ],
                         ),
-                        // 按钮
                         Row(
                           children: [
                             // customWidget.setCupertinoButton("注文数書戾",
@@ -175,7 +178,10 @@ class _ReservationDetailsState extends State<ReservationDetails>
                           focusNodeList[index],
                           () => setState(() {
                             currentFocusNode = focusNodeList[index];
-                          })) ;
+                          }),
+                          onChanged: (newPlanCount) {
+                            _updatePlanCount(index, newPlanCount);
+                          }) ;
                         }))),
                 const SizedBox(
                   height: 50,
@@ -236,13 +242,13 @@ class _ReservationDetailsState extends State<ReservationDetails>
                       currentFocusNode.unfocus();
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         plansCountList.value = [];
-                        for (var i = 0; i < detailsData.length; i++) {
-                          if(controllerList[i].text != ""&&(detailsData[i].planCount.toString() != controllerList[i].text)){
-                            if(int.parse(controllerList[i].text)<detailsData[i].orderCount!){
-                              controllerList[i].text = detailsData[i].orderCount!.toString();
+                        for (var i = 0; i < detailsDataCopy.length; i++) {
+                          if(controllerList[i].text != ""&&(detailsDataCopy[i].planCount.toString() != controllerList[i].text)){
+                            if(int.parse(controllerList[i].text)<detailsDataCopy[i].orderCount!){
+                              controllerList[i].text = detailsDataCopy[i].orderCount!.toString();
                             }
                             plansCountList.add({
-                              "id": detailsData[i].id,
+                              "id": detailsDataCopy[i].id,
                               "orderDate": time.value,
                               "planCount": controllerList[i].text,
                               "merchantId":Global.merchantId,

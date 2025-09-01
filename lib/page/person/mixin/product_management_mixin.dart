@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 /// 商品管理
 mixin ProductManagementMixin<T extends StatefulWidget> on State<T> {
   List tabs = ["贩壳中", "开発中", "服壳中止"];
-  // 1 开发中 2 贩卖中 3 贩卖停止
+  // 1 开発中 2 贩壳中 3 服壳中止
   RxInt tabIndex = 0.obs;
 
   /// 商品リストデータ

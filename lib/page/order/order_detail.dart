@@ -206,13 +206,13 @@ class _OrderDetailState extends State<OrderDetail> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        customWidget.setTextOverflow("オ-ダ-样细",
+                        customWidget.setTextOverflow("オ一ダ一样细",
                             fontSize: 14,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(bottom: 5)),
                         customWidget.setTable(color: Colors.transparent, [
                           TableRow(children: [
-                            customWidget.setTextOverflow("オ-ダ-番号",
+                            customWidget.setTextOverflow("オ一ダ一番号",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
@@ -316,7 +316,7 @@ class _OrderDetailState extends State<OrderDetail> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        customWidget.setTextOverflow("オ-ダ-金額",
+                        customWidget.setTextOverflow("オ一ダ一金額",
                             fontSize: 14,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(bottom: 5)),

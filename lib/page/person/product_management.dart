@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_color.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
 import 'package:flutter_asakusa_bakery_store/common/slide_up_panel.dart';
 import 'package:flutter_asakusa_bakery_store/model/items_list_model.dart';
 import 'package:flutter_asakusa_bakery_store/page/person/mixin/product_management_mixin.dart';
-import 'package:flutter_asakusa_bakery_store/routes/routes.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:flutter_asakusa_bakery_store/view/persion/sift_wrap_widget.dart';
 import 'package:get/get.dart';
@@ -100,10 +100,16 @@ class _ProductManagementState extends State<ProductManagement>
                             width: 60,
                             height: 60,
                           )
-                        : customWidget.setNetworkImg(
-                            '${Constant.base_url}${item.filePath}',
-                            width: 60,
-                            height: 60),
+                        :CachedNetworkImage(
+                    imageUrl: '${Constant.picture_url}${item.filePath}',
+                    placeholder: (context, url) =>
+                         const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(CustomColor.redE8),),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.image,color: CustomColor.blackD,),
+                    fit: BoxFit.cover,
+                    width: 60,
+                    height: 60,
+                  )
                   ),
                   Container(
                     margin: const EdgeInsets.only(left: 15),
