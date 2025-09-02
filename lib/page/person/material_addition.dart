@@ -72,11 +72,11 @@ class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditi
             infoWidget.titleWidget("材料名", false),
             ClearableTextField(
                 controller: nameController,
-                hintText: '数値を入カしてください',
+                hintText: '数値を入力してください',
                 readOnly: false),
             infoWidget.titleWidget("アレルゲン区分", false),
             Obx(() => infoWidget.pickerSelected(allergenCategory.value,
-                    allergenCategory.value == "数値を入カしてください", () {
+                    allergenCategory.value == "数値を入力してください", () {
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [
@@ -89,7 +89,7 @@ class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditi
                 })),
             infoWidget.titleWidget("最小単位", false),
             Obx(() => infoWidget.pickerSelected(
-                    minimumUnit.value, minimumUnit.value == "数値を入カしてください", () {
+                    minimumUnit.value, minimumUnit.value == "数値を入力してください", () {
                   customWidget.showCustomizationPicker(
                     context,
                     columnsData: [
@@ -110,9 +110,9 @@ class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditi
                 })),
             infoWidget.titleWidget("表示単位", false),
             Obx(() => infoWidget.pickerSelected(
-                    displayUnit.value, displayUnit.value == "数値を入カしてください", () {
-                      if(minimumUnit.value == "数値を入カしてください"){
-                        customWidget.toastShowNotIcon("最小単位を先に入カしてください");
+                    displayUnit.value, displayUnit.value == "数値を入力してください", () {
+                      if(minimumUnit.value == "数値を入力してください"){
+                        customWidget.toastShowNotIcon("最小単位を先に入力してください");
                         return;
                       }
                   customWidget.showCustomizationPicker(
@@ -129,7 +129,7 @@ class _MaterialAdditionState extends State<MaterialAddition> with MaterialAdditi
             ClearableTextField(
                 controller: inboundQuantityThresholdController,
                 isNum: true,
-                hintText: '数値を入カしてください',
+                hintText: '数値を入力してください',
                 readOnly: false),
             Obx(() => Row(
                   mainAxisAlignment: MainAxisAlignment.end,

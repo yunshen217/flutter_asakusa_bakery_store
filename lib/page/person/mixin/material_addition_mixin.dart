@@ -15,16 +15,16 @@ mixin MaterialAdditionMixin<T extends StatefulWidget> on State<T>{
   TextEditingController inboundQuantityThresholdController =
       TextEditingController();
   // アレルゲン区分
-  RxString allergenCategory = "数値を入カしてください".obs;
+  RxString allergenCategory = "数値を入力してください".obs;
   RxList allergenCategoryList = ["是", "否"].obs;
 
   /// 最小単位
-  RxString minimumUnit = "数値を入カしてください".obs;
+  RxString minimumUnit = "数値を入力してください".obs;
   RxList<UnitsMinModel> unitsMinList = <UnitsMinModel>[].obs;
   RxList minimumUnitList = [].obs;
 
   /// 表示単位
-  RxString displayUnit = "数値を入カしてください".obs;
+  RxString displayUnit = "数値を入力してください".obs;
   RxList<UnitsMinModel> displayList = <UnitsMinModel>[].obs;
   RxList displayUnitList = [].obs;
   RxBool isHaveDeletedBtn = false.obs;

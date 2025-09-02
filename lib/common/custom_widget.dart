@@ -935,7 +935,7 @@ class CustomWidget {
   }
 
   void showCustomSingleBtnDialog(context,
-      {title = "現在ログインしていません", isChild = false, child, confirm}) {
+      {title = "ログインしてください", isChild = false, child, confirm}) {
     if (_isDialogShowing) return;
     _isDialogShowing = true;
 
@@ -952,7 +952,7 @@ class CustomWidget {
                 onPressed: () => Navigator.pop(context),
               ),
               CupertinoDialogAction(
-                  child: setText("ログインする", color: CustomColor.redE8),
+                  child: setText("ログイン", color: CustomColor.redE8),
                   onPressed: () {
                     Get.back();
                     confirm();

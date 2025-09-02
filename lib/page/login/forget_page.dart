@@ -30,7 +30,7 @@ class _ForgetPageState extends State<ForgetPage> {
   }
   isAccountPass() {
     if (!utils.isEmail(accountController!.text.toString().trim())) {
-      customWidget.toastShow("メールアドレスが不正です", notifyType: NotifyType.warning);
+      customWidget.toastShow("メールアドレスが登録されていません", notifyType: NotifyType.warning);
       return false;
     }
     return true;
@@ -40,7 +40,7 @@ class _ForgetPageState extends State<ForgetPage> {
     return BaseScaffold(
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
-          title: "パスフードを忘れた場合",
+          title: "パスワードを忘れた場合",
           backgroundColor: CustomColor.white,
           isLeftShow: false,
           leading: InkWell(
@@ -51,7 +51,7 @@ class _ForgetPageState extends State<ForgetPage> {
          body:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          customWidget.setText("ご登録済のメールアドレスを入力してください。新しいパスワードはご登録のメールアドレスに送信されます。",
+          customWidget.setText("ご登録のメールアドレスを入力してください。新しいパスワードを送信します。",
               margin: const EdgeInsets.all(15)),
           customWidget.setTextFieldForLogin(accountController,
               icon: "icon_msg.png",

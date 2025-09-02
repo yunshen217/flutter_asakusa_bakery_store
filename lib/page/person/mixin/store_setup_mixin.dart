@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_asakusa_bakery_store/common/constant.dart';
 import 'package:flutter_asakusa_bakery_store/common/custom_widget.dart';
@@ -10,6 +11,11 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_manager/photo_manager.dart';
+
+class LatLng {
+  final double lat, lng;
+  LatLng(this.lat, this.lng);
+}
 
 mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   /// 店名
@@ -100,6 +106,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
   RxString specialHolidays = '選択してください'.obs;
   final RxString date = ''.obs;
   RxList<CommonSnsModel> commonSns = <CommonSnsModel>[].obs;
+
   /// SNS
   RxList snsData = [].obs;
   RxString sns1 = "SNS1".obs;
@@ -119,21 +126,47 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
 
   RxList<String> assetsImg = <String>[].obs;
 
-  getCommonSns() async{
-    await backEndRepository.doGet(Constant.sns,successRequest: (result) {
-      commonSns.clear();
-      snsData.clear();
-      if(result["data"]!=null){
-        for (var data in result["data"]) {
-          commonSns.add(CommonSnsModel.fromJson(data));
-        }
+  Future<LatLng?> getCode(String address) async {
+    const apiKey = 'AIzaSyDnOhiEUGWv6nsa3LarOHS0NQcF66IHuzE';
+    final dio = Dio();
+
+    try {
+      final res = await dio.get(
+        'https://maps.googleapis.com/maps/api/geocode/json',
+        queryParameters: {
+          'address': address,
+          'language': 'ja',
+          'key': apiKey,
+        },
+      );
+      if (res.data['status'] == 'OK' && res.data['results'].isNotEmpty) {
+        final loc = res.data['results'][0]['geometry']['location'];
+        return LatLng(loc['lat'], loc['lng']);
       }
-      if(commonSns.isNotEmpty){
-        for (var data in commonSns) {
-          snsData.add(data.value);
+    } on DioException catch (e) {
+      print('Dio error: $e');
+    }
+    return null;
+  }
+
+  getCommonSns() async {
+    await backEndRepository.doGet(
+      Constant.sns,
+      successRequest: (result) {
+        commonSns.clear();
+        snsData.clear();
+        if (result["data"] != null) {
+          for (var data in result["data"]) {
+            commonSns.add(CommonSnsModel.fromJson(data));
+          }
         }
-      }
-    },);
+        if (commonSns.isNotEmpty) {
+          for (var data in commonSns) {
+            snsData.add(data.value);
+          }
+        }
+      },
+    );
   }
 
   getDetailData() async {
@@ -152,9 +185,11 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
           streetController.text = detailModel.value!.streetAddress;
           addressController.text = detailModel.value!.building;
           phoneController.text = detailModel.value!.phoneNumber;
-          isThereDiningSpace.value =detailModel.value!.eatingArea == ""?"": detailModel.value!.eatingArea == "0"
-              ? isThereDiningSpaceData[0]
-              : isThereDiningSpaceData[1];
+          isThereDiningSpace.value = detailModel.value!.eatingArea == ""
+              ? ""
+              : detailModel.value!.eatingArea == "0"
+                  ? isThereDiningSpaceData[0]
+                  : isThereDiningSpaceData[1];
           bookingDayMax.value = detailModel.value!.approvalDays == 0
               ? "本日から予約可能日数TO"
               : detailModel.value!.approvalDays.toString();
@@ -191,16 +226,32 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
               : detailModel.value!.pointRate.toString();
           sns1.value = detailModel.value!.snsType1 == ""
               ? "SNS1"
-              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType1).value ?? 'SNS1';
+              : commonSns
+                      .firstWhere(
+                          (e) => '${e.code}' == detailModel.value?.snsType1)
+                      .value ??
+                  'SNS1';
           sns2.value = detailModel.value!.snsType2 == ""
               ? "SNS2"
-              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType2).value ?? 'SNS2';
+              : commonSns
+                      .firstWhere(
+                          (e) => '${e.code}' == detailModel.value?.snsType2)
+                      .value ??
+                  'SNS2';
           sns3.value = detailModel.value!.snsType3 == ""
               ? "SNS3"
-              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType3).value ?? 'SNS3';
+              : commonSns
+                      .firstWhere(
+                          (e) => '${e.code}' == detailModel.value?.snsType3)
+                      .value ??
+                  'SNS3';
           sns4.value = detailModel.value!.snsType4 == ""
               ? "SNS4"
-              : commonSns.firstWhere((e) => '${e.code}' == detailModel.value?.snsType4).value ?? 'SNS4';
+              : commonSns
+                      .firstWhere(
+                          (e) => '${e.code}' == detailModel.value?.snsType4)
+                      .value ??
+                  'SNS4';
           linkController1.text = detailModel.value!.snsLink1;
           linkController2.text = detailModel.value!.snsLink2;
           linkController3.text = detailModel.value!.snsLink3;
@@ -220,9 +271,10 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
             }
           }
           assetsImg.clear();
-          if(detailModel.value!.files.isNotEmpty){
+          if (detailModel.value!.files.isNotEmpty) {
             for (var data in detailModel.value!.files) {
-              assetsImg.add('${Constant.picture_url}${data.filePath}''${data.fileName}');
+              assetsImg.add(
+                  '${Constant.picture_url}${data.filePath}' '${data.fileName}');
               fileIdList.add(data.id);
             }
           }
@@ -246,18 +298,18 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  updateDetailData() async {
+  updateDetailData(LatLng loc) async {
     List fixedHoliday = [];
-    if(selected.isNotEmpty){
-      for (int i = 0;i<selected.length;i++) {
-        if(selected[i].value){
-          fixedHoliday.add("${i+1}");
+    if (selected.isNotEmpty) {
+      for (int i = 0; i < selected.length; i++) {
+        if (selected[i].value) {
+          fixedHoliday.add("${i + 1}");
         }
       }
     }
 
     List specialRestDayList = [];
-    if(selectedDates.isNotEmpty){
+    if (selectedDates.isNotEmpty) {
       for (var data in selectedDates) {
         specialRestDayList.add(DateFormat('yyyy-MM-dd').format(data));
       }
@@ -280,20 +332,32 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "remark": "",
       "loginIp": "",
       "loginDate": "",
-      "businessHoursBegin": startTime.value == "開始時間"?"":startTime.value,
-      "businessHoursEnd": endTime.value == "終了時間"?"":endTime.value,
+      "latitude": loc.lat,
+      "longitude": loc.lng,
+      "businessHoursBegin": startTime.value == "開始時間" ? "" : startTime.value,
+      "businessHoursEnd": endTime.value == "終了時間" ? "" : endTime.value,
       "fixedHoliday": fixedHoliday,
       "specialRestDay": "",
-      "eatingArea": isThereDiningSpace.value == "イートインスペース"?"":(isThereDiningSpace.value=="なし"?"0":"1"),
+      "eatingArea": isThereDiningSpace.value == "イートインスペース"
+          ? ""
+          : (isThereDiningSpace.value == "なし" ? "0" : "1"),
       "postcode": postalCodeController.text,
       "prefecturesCode": prefecturesCode.value,
       "municipalities": cityController.text,
       "streetAddress": streetController.text,
       "building": addressController.text,
-      "snsType1": sns1.value == "SNS1"?"":commonSns.firstWhere((e) => '${e.value}' == sns1.value).code ?? '',
-      "snsType2": sns2.value == "SNS2"?"":commonSns.firstWhere((e) => '${e.value}' == sns2.value).code ?? '',
-      "snsType3": sns3.value == "SNS3"?"":commonSns.firstWhere((e) => '${e.value}' == sns3.value).code ?? '',
-      "snsType4": sns4.value == "SNS4"?"":commonSns.firstWhere((e) => '${e.value}' == sns4.value).code ?? '',
+      "snsType1": sns1.value == "SNS1"
+          ? ""
+          : commonSns.firstWhere((e) => '${e.value}' == sns1.value).code ?? '',
+      "snsType2": sns2.value == "SNS2"
+          ? ""
+          : commonSns.firstWhere((e) => '${e.value}' == sns2.value).code ?? '',
+      "snsType3": sns3.value == "SNS3"
+          ? ""
+          : commonSns.firstWhere((e) => '${e.value}' == sns3.value).code ?? '',
+      "snsType4": sns4.value == "SNS4"
+          ? ""
+          : commonSns.firstWhere((e) => '${e.value}' == sns4.value).code ?? '',
       "snsLink1": linkController1.text,
       "snsLink2": linkController2.text,
       "snsLink3": linkController3.text,
@@ -301,9 +365,13 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "businessStatus": "",
       "storeHomepageLink": homeController.text,
       "deliveryFlag": "",
-      "deadLineDays": reservationsAreClosedDay.value == "本日から予約可能日数FROM"?"":reservationsAreClosedDay.value,
-      "approvalDays": bookingDayMax.value == "本日から予約可能日数TO"?"":bookingDayMax.value,
-      "deadLineTime": appointmentTime.value == "予約締切時間"?"":appointmentTime.value,
+      "deadLineDays": reservationsAreClosedDay.value == "本日から予約可能日数FROM"
+          ? ""
+          : reservationsAreClosedDay.value,
+      "approvalDays":
+          bookingDayMax.value == "本日から予約可能日数TO" ? "" : bookingDayMax.value,
+      "deadLineTime":
+          appointmentTime.value == "予約締切時間" ? "" : appointmentTime.value,
       "email": "",
       "customerOrderLimit": orderAmountMaxController.text,
       "customerDailyOrderLimit": dailyOrderAmountMaxController.text,
@@ -311,7 +379,7 @@ mixin StoreSetupMixin<T extends StatefulWidget> on State<T> {
       "revAmountLimit": productAmountMaxController.text,
       "fileIdList": fileIdList,
       "specialRestDayList": specialRestDayList,
-      "pointRate":pointsRatioController.text
+      "pointRate": pointsRatioController.text
     };
     print("params ------------------------ $params");
     await backEndRepository.doPut(

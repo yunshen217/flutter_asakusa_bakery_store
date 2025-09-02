@@ -68,17 +68,17 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
           height: 1,
           color: CustomColor.bg,
         ),
-        infoWidget.titleWidget("店舗画像(3枚)", false),
+        infoWidget.titleWidget("店舗画像（3枚）", false),
         SelectImageWidget(localAssets:image,maxLength: 3,fileIds:fileIdList,netUrls:assetsImg),
         infoWidget.titleWidget("店舗名", true),
         ClearableTextField(
             controller: storeNameController,
-            hintText: '店舗名を入カしてください',
+            hintText: '店舗名を入力してください',
             readOnly: false),
-        infoWidget.titleWidget("一言の店舗説明(20文字)", false),
+        infoWidget.titleWidget("一言の店舗説明（20文字）", false),
         customWidget.setTextField(
             storeDescriptionController, storeDescriptionFocusNode,
-            hintText: '店舗名を入カしてください',
+            hintText: '店舗名を入力してください',
             circular: 5,
             maxLines: 5,
             height: 100,
@@ -99,12 +99,12 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
         ClearableTextField(
             controller: provinceController, hintText: '都道府県', readOnly: true),
         ClearableTextField(
-            controller: cityController, hintText: '市区町材', readOnly: true),
+            controller: cityController, hintText: '市区町村', readOnly: true),
         ClearableTextField(
             controller: streetController, hintText: '番地', readOnly: false),
         ClearableTextField(
             controller: addressController,
-            hintText: '建物名·部屋番号',
+            hintText: '建物名・部屋番号',
             readOnly: false),
         infoWidget.titleWidget("電話番号", false),
         ClearableTextField(
@@ -214,37 +214,37 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
             ),
           )),
         ),
-        infoWidget.titleWidget("特别休日", false),
+        infoWidget.titleWidget("特別休日", false),
         Obx(() => infoWidget.pickerSelected(specialHolidays.value,
             specialHolidays.value == "", () => showCalendar())),
-        infoWidget.titleWidget("顧客每回注文金額上限", false),
+        infoWidget.titleWidget("１回注文上限金額", false),
         ClearableTextField(
             controller: orderAmountMaxController,
-            hintText: '顧客每回注文金額上限を入力してください',
+            hintText: '金額を入力してください',
             isNum: true,
             readOnly: false),
-        infoWidget.titleWidget("顧客每日注文金額上限", false),
+        infoWidget.titleWidget("顧客１日の注文上限金額", false),
         ClearableTextField(
             controller: dailyOrderAmountMaxController,
-            hintText: '顧客每日注文金額上限を入力してください',
+            hintText: '金額を入力してください',
             isNum: true,
             readOnly: false),
-        infoWidget.titleWidget("店舗每日予約商品数上限", false),
+        infoWidget.titleWidget("１日の製造商品上限数", false),
         ClearableTextField(
             controller: productNumberMaxController,
-            hintText: '店舗每日予約商品数上限を入カしてください',
+            hintText: '商品数を入力してください',
             isNum: true,
             readOnly: false),
-        infoWidget.titleWidget("店舗每日予約金額上限", false),
+        infoWidget.titleWidget("１日の予約上限金額", false),
         ClearableTextField(
             controller: productAmountMaxController,
-            hintText: '店舗每日予約金额上限を入カしてく尤さい',
+            hintText: '金額を入力してください',
             isNum: true,
             readOnly: false),
-        infoWidget.titleWidget("ポイント比率", false),
+        infoWidget.titleWidget("ポイント率", false),
         ClearableTextField(
             controller: pointsRatioController,
-            hintText: 'ポイント比率を入カしてィださい',
+            hintText: 'ポイント率を入力してください',
             isNum: true,
             readOnly: false),
         infoWidget.titleWidget("SNS1", false),
@@ -335,12 +335,18 @@ class _StoreSetupState extends State<StoreSetup> with StoreSetupMixin {
               child: mainPageShow(),
             ),
           ),
-          infoWidget.bottomBtn("キャン乜ル", "保存", true, () =>Get.back(), (){
+          infoWidget.bottomBtn("キャンセル", "保存", true, () =>Get.back(), () async {
             if(int.parse(reservationsAreClosedDay.value == "本日から予約可能日数FROM"?"":reservationsAreClosedDay.value)>int.parse(bookingDayMax.value=="本日から予約可能日数TO"?"":bookingDayMax.value)){
               customWidget.toastShowNotIcon("予約可能日数FROMは予約可能日数TOより小さくなるように入力してください");
               return;
             }
-            updateDetailData();
+            final loc = await getCode('${provinceController.text}${cityController.text}${streetController.text}${addressController.text}');
+            if (loc != null) {
+              updateDetailData(loc);
+            }else{
+              return;
+            }
+            
           })
         ],
       ),

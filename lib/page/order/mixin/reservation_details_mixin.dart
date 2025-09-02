@@ -85,7 +85,7 @@ mixin ReservationDetailsMixin<T extends StatefulWidget> on State<T> {
       params: params,
       successRequest: (result) {
         customWidget.toastShowNotIcon("更新しました");
-        btnText.value=btnText.value == "予約中止"?"予約再開":"予約中止";
+        btnText.value=btnText.value == "予約受付中止"?"予約再開":"予約受付中止";
 
       },
     );

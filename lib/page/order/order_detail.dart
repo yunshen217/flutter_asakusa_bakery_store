@@ -8,7 +8,7 @@ import 'package:flutter_asakusa_bakery_store/repository/repository.dart';
 import 'package:flutter_asakusa_bakery_store/view/BaseScaffold.dart';
 import 'package:get/get.dart';
 
-/// 注文の詳細
+/// 注文詳細
 class OrderDetail extends StatefulWidget {
   const OrderDetail({super.key});
 
@@ -95,7 +95,7 @@ class _OrderDetailState extends State<OrderDetail> {
             margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             fontSize: 12,
             color: CustomColor.black_9),
-        customWidget.setTextOverflow("金额",
+        customWidget.setTextOverflow("金額",
             margin: const EdgeInsets.symmetric(vertical: 5),
             fontSize: 12,
             color: CustomColor.black_9),
@@ -129,7 +129,7 @@ class _OrderDetailState extends State<OrderDetail> {
     return BaseScaffold(
         backgroundColor: CustomColor.bg,
         appBar: customWidget.setAppBar(
-            title: "注文の詳細",
+            title: "注文詳細",
             backgroundColor: CustomColor.white,
             isLeftShow: false,
             leading: InkWell(
@@ -176,7 +176,7 @@ class _OrderDetailState extends State<OrderDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         customWidget.setText(
-                            "お客樣：${orderDetailData.value!.sendName}",
+                            "お客様：${orderDetailData.value!.sendName}",
                             fontSize: 14,
                             color: CustomColor.black_3),
                         customWidget.setTextOverflow("受取番号：",
@@ -206,13 +206,13 @@ class _OrderDetailState extends State<OrderDetail> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        customWidget.setTextOverflow("オ一ダ一样细",
+                        customWidget.setTextOverflow("注文詳細",
                             fontSize: 14,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(bottom: 5)),
                         customWidget.setTable(color: Colors.transparent, [
                           TableRow(children: [
-                            customWidget.setTextOverflow("オ一ダ一番号",
+                            customWidget.setTextOverflow("注文番号",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
@@ -236,7 +236,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                 color: CustomColor.black_3)
                           ]),
                           TableRow(children: [
-                            customWidget.setTextOverflow("ビッキング方法",
+                            customWidget.setTextOverflow("受取方法",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
@@ -263,7 +263,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                   color: CustomColor.black_3)
                             ]),
                           TableRow(children: [
-                            customWidget.setTextOverflow("予约时间",
+                            customWidget.setTextOverflow("予約時間",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
@@ -275,7 +275,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                 color: CustomColor.black_3)
                           ]),
                           TableRow(children: [
-                            customWidget.setTextOverflow("支付状况",
+                            customWidget.setTextOverflow("支払状況",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,
@@ -293,12 +293,12 @@ class _OrderDetailState extends State<OrderDetail> {
                     ),
                     margin: const EdgeInsets.all(15)),
 
-                /// 商品の詳細
+                /// 商品詳細
                 customWidget.setContain(
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        customWidget.setTextOverflow("商品の詳細",
+                        customWidget.setTextOverflow("商品詳細",
                             fontSize: 14,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(bottom: 5)),
@@ -311,18 +311,18 @@ class _OrderDetailState extends State<OrderDetail> {
                     ),
                     margin: const EdgeInsets.symmetric(horizontal: 15)),
 
-                /// 金额
+                /// 金額
                 customWidget.setContain(
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        customWidget.setTextOverflow("オ一ダ一金額",
+                        customWidget.setTextOverflow("注文金額",
                             fontSize: 14,
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(bottom: 5)),
                         customWidget.setTable(color: Colors.transparent, [
                           TableRow(children: [
-                            customWidget.setTextOverflow("合計金额",
+                            customWidget.setTextOverflow("合計金額",
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 5),
                                 fontSize: 12,

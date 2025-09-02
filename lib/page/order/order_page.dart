@@ -127,7 +127,7 @@ class _OrderPageState extends State<OrderPage>
                                           .isAfter(
                                               DateTime.parse(timeEnd.value))) {
                                         customWidget.toastShow(
-                                            "現在の時刻は開始時刻より前にすることはできません");
+                                            "FROM /TOの日付を正しく指定してください");
                                         return;
                                       }
                                       timeEnd.value = date;
@@ -167,8 +167,8 @@ class _OrderPageState extends State<OrderPage>
                           }
                           final item = orderPlansData[index];
                           String status = item.status == "1"
-                              ? "予約時間未満"
-                              : (item.status == "2" ? "予約中" : (item.status == "3" ? "店休":"予約一時中止"));
+                              ? "予約受付終了"
+                              : (item.status == "2" ? "予約受付中" : (item.status == "3" ? "定休日":"予約一時中止"));
                           return InkWell(
                             onTap: () => Routes.goPage('/ReservationDetails',param: {"time":item.reserveDate!,"status":status}),
                             child: Container(
@@ -194,11 +194,11 @@ class _OrderPageState extends State<OrderPage>
                                     child: Column(
                                       children: [
                                         customWidget.setRowText(
-                                            "計画倜数", '${item.planCount!}',
+                                            "計画週数", '${item.planCount!}',
                                             margin: const EdgeInsets.only(
                                                 bottom: 10)),
                                         customWidget.setRowText(
-                                            "予約倜数", '${item.orderCount!}',
+                                            "予約週数", '${item.orderCount!}',
                                             margin: const EdgeInsets.only(
                                                 bottom: 10)),
                                         customWidget.setRowText(
@@ -210,7 +210,7 @@ class _OrderPageState extends State<OrderPage>
                                             margin: const EdgeInsets.only(
                                                 bottom: 10)),
                                         customWidget.setRowText(
-                                            "予約金额", '\$ ${item.allAmount}',
+                                            "予約金額", '\$ ${item.allAmount}',
                                             margin: const EdgeInsets.only(
                                                 bottom: 0)),
                                       ],
@@ -263,8 +263,8 @@ class _OrderPageState extends State<OrderPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Obx(()=>chartBox("郵送件数", sendOrderCount.value)),
-                Obx(()=>chartBox("商品数", totalCount.value)),
-                Obx(()=>chartBox("商品の金额", allAmount.value)),
+                Obx(()=>chartBox("予約件数", totalCount.value)),
+                Obx(()=>chartBox("予約金額", allAmount.value)),
               ],
             ),
             Container(

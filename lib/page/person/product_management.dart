@@ -122,7 +122,7 @@ class _ProductManagementState extends State<ProductManagement>
                             color: CustomColor.black_3,
                             margin: const EdgeInsets.only(right: 6)),
                         customWidget.setRichText(
-                            "累計贩壳：", "${item.totalSaleCount}",
+                            "累計販売：", "${item.totalSaleCount}",
                             fontSize: 12,
                             color: CustomColor.black_9,
                             subtitleColor: CustomColor.black_3)

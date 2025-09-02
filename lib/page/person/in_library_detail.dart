@@ -107,7 +107,7 @@ class _InLibraryDetailState extends State<InLibraryDetail> {
             height: double.infinity,
             child: Column(
               children: [
-                _row("入出庫区分", "数量", "单位", "時間", false),
+                _row("入出庫区分", "数量", "単位", "時間", false),
                 SingleChildScrollView(
                   child: Obx(()=>Column(
                     children: List.generate(inLibraryDetailList.length, (index){

@@ -112,7 +112,7 @@ class _InboundAndOutboundStorageState extends State<InboundAndOutboundStorage> {
             infoWidget.titleWidget("数量", false),
             ClearableTextField(
             controller: numController,
-            hintText: '数值を入カしてください',
+            hintText: '数値を入力してください',
             readOnly: false,
             isNum: true,),
             infoWidget.titleWidget("入出庫区分", false),

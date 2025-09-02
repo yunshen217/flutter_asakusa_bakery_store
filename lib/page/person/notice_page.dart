@@ -129,7 +129,7 @@ class _NoticePageState extends State<NoticePage>
                   controller: _tabController,
                   tabs: const [
                     Tab(text: 'お知らせ'),
-                    Tab(text: '在庫アラ一ム'),
+                    Tab(text: '在庫アラーム'),
                   ],
                   onTap: (value) {
                     value == 0?type.value = 5:type.value = 2;

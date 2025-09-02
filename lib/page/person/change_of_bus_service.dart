@@ -17,11 +17,11 @@ class ChangeOfBusService extends StatefulWidget {
 }
 
 class _ChangeOfBusServiceState extends State<ChangeOfBusService> {
-  // 現在のバスフ一ド
+  // 現在のパスワード
   TextEditingController oldPsdController = TextEditingController();
-  // 新しいバスフ一ド
+  // 新しいパスワード
   TextEditingController newPsdController = TextEditingController();
-  // 確認パスフ一ド
+  // 確認パスワード
   TextEditingController confirmPsdController = TextEditingController();
   updatePassword() async {
     Map<String, dynamic> params = {
@@ -33,7 +33,7 @@ class _ChangeOfBusServiceState extends State<ChangeOfBusService> {
       Constant.updatePassword,
       params: params,
       successRequest: (result) {
-        customWidget.toastShowNotIcon("オ一ダ一の送信に成功しました");
+        customWidget.toastShowNotIcon("注文が成功しました");
         Get.back();
       },
     );
@@ -44,7 +44,7 @@ class _ChangeOfBusServiceState extends State<ChangeOfBusService> {
     return BaseScaffold(
       backgroundColor: CustomColor.white,
       appBar: customWidget.setAppBar(
-        title: "バスフ一ドの変更",
+        title: "パスワードの変更",
         backgroundColor: CustomColor.white,
         isLeftShow: false,
         leading: InkWell(
@@ -57,25 +57,25 @@ class _ChangeOfBusServiceState extends State<ChangeOfBusService> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            infoWidget.titleWidget("現在のバスフ一ド", false),
+            infoWidget.titleWidget("現在のパスワード", false),
             ClearableTextField(
                 controller: oldPsdController,
-                hintText: "現在のバスフ一ド",
+                hintText: "現在のパスワード",
                 readOnly: false,
                 isPsd: true),
-            infoWidget.titleWidget("新しいバスフ一ド", false),
+            infoWidget.titleWidget("新しいパスワード", false),
             ClearableTextField(
                 controller: newPsdController,
-                hintText: '新しいバスフ一ド',
+                hintText: '新しいパスワード',
                 readOnly: false,
                 isPsd: true),
-            infoWidget.titleWidget("確認パスフ一ド", false),
+            infoWidget.titleWidget("確認パスワード", false),
             ClearableTextField(
                 controller: confirmPsdController,
-                hintText: '確認パスフ一ド',
+                hintText: '確認パスワード',
                 readOnly: false,
                 isPsd: true),
-            customWidget.setTextOverflow("八スフ一下規則:6-8析半角英数字の組合せ",
+            customWidget.setTextOverflow("パスワード規則：６−８桁半角英数字の組合せ",
                 margin: const EdgeInsets.fromLTRB(15, 15, 15, 10),
                 fontSize: 12,
                 color: CustomColor.black_9),

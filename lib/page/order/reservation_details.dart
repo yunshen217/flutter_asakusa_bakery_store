@@ -27,7 +27,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
     super.initState();
     time.value = arguments != null ? arguments["time"] : "";
     status.value = arguments != null ? arguments["status"] : "";
-    btnText.value = status.value == "予約一時中止"?"予約再開":"予約中止";
+    btnText.value = status.value == "予約一時中止"?"予約再開":"予約受付中止";
 
     getPlansItems();
     getCommonSearchParam();
@@ -143,7 +143,7 @@ class _ReservationDetailsState extends State<ReservationDetails>
                                   useDefaultWidth: true,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
-                                  child: customWidget.setText("予約終了を確認しますか?",
+                                  child: customWidget.setText("予約を中止しますか？",
                                       maxLines: 100,
                                       textAlign: TextAlign.center,
                                       color: CustomColor.black_9),

@@ -21,7 +21,7 @@ class SiftWrapWidget extends StatelessWidget {
       required this.siftBtnDataIsSelectes,
       required this.siftBtnData,
       required this.sift,
-      this.title = "パンの種類",
+      this.title = "種類",
       this.child = const SizedBox.shrink(),
       this.cancelText = "クリア",
       this.subOnTap,

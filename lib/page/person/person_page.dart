@@ -53,7 +53,7 @@ class _PersonPageState extends State<PersonPage>
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
           isLeftShow: false,
-          title: 'マイ店舗',
+          title: '店舗',
           centerTitle: false,
           backgroundColor: CustomColor.orangeFFB554),
       body: Container(
@@ -174,7 +174,7 @@ class _PersonPageState extends State<PersonPage>
                         trailing: const Icon(Icons.chevron_right),
                         contentPadding:
                             const EdgeInsets.only(right: 15, left: 15),
-                        title: customWidget.setText("ログオフ",
+                        title: customWidget.setText("ログアウト",
                             fontWeight: FontWeight.bold),
                         leading: customWidget
                             .setAssetsImg("person_loginout@3x.png", width: 24),

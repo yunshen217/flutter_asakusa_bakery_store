@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
-                                                content: Text('デバイストークン獲得失敗')),
+                                                content: Text('デバイストークン取得失敗')),
                                           );
                                         }
                                         return;
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage>
       customWidget.toastShow("ユーザーIDを入力してください", notifyType: NotifyType.warning);
       return false;
     } else if (!utils.isPw(pwController!.text.trim())) {
-      customWidget.toastShow("パスワードフォーマットエラー", notifyType: NotifyType.warning);
+      customWidget.toastShow("パスワードの形式が正しくありません", notifyType: NotifyType.warning);
       return false;
     }
     return true;

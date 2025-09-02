@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage>
 
   void _editTrackingPopup() {
     Widget widget = customWidget.setTextFieldForLogin(editcontroller,
-        hintText: "番号を入カしてください",
+        hintText: "送り状No.を入力してください",
         suffix: Container(
           padding: const EdgeInsets.all(10),
           child: customWidget.setAssetsImg("order_scan@2x.png"),
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage>
     return BaseScaffold(
       backgroundColor: CustomColor.bg,
       appBar: customWidget.setAppBar(
-          title: "注文一覧",
+          title: "注文",
           isLeftShow: false,
           centerTitle: false,
           bottom: PreferredSize(
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage>
                                               context,
                                               title: "",
                                               child: customWidget.setText(
-                                                  "キャンセルを確認しますか?",
+                                                  "注文を取り消しますか？",
                                                   textAlign: TextAlign.center),
                                               contentPadding:
                                                   const EdgeInsets.only(
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage>
                             ],
                           ),
                           customWidget.setCupertinoButton(
-                              orderStateIndex.value == 0 ? "一括処理" : "受け取り/発送済み",
+                              orderStateIndex.value == 0 ? "一括処理" : "引渡／出荷",
                               width: 120,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),

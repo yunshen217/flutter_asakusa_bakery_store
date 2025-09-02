@@ -10,7 +10,7 @@ class ToLoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: customWidget.setCupertinoButton("先にログインしてください",
+      child: customWidget.setCupertinoButton("ログインしてください",
           padding: const EdgeInsets.symmetric(horizontal: 15),
           fontWeight: FontWeight.normal,
           color: CustomColor.blackD,
@@ -19,9 +19,9 @@ class ToLoginPage extends StatelessWidget {
           context,
           title: "",
           cancelText: "キャンセル",
-          submitText: "ログインする",
+          submitText: "ログイン",
           child:
-              customWidget.setText("現在ログインしていません", textAlign: TextAlign.center),
+              customWidget.setText("ログインしてください", textAlign: TextAlign.center),
           contentPadding: const EdgeInsets.only(bottom: 10),
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           cancelBtnIsOutLinedButton: false,

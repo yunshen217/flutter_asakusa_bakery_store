@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final tabs = [const HomePage(), const OrderPage(), const PersonPage()];
 
-  final tabTitle = ['オーダー', "計画＆予約", "マイ店舗"];
+  final tabTitle = ['オーダー', "計画＆予約", "店舗"];
   List<NavigationIconView> _navigationIconView = [];
   List<String> bottomSelectIcons = [
     "order_bar_select@3x.png",

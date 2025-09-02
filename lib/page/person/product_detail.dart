@@ -75,7 +75,7 @@ class _ProductDetailState extends State<ProductDetail>
                   controller: _tabController,
                   tabs: const [
                     Tab(text: '商品情報'),
-                    Tab(text: 'レシビ'),
+                    Tab(text: 'レシピ'),
                   ],
                   dividerHeight: 1,
                   dividerColor: CustomColor.bg,
@@ -201,10 +201,10 @@ class _ProductDetailState extends State<ProductDetail>
                   confirm: (list) => productCategorySelected.value = list[0],
                 );
               })),
-          infoWidget.titleWidget("商品焼きたて時間带", false),
+          infoWidget.titleWidget("商品焼きたて時間帯", false),
           Obx(() => infoWidget.pickerSelected(
                   freshlyBakedTimeZoneSelected.value,
-                  freshlyBakedTimeZoneSelected.value == '商品焼きたて時間带を選択してください',
+                  freshlyBakedTimeZoneSelected.value == '時間帯を選択してください',
                   () {
                 customWidget.showCustomizationPicker(
                   context,
@@ -212,7 +212,7 @@ class _ProductDetailState extends State<ProductDetail>
                     freshlyBakedTimeZone.map((e) => e.toString()).toList()
                   ],
                   initialIndex: [0],
-                  title: '商品焼きたて時間带を選択してください',
+                  title: '時間帯を選択してください',
                   confirm: (list) =>
                       freshlyBakedTimeZoneSelected.value = list[0],
                 );
@@ -245,7 +245,7 @@ class _ProductDetailState extends State<ProductDetail>
               borderSide:
                   const BorderSide(color: CustomColor.blackD, width: 0.5),
               margin: const EdgeInsets.symmetric(horizontal: 15)),
-          infoWidget.titleWidget("アレルギ一情報(特定8品目)", false),
+          infoWidget.titleWidget("アレルギー情報(特定8品目)", false),
           Obx(() => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 height: 217,
@@ -289,14 +289,14 @@ class _ProductDetailState extends State<ProductDetail>
                   ),
                 ),
               )),
-          infoWidget.titleWidget("ステ一タス", false),
+          infoWidget.titleWidget("ステータス", false),
           Obx(() => infoWidget.pickerSelected(
-                  statusSelected.value, statusSelected.value == "ステ一タス", () {
+                  statusSelected.value, statusSelected.value == "ステータス", () {
                 customWidget.showCustomizationPicker(
                   context,
                   columnsData: [status.map((e) => e.toString()).toList()],
                   initialIndex: [0],
-                  title: '商品ステ-タスを選択してください',
+                  title: '商品ステータスを選択してください',
                   confirm: (list) => statusSelected.value = list[0],
                 );
               })),

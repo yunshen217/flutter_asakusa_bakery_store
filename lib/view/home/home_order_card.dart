@@ -11,7 +11,7 @@ class HomeOrderCard extends StatelessWidget {
   /// 注文ステータス番号 0：製作中 1：受け取り待ち 2：出荷 3：終了
   int orderStateIndex;
 
-  /// 注文の詳細
+  /// 注文詳細
   OrderListModelRecords orderDetail;
   // 上部のラジオボタンをクリックした後に実行されるメソッド
   Function()? onTap;
@@ -154,7 +154,7 @@ class HomeOrderCard extends StatelessWidget {
                   ],
                 ),
                 if (orderStateIndex == 0) ...[
-                  customWidget.setCupertinoButton("焼き上がリ",
+                  customWidget.setCupertinoButton("焼き上り",
                       height: 35,
                       width: 95,
                       fontWeight: FontWeight.normal,
@@ -192,7 +192,7 @@ class HomeOrderCard extends StatelessWidget {
                       //       children: [
                       //         customWidget.setAssetsImg("edit.png",
                       //             width: 16, height: 16),
-                      //         customWidget.setText("送状番号",
+                      //         customWidget.setText("送り状No.",
                       //             fontSize: 12, color: CustomColor.black_3)
                       //       ],
                       //     ),
@@ -212,7 +212,7 @@ class HomeOrderCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      customWidget.setText("送状番号",
+                      customWidget.setText("送り状No.",
                           color: CustomColor.gray_6, fontSize: 12),
                       customWidget.setText(orderDetail.sendNo!,
                           color: CustomColor.black_3, fontSize: 16),

@@ -21,13 +21,13 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
   late final RxList<TextEditingController> topTitleController;
 
   List bottomTitle = [
-    "望価(税込)",
+    "単価(税込)",
     "重量(g)",
     "カロリ一",
     "幅(mm)",
     "奥行き(mm)",
     "高さ(mm)",
-    "デフオルト計画数"
+    "デフォルト計画数"
   ];
 
   late final RxList<TextEditingController> bottomTitleController;
@@ -37,10 +37,10 @@ mixin ProductDetailInfoMixin<T extends StatefulWidget> on State<T> {
   RxString productCategorySelected = "商品カテゴリ".obs;
   RxList<String> productCategory = <String>[].obs;
   final timePeriodModel = Rxn<TimePeriodModel>();
-  RxString freshlyBakedTimeZoneSelected = "商品焼きたて時間带を選択してください".obs;
+  RxString freshlyBakedTimeZoneSelected = "時間帯を選択してください".obs;
   RxList freshlyBakedTimeZone = ["12:00~13:00", "13:00~14:00"].obs;
 
-  RxString statusSelected = "ステ一タス".obs;
+  RxString statusSelected = "ステータス".obs;
   RxList status = ["販売中", "開発中", "販売中止"].obs;
 
   TextEditingController productDescriptionController = TextEditingController();
